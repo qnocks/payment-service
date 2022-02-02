@@ -11,5 +11,5 @@ public interface FlowService {
 
     TransactionInfoDto updateTransaction(TransactionInfoDto transactionInfoDto);
 
-    List<TransactionInfoDto> searchTransaction(String externalId, String provider);
+    List<TransactionInfoDto> searchTransactions(String externalId, String provider);
 }

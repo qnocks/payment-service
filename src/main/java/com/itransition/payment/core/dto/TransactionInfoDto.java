@@ -1,9 +1,13 @@
 package com.itransition.payment.core.dto;
 
 import com.itransition.payment.core.domain.enums.TransactionStatus;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionInfoDto {
 
     private Long id;

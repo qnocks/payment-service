@@ -29,10 +29,8 @@ public class FlowController {
     }
 
     @GetMapping(params = {"external_id", "provider"})
-    public ResponseEntity<List<TransactionInfoDto>> searchTransaction(
-            @RequestParam("external_id") String externalId,
-            @RequestParam("provider") String provider) {
-
-        return new ResponseEntity<>(flowService.searchTransaction(externalId, provider), HttpStatus.OK);
+    public ResponseEntity<List<TransactionInfoDto>> searchTransaction(@RequestParam("external_id") String externalId,
+                                                                      @RequestParam("provider") String provider) {
+        return new ResponseEntity<>(flowService.searchTransactions(externalId, provider), HttpStatus.OK);
     }
 }

@@ -1,8 +1,12 @@
 package com.itransition.payment.core.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionAdapterStateDto {
 
     private String externalId;

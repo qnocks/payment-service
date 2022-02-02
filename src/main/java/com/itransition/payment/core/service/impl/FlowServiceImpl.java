@@ -1,21 +1,22 @@
 package com.itransition.payment.core.service.impl;
 
+import com.itransition.payment.core.domain.enums.TransactionStatus;
+import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.FlowService;
 import com.itransition.payment.core.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlowServiceImpl implements FlowService {
-
-    private final WebClient webClient;
 
     private final TransactionService transactionService;
 
@@ -23,33 +24,58 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto) {
+        verifyExternalIdUniqueness(transactionAdapterStateDto.getExternalId());
+        verifyAccountExistence(transactionAdapterStateDto.getUser());
 
-        // verify external id uniqueness
+        return transactionService.save(transactionAdapterStateDto);
+    }
 
-        // auth
+    private void verifyExternalIdUniqueness(String externalId) {
+        boolean exists = transactionService.existsByExternalId(externalId);
 
-        // verify account existence
+        // Should be changed to custom exception when implementation of exception handling
+        if (exists) {
+            String msg = String.format("External id: %s isn't unique", externalId);
 
-        // persist transaction
+            log.warn(msg);
+            throw new IllegalStateException();
+        }
+    }
 
-        return null;
+    private void verifyAccountExistence(String userId) {
+        AccountDto accountDto = accountService.getById(Long.parseLong(userId));
+
+        // Should be changed to custom exception when implementation of exception handling
+        if (accountDto == null) {
+            String msg = String.format("Cannot find account with id: %s", userId);
+
+            log.warn(msg);
+            throw new IllegalStateException();
+        }
     }
 
     @Override
     public TransactionInfoDto updateTransaction(TransactionInfoDto transactionInfoDto) {
+        verifyStatusTransactionCorrectness(transactionInfoDto.getExternalId());
+        return transactionService.update(transactionInfoDto);
+    }
 
-        // verify correctness of status transaction
+    private void verifyStatusTransactionCorrectness(String externalId) {
+        TransactionInfoDto existingTransaction = transactionService.getByExternalId(externalId);
+        TransactionStatus status = existingTransaction.getStatus();
 
-        // update transaction
+        // Should be changed to custom exception when implementation of exception handling
+        if (!status.equals(TransactionStatus.INITIAL)) {
+            String msg = String.format(
+                    "Cannot change transaction status. The transaction has %s status", status.getName());
 
-        return null;
+            log.warn(msg);
+            throw new IllegalStateException(msg);
+        }
     }
 
     @Override
-    public List<TransactionInfoDto> searchTransaction(String externalId, String provider) {
-
-        // get transaction by criteria
-
-        return null;
+    public List<TransactionInfoDto> searchTransactions(String externalId, String provider) {
+        return transactionService.getAllByExternalIdOrProvider(externalId, provider);
     }
 }

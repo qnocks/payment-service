@@ -1,10 +1,14 @@
 package com.itransition.payment.core.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class AmountDto {
 
     private BigDecimal amount;

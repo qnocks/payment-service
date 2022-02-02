@@ -43,7 +43,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
     private void verifyAccountExistence(String userId) {
-        AccountDto accountDto = accountService.getById(Long.parseLong(userId));
+        AccountDto accountDto = accountService.getById(userId);
 
         // Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {

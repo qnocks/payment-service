@@ -20,7 +20,7 @@ public class AccountServiceImpl implements AccountService {
     private final SecurityService securityService;
 
     @Override
-    public AccountDto getById(Long id) {
+    public AccountDto getById(String id) {
         String authHeader = getAuthHeader();
         return retrieveById(id, authHeader);
     }
@@ -30,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 
-    private AccountDto retrieveById(Long id, String authHeader) {
+    private AccountDto retrieveById(String id, String authHeader) {
         AccountDto accountDto = webClient.get()
                 .uri("account/" + id)
                 .header(HttpHeaders.AUTHORIZATION, authHeader)
@@ -39,10 +39,11 @@ public class AccountServiceImpl implements AccountService {
                 .block();
 
         if (accountDto == null) {
-            log.warn("Cannot get Account with id: {}", id);
+            String msg = String.format("Cannot get Account with id: %s", id);
+            log.warn(msg);
 
             // Should be changed to custom exception when implementation of exception handling
-            throw new IllegalStateException(String.format("Cannot get Account with id: %s", id));
+            throw new IllegalStateException(msg);
         }
 
         return accountDto;

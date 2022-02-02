@@ -5,6 +5,13 @@ import com.itransition.payment.core.dto.AuthResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class represents mock for Core Services business logic
+ *
+ * After completed implementation of Payment Service
+ * this class should be deleted and replaced with real services
+ *
+ */
 @Slf4j
 @Service
 public class MockCoreService {

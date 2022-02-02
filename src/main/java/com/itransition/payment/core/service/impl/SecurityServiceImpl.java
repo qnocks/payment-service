@@ -14,6 +14,10 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public AuthResponse authorize(String grantType, String clientSecret, String clientId) {
+        return processAuthorization(grantType, clientSecret, clientId);
+    }
+
+    private AuthResponse processAuthorization(String grantType, String clientSecret, String clientId) {
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auth/token")

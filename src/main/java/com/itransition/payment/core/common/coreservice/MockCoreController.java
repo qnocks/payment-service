@@ -8,6 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * This class represents mock for Core services
+ * (AccountService, AuthorizationService, TransactionService)
+ * which provides all necessary API for Payment Service
+ *
+ * After completed implementation of Payment Service
+ * this class should be deleted and replaced with real services
+ *
+ */
 @RestController
 @RequestMapping("/mock")
 @RequiredArgsConstructor

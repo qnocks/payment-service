@@ -5,10 +5,12 @@ import com.itransition.payment.core.dto.AuthResponse;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -19,14 +21,30 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto getById(Long id) {
-        AuthResponse authResponse = securityService.authorize("", "", "");
-        String header = authResponse.getTokenType() + " " + authResponse.getAccessToken();
+        String authHeader = getAuthHeader();
+        return retrieveById(id, authHeader);
+    }
 
-        return webClient.get()
+    private String getAuthHeader() {
+        AuthResponse authResponse = securityService.authorize("", "", "");
+        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
+    }
+
+    private AccountDto retrieveById(Long id, String authHeader) {
+        AccountDto accountDto = webClient.get()
                 .uri("account/" + id)
-                .header(HttpHeaders.AUTHORIZATION, header)
+                .header(HttpHeaders.AUTHORIZATION, authHeader)
                 .retrieve()
                 .bodyToMono(AccountDto.class)
                 .block();
+
+        if (accountDto == null) {
+            log.warn("Cannot get Account with id: {}", id);
+
+            // Should be changed to custom exception when implementation of exception handling
+            throw new IllegalStateException(String.format("Cannot get Account with id: %s", id));
+        }
+
+        return accountDto;
     }
 }

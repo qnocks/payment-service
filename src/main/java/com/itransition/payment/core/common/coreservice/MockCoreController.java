@@ -25,7 +25,7 @@ public class MockCoreController {
     private final MockCoreService mockCoreService;
 
     @GetMapping("/account/{account_id}")
-    public ResponseEntity<AccountDto> checkExistingAccount(@PathVariable("account_id") Long accountId,
+    public ResponseEntity<AccountDto> checkExistingAccount(@PathVariable("account_id") String accountId,
                                                            @RequestHeader HttpHeaders headers) {
         if (checkAuthorization(headers)) {
             return new ResponseEntity<>(mockCoreService.checkExistingAccount(accountId), HttpStatus.OK);

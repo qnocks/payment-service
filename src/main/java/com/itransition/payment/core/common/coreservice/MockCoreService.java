@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MockCoreService {
 
-    public AccountDto checkExistingAccount(Long accountId) {
+    public AccountDto checkExistingAccount(String accountId) {
         AccountDto accountDto = new AccountDto("John", "Smith", null);
 
         log.info("IN checkExistingAccount - accountId: {}, returning: {}", accountId, accountDto);

@@ -18,7 +18,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/{account_id}")
-    public ResponseEntity<AccountDto> checkExistingAccount(@PathVariable("account_id") Long accountId) {
+    public ResponseEntity<AccountDto> checkExistingAccount(@PathVariable("account_id") String accountId) {
         return new ResponseEntity<>(accountService.getById(accountId), HttpStatus.OK);
     }
 }

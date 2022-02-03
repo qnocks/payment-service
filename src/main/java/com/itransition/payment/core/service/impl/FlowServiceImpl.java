@@ -7,50 +7,48 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.FlowService;
 import com.itransition.payment.core.service.TransactionService;
+import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlowServiceImpl implements FlowService {
 
     private final TransactionService transactionService;
-
     private final AccountService accountService;
+    private final MessageSource exceptionMessageSource;
 
     @Override
     public TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto) {
         verifyExternalIdUniqueness(transactionAdapterStateDto.getExternalId());
         verifyAccountExistence(transactionAdapterStateDto.getUser());
-
         return transactionService.save(transactionAdapterStateDto);
     }
 
     private void verifyExternalIdUniqueness(String externalId) {
-        boolean exists = transactionService.existsByExternalId(externalId);
+        boolean isTransactionExists = transactionService.existsByExternalId(externalId);
 
-        // Should be changed to custom exception when implementation of exception handling
-        if (exists) {
-            String msg = String.format("External id: %s isn't unique", externalId);
-
-            log.warn(msg);
-            throw new IllegalStateException();
+        // TODO: Should be changed to custom exception when implementation of exception handling
+        if (isTransactionExists) {
+            throw new IllegalStateException(exceptionMessageSource.getMessage(
+                    "flow.external-id-non-uniqueness",
+                    new String[]{externalId},
+                    Locale.getDefault()));
         }
     }
 
     private void verifyAccountExistence(String userId) {
         AccountDto accountDto = accountService.getById(userId);
 
-        // Should be changed to custom exception when implementation of exception handling
+        // TODO: Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {
-            String msg = String.format("Cannot find account with id: %s", userId);
-
-            log.warn(msg);
-            throw new IllegalStateException();
+            throw new IllegalStateException(exceptionMessageSource.getMessage(
+                    "flow.account-absence",
+                    new String[]{userId},
+                    Locale.getDefault()));
         }
     }
 
@@ -64,13 +62,12 @@ public class FlowServiceImpl implements FlowService {
         TransactionInfoDto existingTransaction = transactionService.getByExternalId(externalId);
         TransactionStatus status = existingTransaction.getStatus();
 
-        // Should be changed to custom exception when implementation of exception handling
+        // TODO: Should be changed to custom exception when implementation of exception handling
         if (!status.equals(TransactionStatus.INITIAL)) {
-            String msg = String.format(
-                    "Cannot change transaction status. The transaction has %s status", status.getName());
-
-            log.warn(msg);
-            throw new IllegalStateException(msg);
+            throw new IllegalStateException(exceptionMessageSource.getMessage(
+                    "flow.transaction-status-incorrectness",
+                    new String[]{externalId},
+                    Locale.getDefault()));
         }
     }
 

@@ -8,9 +8,7 @@ import lombok.Getter;
 public enum TransactionStatus {
 
     INITIAL("initial"),
-
     COMPLETED("completed"),
-
     FAILED("failed");
 
     private final String name;

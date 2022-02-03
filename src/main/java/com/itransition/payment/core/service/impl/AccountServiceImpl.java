@@ -4,20 +4,20 @@ import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AuthResponse;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.SecurityService;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
     private final WebClient webClient;
-
     private final SecurityService securityService;
+    private final MessageSource exceptionMessageSource;
 
     @Override
     public AccountDto getById(String id) {
@@ -39,11 +39,11 @@ public class AccountServiceImpl implements AccountService {
                 .block();
 
         if (accountDto == null) {
-            String msg = String.format("Cannot get Account with id: %s", id);
-            log.warn(msg);
-
-            // Should be changed to custom exception when implementation of exception handling
-            throw new IllegalStateException(msg);
+            // TODO: Should be changed to custom exception when implementation of exception handling
+            throw new IllegalStateException(exceptionMessageSource.getMessage(
+                    "account.cannot-get",
+                    new String[]{id},
+                    Locale.getDefault()));
         }
 
         return accountDto;

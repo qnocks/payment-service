@@ -1,17 +1,17 @@
 package com.itransition.payment.core.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@EqualsAndHashCode
-@ToString
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountDto {
 
     private String firstName;
-
     private String lastName;
-
     private String middleName;
 }

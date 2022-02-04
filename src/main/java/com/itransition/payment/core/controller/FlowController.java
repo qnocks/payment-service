@@ -3,12 +3,15 @@ package com.itransition.payment.core.controller;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.service.FlowService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/transactions")
@@ -18,19 +21,20 @@ public class FlowController {
     private final FlowService flowService;
 
     @PostMapping
-    public ResponseEntity<TransactionInfoDto> createTransaction(
+    public TransactionInfoDto createTransaction(
             @RequestBody TransactionAdapterStateDto transactionAdapterStateDto) {
-        return new ResponseEntity<>(flowService.createTransaction(transactionAdapterStateDto), HttpStatus.CREATED);
+        return flowService.createTransaction(transactionAdapterStateDto);
     }
 
     @PutMapping
-    public ResponseEntity<TransactionInfoDto> updateTransaction(@RequestBody TransactionInfoDto transactionInfoDto) {
-        return new ResponseEntity<>(flowService.updateTransaction(transactionInfoDto), HttpStatus.OK);
+    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto transactionInfoDto) {
+        return flowService.updateTransaction(transactionInfoDto);
     }
 
     @GetMapping(params = {"external_id", "provider"})
-    public ResponseEntity<List<TransactionInfoDto>> searchTransaction(@RequestParam("external_id") String externalId,
-                                                                      @RequestParam("provider") String provider) {
-        return new ResponseEntity<>(flowService.searchTransactions(externalId, provider), HttpStatus.OK);
+    public List<TransactionInfoDto> searchTransaction(
+            @RequestParam("external_id") String externalId,
+            @RequestParam("provider") String provider) {
+        return flowService.searchTransactions(externalId, provider);
     }
 }

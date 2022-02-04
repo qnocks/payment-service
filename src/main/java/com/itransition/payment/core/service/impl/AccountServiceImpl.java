@@ -2,11 +2,10 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AuthResponse;
+import com.itransition.payment.core.exception.ExceptionUtil;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.SecurityService;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,7 +16,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final WebClient webClient;
     private final SecurityService securityService;
-    private final MessageSource exceptionMessageSource;
+    private final ExceptionUtil exceptionUtil;
 
     @Override
     public AccountDto getById(String id) {
@@ -40,10 +39,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountDto == null) {
             // TODO: Should be changed to custom exception when implementation of exception handling
-            throw new IllegalStateException(exceptionMessageSource.getMessage(
-                    "account.cannot-get",
-                    new String[]{id},
-                    Locale.getDefault()));
+            throw new IllegalStateException(exceptionUtil.getMessage("account.cannot-get", id));
         }
 
         return accountDto;

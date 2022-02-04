@@ -4,13 +4,12 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.exception.ExceptionUtil;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.FlowService;
 import com.itransition.payment.core.service.TransactionService;
 import java.util.List;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +18,7 @@ public class FlowServiceImpl implements FlowService {
 
     private final TransactionService transactionService;
     private final AccountService accountService;
-    private final MessageSource exceptionMessageSource;
+    private final ExceptionUtil exceptionUtil;
 
     @Override
     public TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto) {
@@ -33,10 +32,8 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
-            throw new IllegalStateException(exceptionMessageSource.getMessage(
-                    "flow.external-id-non-uniqueness",
-                    new String[]{externalId},
-                    Locale.getDefault()));
+            throw new IllegalStateException(
+                    exceptionUtil.getMessage("flow.external-id-non-uniqueness", externalId));
         }
     }
 
@@ -45,10 +42,7 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {
-            throw new IllegalStateException(exceptionMessageSource.getMessage(
-                    "flow.account-absence",
-                    new String[]{userId},
-                    Locale.getDefault()));
+            throw new IllegalStateException(exceptionUtil.getMessage("flow.account-absence", userId));
         }
     }
 
@@ -64,10 +58,8 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (!status.equals(TransactionStatus.INITIAL)) {
-            throw new IllegalStateException(exceptionMessageSource.getMessage(
-                    "flow.transaction-status-incorrectness",
-                    new String[]{externalId},
-                    Locale.getDefault()));
+            throw new IllegalStateException(
+                    exceptionUtil.getMessage("flow.transaction-status-incorrectness", externalId));
         }
     }
 

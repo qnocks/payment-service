@@ -69,7 +69,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider) {
-        return transactionRepository.findAllByExternalIdAndProvider(externalId, provider).stream()
+        return transactionRepository
+                .findAllByExternalIdAndProviderProvider(externalId, provider).stream()
                 .map(mapperUtil::toDto)
                 .collect(Collectors.toList());
     }

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import liquibase.pro.packaged.L;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,10 @@ public class PaymentProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String provider;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "paymentProvider")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "provider")
     private List<Transaction> transactions;
 }

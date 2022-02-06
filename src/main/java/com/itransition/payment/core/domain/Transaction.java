@@ -14,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,10 +42,11 @@ public class Transaction {
     private String coreId;
 
     // TODO: Delete either provider or paymentProvider according to specification
-    private String provider;
+//    private String provider;
 
-    @ManyToOne
-    private PaymentProvider paymentProvider;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "provider_id", referencedColumnName = "id")
+    private PaymentProvider provider;
 
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;

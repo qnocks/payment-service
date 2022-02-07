@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
-    <changeSet id="2" author="Roman Ostanin">
+    <changeSet id="CREATE_TRANSACTION_TABLE" author="Roman Ostanin">
         <createTable tableName="transaction">
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" />

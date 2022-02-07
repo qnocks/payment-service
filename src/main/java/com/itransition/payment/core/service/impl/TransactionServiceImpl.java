@@ -30,13 +30,13 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto) {
         Transaction transaction = mapperUtil.toEntity(transactionAdapterStateDto);
-        initiateTransactionField(transaction, transactionAdapterStateDto);
+        initiateTransactionFields(transaction, transactionAdapterStateDto);
         transactionRepository.saveAndFlush(transaction);
         return mapperUtil.toDto(transaction);
     }
 
-    private void initiateTransactionField(Transaction transaction,
-                                          TransactionAdapterStateDto transactionAdapterStateDto) {
+    private void initiateTransactionFields(Transaction transaction,
+                                           TransactionAdapterStateDto transactionAdapterStateDto) {
         PaymentProvider provider = paymentProviderService.getByProvider(transactionAdapterStateDto.getProvider());
 
         if (provider != null) {
@@ -50,7 +50,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionInfoDto update(TransactionInfoDto transactionInfoDto) {
         Transaction transaction = mapperUtil.toEntity(transactionInfoDto);
-        updateTransactionField(transaction, transactionInfoDto);
+        updateTransactionFields(transaction, transactionInfoDto);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         Transaction existingTransaction = transactionRepository.findById(transaction.getId())
@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
         return mapperUtil.toDto(existingTransaction);
     }
 
-    private void updateTransactionField(Transaction transaction, TransactionInfoDto transactionInfoDto) {
+    private void updateTransactionFields(Transaction transaction, TransactionInfoDto transactionInfoDto) {
         PaymentProvider provider = paymentProviderService.getByProvider(transactionInfoDto.getProvider());
 
         if (provider != null) {

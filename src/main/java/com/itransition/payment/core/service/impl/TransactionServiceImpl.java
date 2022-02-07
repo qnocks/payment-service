@@ -4,6 +4,7 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionAdminDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionUtil;
 import com.itransition.payment.core.mapper.MapperUtil;
@@ -50,12 +51,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionInfoDto update(TransactionInfoDto transactionInfoDto) {
         Transaction transaction = mapperUtil.toEntity(transactionInfoDto);
-        updateTransactionFields(transaction, transactionInfoDto);
+        updateTransactionField(transaction, transactionInfoDto.getProvider());
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        Transaction existingTransaction = transactionRepository.findById(transaction.getId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        exceptionUtil.getMessage("transaction.cannot-get", transactionInfoDto.getId())));
+        Transaction existingTransaction = getById(transactionInfoDto.getId());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
 
@@ -63,12 +61,36 @@ public class TransactionServiceImpl implements TransactionService {
         return mapperUtil.toDto(existingTransaction);
     }
 
-    private void updateTransactionFields(Transaction transaction, TransactionInfoDto transactionInfoDto) {
-        PaymentProvider provider = paymentProviderService.getByProvider(transactionInfoDto.getProvider());
+    @Override
+    public TransactionAdminDto update(TransactionAdminDto transactionAdminDto) {
+        Transaction transaction = mapperUtil.toEntity(transactionAdminDto);
+        updateTransactionField(transaction, transactionAdminDto.getProvider());
 
-        if (provider != null) {
-            transaction.setProvider(provider);
+        Transaction existingTransaction = getById(transactionAdminDto.getId());
+
+        BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
+
+        transactionRepository.save(existingTransaction);
+        return mapperUtil.toAdminDto(existingTransaction);
+    }
+
+    @Override
+    public TransactionAdminDto complete(String externalId, String provider) {
+        return null;
+    }
+
+    private void updateTransactionField(Transaction transaction, String provider) {
+        PaymentProvider paymentProvider = paymentProviderService.getByProvider(provider);
+
+        if (paymentProvider != null) {
+            transaction.setProvider(paymentProvider);
         }
+    }
+
+    private Transaction getById(Long id) {
+        // TODO: Should be changed to custom exception when implementation of exception handling
+        return transactionRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(exceptionUtil.getMessage("transaction.cannot-get", id)));
     }
 
     @Override

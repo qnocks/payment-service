@@ -1,5 +1,6 @@
 package com.itransition.payment.core.service.impl;
 
+import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
@@ -7,6 +8,7 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionUtil;
 import com.itransition.payment.core.mapper.MapperUtil;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeanUtil;
 import java.time.LocalDateTime;
@@ -21,18 +23,26 @@ import org.springframework.stereotype.Service;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final PaymentProviderService paymentProviderService;
     private final MapperUtil mapperUtil;
     private final ExceptionUtil exceptionUtil;
 
     @Override
     public TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto) {
         Transaction transaction = mapperUtil.toEntity(transactionAdapterStateDto);
-        initiateTransactionField(transaction);
+        initiateTransactionField(transaction, transactionAdapterStateDto);
         transactionRepository.saveAndFlush(transaction);
         return mapperUtil.toDto(transaction);
     }
 
-    private void initiateTransactionField(Transaction transaction) {
+    private void initiateTransactionField(Transaction transaction,
+                                          TransactionAdapterStateDto transactionAdapterStateDto) {
+        PaymentProvider provider = paymentProviderService.getByProvider(transactionAdapterStateDto.getProvider());
+
+        if (provider != null) {
+            transaction.setProvider(provider);
+        }
+
         transaction.setStatus(TransactionStatus.INITIAL);
         transaction.setCreatedAt(LocalDateTime.now());
     }
@@ -40,6 +50,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionInfoDto update(TransactionInfoDto transactionInfoDto) {
         Transaction transaction = mapperUtil.toEntity(transactionInfoDto);
+        updateTransactionField(transaction, transactionInfoDto);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         Transaction existingTransaction = transactionRepository.findById(transaction.getId())
@@ -50,6 +61,14 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(existingTransaction);
         return mapperUtil.toDto(existingTransaction);
+    }
+
+    private void updateTransactionField(Transaction transaction, TransactionInfoDto transactionInfoDto) {
+        PaymentProvider provider = paymentProviderService.getByProvider(transactionInfoDto.getProvider());
+
+        if (provider != null) {
+            transaction.setProvider(provider);
+        }
     }
 
     @Override

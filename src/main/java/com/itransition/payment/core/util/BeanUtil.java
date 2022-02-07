@@ -1,5 +1,6 @@
 package com.itransition.payment.core.util;
 
+import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.beans.BeanWrapper;
@@ -9,15 +10,16 @@ public final class BeanUtil {
 
     public static String[] getNullPropertyNames(Object source) {
         BeanWrapper beanWrapper = new BeanWrapperImpl(source);
-        java.beans.PropertyDescriptor[] propertyDescriptors = beanWrapper.getPropertyDescriptors();
-        Set emptyNames = new HashSet();
-        for(java.beans.PropertyDescriptor pd : propertyDescriptors) {
-            Object srcValue = beanWrapper.getPropertyValue(pd.getName());
-            if (srcValue == null)
-                emptyNames.add(pd.getName());
+        PropertyDescriptor[] propertyDescriptors = beanWrapper.getPropertyDescriptors();
+        Set<String> emptyNames = new HashSet<>();
+
+        for(PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            Object value = beanWrapper.getPropertyValue(propertyDescriptor.getName());
+            if (value == null)
+                emptyNames.add(propertyDescriptor.getName());
         }
 
         String[] result = new String[emptyNames.size()];
-        return (String[]) emptyNames.toArray(result);
+        return emptyNames.toArray(result);
     }
 }

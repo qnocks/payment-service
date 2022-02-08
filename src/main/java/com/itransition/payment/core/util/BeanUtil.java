@@ -13,7 +13,7 @@ public final class BeanUtil {
         PropertyDescriptor[] propertyDescriptors = beanWrapper.getPropertyDescriptors();
         Set<String> emptyNames = new HashSet<>();
 
-        for(PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             Object value = beanWrapper.getPropertyValue(propertyDescriptor.getName());
             if (value == null)
                 emptyNames.add(propertyDescriptor.getName());

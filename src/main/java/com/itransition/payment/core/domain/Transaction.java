@@ -16,12 +16,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "transaction")
@@ -59,7 +62,17 @@ public class Transaction {
     private List<ReplenishError> replenishErrors;
 
     private LocalDateTime externalDate;
+
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
     private LocalDateTime replenishAfter;
     private String additionalData;
+
+    @PrePersist
+    private void init() {
+        status = TransactionStatus.INITIAL;
+    }
 }

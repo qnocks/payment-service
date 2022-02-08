@@ -57,7 +57,7 @@ public class FlowServiceImpl implements FlowService {
         TransactionStatus status = existingTransaction.getStatus();
 
         // TODO: Should be changed to custom exception when implementation of exception handling
-        if (!status.equals(TransactionStatus.INITIAL)) {
+        if (!TransactionStatus.INITIAL.equals(status)) {
             throw new IllegalStateException(
                     exceptionUtil.getMessage("flow.transaction-status-incorrectness", status));
         }

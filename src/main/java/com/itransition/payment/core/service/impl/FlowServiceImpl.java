@@ -4,7 +4,7 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.exception.ExceptionUtil;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.FlowService;
 import com.itransition.payment.core.service.TransactionService;
@@ -18,7 +18,7 @@ public class FlowServiceImpl implements FlowService {
 
     private final TransactionService transactionService;
     private final AccountService accountService;
-    private final ExceptionUtil exceptionUtil;
+    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
     public TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto) {
@@ -33,7 +33,7 @@ public class FlowServiceImpl implements FlowService {
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
             throw new IllegalStateException(
-                    exceptionUtil.getMessage("flow.external-id-non-uniqueness", externalId));
+                    exceptionMessageResolver.getMessage("flow.external-id-non-uniqueness", externalId));
         }
     }
 
@@ -42,7 +42,7 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {
-            throw new IllegalStateException(exceptionUtil.getMessage("flow.account-absence", userId));
+            throw new IllegalStateException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
         }
     }
 
@@ -57,9 +57,9 @@ public class FlowServiceImpl implements FlowService {
         TransactionStatus status = existingTransaction.getStatus();
 
         // TODO: Should be changed to custom exception when implementation of exception handling
-        if (!status.equals(TransactionStatus.INITIAL)) {
+        if (!TransactionStatus.INITIAL.equals(status)) {
             throw new IllegalStateException(
-                    exceptionUtil.getMessage("flow.transaction-status-incorrectness", externalId));
+                    exceptionMessageResolver.getMessage("flow.transaction-status-incorrectness", status));
         }
     }
 

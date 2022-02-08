@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <changeSet id="CREATE_TRANSACTION_TABLE" author="r.ostanin@itransition.com">
+        <createTable tableName="transactions">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="external_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="core_id" type="TEXT" />
+            <column name="status" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="replenishment_status" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount" type="NUMERIC(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="commission_amount" type="NUMERIC(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="commission_currency" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="external_date" type="TIMESTAMP" />
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="replenish_after" type="TIMESTAMP" />
+            <column name="additional_data" type="TEXT">
+                <constraints nullable="false" />
+            </column>
+            <column name="provider" type="TEXT">
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="provider"
+                                 baseTableName="transactions"
+                                 constraintName="fk_transactions_providers"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="name"
+                                 referencedTableName="payment_providers"/>
+
+        <createIndex indexName="provider_external_id" tableName="transactions">
+            <column name="provider"/>
+            <column name="external_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

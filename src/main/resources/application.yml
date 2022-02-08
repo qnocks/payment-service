@@ -1,6 +1,21 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: payment-service
 
-server:
-  port: 8081
+  datasource:
+    url: jdbc:postgresql://localhost:5433/payment
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate.format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

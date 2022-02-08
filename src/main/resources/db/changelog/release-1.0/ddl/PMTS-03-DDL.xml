@@ -8,10 +8,17 @@
     <changeSet id="CREATE_REPLENISH_ERROR_TABLE" author="Roman Ostanin">
         <createTable tableName="replenish_error">
             <column name="transaction_id" type="BIGINT">
-                <constraints primaryKey="true" references="transaction(id)" foreignKeyName="fk_transaction_id" />
+                <constraints primaryKey="true"
+                             references="transaction(id)"
+                             foreignKeyName="fk_transaction_id"
+                             nullable="false" />
             </column>
-            <column name="timestamp" type="BIGINT" />
-            <column name="error" type="TEXT" />
+            <column name="timestamp" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="error" type="TEXT">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

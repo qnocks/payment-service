@@ -10,18 +10,29 @@
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" />
             </column>
-            <column name="external_id" type="VARCHAR(100)" />
-            <column name="core_id" type="VARCHAR(100)" />
-            <column name="provider_id" type="BIGINT">
-                <constraints references="payment_provider(id)" foreignKeyName="fk_payment_provider_id" />
+            <column name="external_id" type="VARCHAR(100)">
+                <constraints nullable="false" />
             </column>
-            <column name="status" type="VARCHAR(10)" />
+            <column name="core_id" type="VARCHAR(100)" />
+            <column name="status" type="VARCHAR(10)">
+                <constraints nullable="false" />
+            </column>
             <column name="replenishment_status" type="VARCHAR(10)" />
-            <column name="amount" type="NUMERIC(12, 2)" />
-            <column name="currency" type="VARCHAR(3)" />
-            <column name="commission_amount" type="NUMERIC(12, 2)" />
-            <column name="commission_currency" type="VARCHAR(3)" />
-            <column name="user_id" type="VARCHAR(100)" />
+            <column name="amount" type="NUMERIC(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="currency" type="VARCHAR(3)">
+                <constraints nullable="false" />
+            </column>
+            <column name="commission_amount" type="NUMERIC(12, 2)">
+                <constraints nullable="false" />
+            </column>
+            <column name="commission_currency" type="VARCHAR(3)">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
             <column name="external_date" type="TIMESTAMP" />
             <column name="created_at" type="TIMESTAMP">
                 <constraints nullable="false" />
@@ -31,6 +42,11 @@
             </column>
             <column name="replenish_after" type="TIMESTAMP" />
             <column name="additional_data" type="TEXT" />
+            <column name="provider_id" type="BIGINT">
+                <constraints references="payment_provider(id)"
+                             foreignKeyName="fk_payment_provider_id"
+                             nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

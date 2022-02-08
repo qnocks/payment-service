@@ -10,7 +10,9 @@
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" />
             </column>
-            <column name="provider" type="VARCHAR(50)" />
+            <column name="provider" type="VARCHAR(50)">
+                <constraints nullable="false" />
+            </column>
         </createTable>
     </changeSet>
 

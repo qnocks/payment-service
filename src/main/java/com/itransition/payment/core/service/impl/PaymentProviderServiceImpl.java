@@ -14,6 +14,6 @@ public class PaymentProviderServiceImpl implements PaymentProviderService {
 
     @Override
     public PaymentProvider getByProvider(String provider) {
-        return paymentProviderRepository.findByProvider(provider).orElse(null);
+        return paymentProviderRepository.findByName(provider).orElse(null);
     }
 }

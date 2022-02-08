@@ -20,8 +20,6 @@ repositories {
 
 ext {
     wiremockVersion = "2.32.0"
-    modelmapperVersion = "2.3.3"
-    mockitoVersion = "2.13.0"
 }
 
 dependencies {
@@ -32,14 +30,11 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
-    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
-
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "com.github.tomakehurst:wiremock-jre8:${wiremockVersion}"
-    testImplementation "org.mockito:mockito-inline:${mockitoVersion}"
 }
 
 tasks.named('test') {

@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Boolean existsByExternalId(String externalId) {
+    public boolean existsByExternalId(String externalId) {
         return transactionRepository.existsByExternalId(externalId);
     }
 
@@ -81,9 +81,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider) {
+    public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String name) {
         return transactionRepository
-                .findAllByExternalIdAndProviderProvider(externalId, provider).stream()
+                .findAllByExternalIdAndProviderName(externalId, name).stream()
                 .map(transactionMapper::toDto)
                 .collect(Collectors.toList());
     }

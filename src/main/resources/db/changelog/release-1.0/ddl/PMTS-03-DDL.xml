@@ -5,14 +5,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
-    <changeSet id="CREATE_REPLENISH_ERROR_TABLE" author="Roman Ostanin">
-        <createTable tableName="replenish_error">
-            <column name="transaction_id" type="BIGINT">
-                <constraints primaryKey="true"
-                             references="transaction(id)"
-                             foreignKeyName="fk_transaction_id"
-                             nullable="false" />
+    <changeSet id="CREATE_REPLENISH_ERROR_TABLE" author="r.ostanin@itransition.com">
+        <createTable tableName="replenish_errors">
+            <column name="id" autoIncrement="true" type="BIGINT">
+                <constraints primaryKey="true" />
             </column>
+            <column name="transaction_id" type="BIGINT" />
             <column name="timestamp" type="BIGINT">
                 <constraints nullable="false" />
             </column>
@@ -20,6 +18,18 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="transaction_id"
+                                 baseTableName="replenish_errors"
+                                 constraintName="fk_replenish_errors_transactions"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="transactions"/>
+
+        <createIndex indexName="idx_transaction_id" tableName="replenish_errors" unique="false">
+            <column name="transaction_id"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

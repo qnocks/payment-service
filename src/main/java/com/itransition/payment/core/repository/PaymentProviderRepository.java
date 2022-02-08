@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentProviderRepository extends JpaRepository<PaymentProvider, Long> {
 
-    Optional<PaymentProvider> findByProvider(String provider);
+    Optional<PaymentProvider> findByName(String name);
 }

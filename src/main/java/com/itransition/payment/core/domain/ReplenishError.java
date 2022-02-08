@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "replenish_error")
+@Table(name = "replenish_errors")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class ReplenishError {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long timestamp;

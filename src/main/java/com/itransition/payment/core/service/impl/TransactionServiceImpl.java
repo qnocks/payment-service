@@ -2,84 +2,56 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
-import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
-import com.itransition.payment.core.dto.TransactionAdminDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionUtil;
-import com.itransition.payment.core.mapper.MapperUtil;
+import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeanUtil;
-import java.time.LocalDateTime;
+import com.sun.istack.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final PaymentProviderService paymentProviderService;
-    private final MapperUtil mapperUtil;
+    private final TransactionMapper transactionMapper;
     private final ExceptionUtil exceptionUtil;
 
+    @Transactional
     @Override
     public TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto) {
-        Transaction transaction = mapperUtil.toEntity(transactionAdapterStateDto);
-        initiateTransactionFields(transaction, transactionAdapterStateDto);
+        Transaction transaction = transactionMapper.toEntity(transactionAdapterStateDto);
+        initiateTransactionProvider(transaction, transactionAdapterStateDto.getProvider());
         transactionRepository.saveAndFlush(transaction);
-        return mapperUtil.toDto(transaction);
+        return transactionMapper.toDto(transaction);
     }
 
-    private void initiateTransactionFields(Transaction transaction,
-                                           TransactionAdapterStateDto transactionAdapterStateDto) {
-        PaymentProvider provider = paymentProviderService.getByProvider(transactionAdapterStateDto.getProvider());
-
-        if (provider != null) {
-            transaction.setProvider(provider);
-        }
-
-        transaction.setStatus(TransactionStatus.INITIAL);
-        transaction.setCreatedAt(LocalDateTime.now());
-    }
-
+    @Transactional
     @Override
     public TransactionInfoDto update(TransactionInfoDto transactionInfoDto) {
-        Transaction transaction = mapperUtil.toEntity(transactionInfoDto);
-        updateTransactionField(transaction, transactionInfoDto.getProvider());
+        Transaction transaction = transactionMapper.toEntity(transactionInfoDto);
+        initiateTransactionProvider(transaction, transactionInfoDto.getProvider());
 
-        Transaction existingTransaction = getById(transactionInfoDto.getId());
-
-        BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
-
-        transactionRepository.save(existingTransaction);
-        return mapperUtil.toDto(existingTransaction);
-    }
-
-    @Override
-    public TransactionAdminDto update(TransactionAdminDto transactionAdminDto) {
-        Transaction transaction = mapperUtil.toEntity(transactionAdminDto);
-        updateTransactionField(transaction, transactionAdminDto.getProvider());
-
-        Transaction existingTransaction = getById(transactionAdminDto.getId());
+        Transaction existingTransaction = getById(transaction.getId());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
 
         transactionRepository.save(existingTransaction);
-        return mapperUtil.toAdminDto(existingTransaction);
+        return transactionMapper.toDto(existingTransaction);
     }
 
-    @Override
-    public TransactionAdminDto complete(String externalId, String provider) {
-        return null;
-    }
-
-    private void updateTransactionField(Transaction transaction, String provider) {
+    private void initiateTransactionProvider(@NotNull Transaction transaction, String provider) {
         PaymentProvider paymentProvider = paymentProviderService.getByProvider(provider);
 
         if (paymentProvider != null) {
@@ -105,14 +77,14 @@ public class TransactionServiceImpl implements TransactionService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         exceptionUtil.getMessage("transaction.cannot-get-by-external-id", externalId)));
 
-        return mapperUtil.toDto(transaction);
+        return transactionMapper.toDto(transaction);
     }
 
     @Override
     public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider) {
         return transactionRepository
                 .findAllByExternalIdAndProviderProvider(externalId, provider).stream()
-                .map(mapperUtil::toDto)
+                .map(transactionMapper::toDto)
                 .collect(Collectors.toList());
     }
 }

@@ -20,7 +20,6 @@ repositories {
 
 ext {
     wiremockVersion = "2.32.0"
-    modelmapperVersion = "2.3.3"
 }
 
 dependencies {
@@ -30,8 +29,6 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
-
-    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

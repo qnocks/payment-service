@@ -1,13 +1,14 @@
 package com.itransition.payment.core.config;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
+@EnableJpaAuditing
 public class PaymentServiceConfiguration {
 
     @Bean("mock-webclient")
@@ -21,15 +22,5 @@ public class PaymentServiceConfiguration {
         bundleMessageSource.setBasename("classpath:/messages/exception/exception");
         bundleMessageSource.setDefaultEncoding("UTF-8");
         return bundleMessageSource;
-    }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setSkipNullEnabled(true)
-                .setAmbiguityIgnored(true);
-
-        return modelMapper;
     }
 }

@@ -3,10 +3,13 @@ package com.itransition.payment.core.util;
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-public final class BeanUtil {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BeansUtils {
 
     public static String[] getNullPropertyNames(Object source) {
         BeanWrapper beanWrapper = new BeanWrapperImpl(source);

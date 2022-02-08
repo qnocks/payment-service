@@ -9,7 +9,7 @@ import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
-import com.itransition.payment.core.util.BeanUtil;
+import com.itransition.payment.core.util.BeansUtils;
 import com.sun.istack.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction existingTransaction = getById(transaction.getId());
 
-        BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
+        BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 
         transactionRepository.save(existingTransaction);
         return transactionMapper.toDto(existingTransaction);
@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean existsByExternalId(String externalId) {
+    public Boolean existsByExternalId(String externalId) {
         return transactionRepository.existsByExternalId(externalId);
     }
 

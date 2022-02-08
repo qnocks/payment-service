@@ -11,7 +11,7 @@ public interface TransactionService {
 
     TransactionInfoDto update(TransactionInfoDto transactionInfoDto);
 
-    boolean existsByExternalId(String externalId);
+    Boolean existsByExternalId(String externalId);
 
     TransactionInfoDto getByExternalId(String externalId);
 

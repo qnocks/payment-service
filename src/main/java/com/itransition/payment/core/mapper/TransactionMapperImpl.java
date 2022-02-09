@@ -5,23 +5,32 @@ import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class TransactionMapperImpl implements TransactionMapper {
 
-    private final ModelMapper mapper;
-
     @Override
     public TransactionInfoDto toDto(Transaction transaction) {
-        return mapper.map(transaction, TransactionInfoDto.class);
+        return TransactionInfoDto.builder()
+                .id(transaction.getId())
+                .externalId(transaction.getExternalId())
+                .status(transaction.getStatus())
+                .provider(transaction.getProvider().getName())
+                .additionalData(transaction.getAdditionalData())
+                .build();
     }
 
     @Override
     public Transaction toEntity(TransactionInfoDto transactionInfoDto) {
-        return mapper.map(transactionInfoDto, Transaction.class);
+        return Transaction.builder()
+                .id(transactionInfoDto.getId())
+                .externalId(transactionInfoDto.getExternalId())
+                .status(transactionInfoDto.getStatus())
+                .provider(PaymentProvider.builder().name(transactionInfoDto.getProvider()).build())
+                .additionalData(transactionInfoDto.getAdditionalData())
+                .build();
     }
 
     @Override
@@ -29,7 +38,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         return Transaction.builder()
                 .externalId(transactionAdapterStateDto.getExternalId())
                 .provider(PaymentProvider.builder()
-                        .provider(transactionAdapterStateDto.getProvider())
+                        .name(transactionAdapterStateDto.getProvider())
                         .build())
                 .amount(transactionAdapterStateDto.getAmount().getAmount())
                 .currency(transactionAdapterStateDto.getAmount().getCurrency())

@@ -2,7 +2,7 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AuthResponse;
-import com.itransition.payment.core.exception.ExceptionUtil;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final WebClient webClient;
     private final SecurityService securityService;
-    private final ExceptionUtil exceptionUtil;
+    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
     public AccountDto getById(String id) {
@@ -39,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountDto == null) {
             // TODO: Should be changed to custom exception when implementation of exception handling
-            throw new IllegalStateException(exceptionUtil.getMessage("account.cannot-get", id));
+            throw new IllegalStateException(exceptionMessageResolver.getMessage("account.cannot-get", id));
         }
 
         return accountDto;

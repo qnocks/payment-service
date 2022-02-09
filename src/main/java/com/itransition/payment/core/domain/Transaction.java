@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -23,11 +24,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "transaction")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "transactions")
 @Data
 @Builder
 @NoArgsConstructor
@@ -36,14 +39,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String externalId;
     private String coreId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "provider_id", referencedColumnName = "id")
+    @JoinColumn(name = "provider", referencedColumnName = "name")
     private PaymentProvider provider;
 
     @Enumerated(EnumType.STRING)
@@ -63,10 +66,10 @@ public class Transaction {
 
     private LocalDateTime externalDate;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     private LocalDateTime updatedAt;
     private LocalDateTime replenishAfter;
     private String additionalData;
@@ -74,5 +77,6 @@ public class Transaction {
     @PrePersist
     private void init() {
         status = TransactionStatus.INITIAL;
+        replenishmentStatus = ReplenishmentStatus.INITIAL;
     }
 }

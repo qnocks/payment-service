@@ -13,5 +13,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Optional<Transaction> findByExternalId(String externalId);
 
-    List<Transaction> findAllByExternalIdAndProviderProvider(String externalId, String provider);
+    List<Transaction> findAllByExternalIdAndProviderName(String externalId, String name);
 }

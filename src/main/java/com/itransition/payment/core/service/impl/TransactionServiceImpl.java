@@ -4,12 +4,12 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.exception.ExceptionUtil;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
-import com.itransition.payment.core.util.BeanUtil;
+import com.itransition.payment.core.util.BeansUtils;
 import com.sun.istack.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final PaymentProviderService paymentProviderService;
     private final TransactionMapper transactionMapper;
-    private final ExceptionUtil exceptionUtil;
+    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Transactional
     @Override
@@ -45,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         Transaction existingTransaction = getById(transaction.getId());
 
-        BeanUtils.copyProperties(transaction, existingTransaction, BeanUtil.getNullPropertyNames(transaction));
+        BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 
         transactionRepository.save(existingTransaction);
         return transactionMapper.toDto(existingTransaction);
@@ -61,8 +61,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction getById(Long id) {
         // TODO: Should be changed to custom exception when implementation of exception handling
-        return transactionRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException(exceptionUtil.getMessage("transaction.cannot-get", id)));
+        return transactionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(
+                exceptionMessageResolver.getMessage("transaction.cannot-get", id)));
     }
 
     @Override
@@ -75,15 +75,15 @@ public class TransactionServiceImpl implements TransactionService {
         // TODO: Should be changed to custom exception when implementation of exception handling
         Transaction transaction = transactionRepository.findByExternalId(externalId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        exceptionUtil.getMessage("transaction.cannot-get-by-external-id", externalId)));
+                        exceptionMessageResolver.getMessage("transaction.cannot-get-by-external-id", externalId)));
 
         return transactionMapper.toDto(transaction);
     }
 
     @Override
-    public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider) {
+    public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String name) {
         return transactionRepository
-                .findAllByExternalIdAndProviderProvider(externalId, provider).stream()
+                .findAllByExternalIdAndProviderName(externalId, name).stream()
                 .map(transactionMapper::toDto)
                 .collect(Collectors.toList());
     }

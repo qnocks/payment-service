@@ -1,4 +1,4 @@
-package com.itransition.payment.core.util;
+package com.itransition.payment.core;
 
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
@@ -9,19 +9,20 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public final class TestUtils {
+public final class TransactionTestUtils {
 
     private static final Long ID = 1L;
     private static final String EXTERNAL_ID = "123";
     private static final TransactionStatus STATUS = TransactionStatus.INITIAL;
-    private static final PaymentProvider PROVIDER = PaymentProvider.builder().id(1L).provider("test").build();
+    private static final PaymentProvider PROVIDER = PaymentProvider.builder().id(1L).name("test").build();
+    private static final PaymentProvider NEW_PROVIDER = PaymentProvider.builder().name("test").build();
     private static final BigDecimal AMOUNT = BigDecimal.valueOf(123.123);
     private static final String CURRENCY = "USD";
     private static final BigDecimal COMMISSION_AMOUNT = BigDecimal.valueOf(12.12);
     private static final String COMMISSION_CURRENCY = "USD";
     private static final String USER_ID = "321";
-    private static final LocalDateTime CREATED_AT = LocalDateTime.of(2022, 2, 8, 3, 45);
-    private static final LocalDateTime UPDATED_AT = LocalDateTime.of(2022, 2, 8, 3, 45);
+    private static final LocalDateTime CREATED_AT = LocalDateTime.of(2022, 2, 8, 4, 45);
+    private static final LocalDateTime UPDATED_AT = LocalDateTime.of(2022, 2, 8, 4, 45);
     private static final String ADDITIONAL_DATA = "{}";
 
     public static Transaction transaction() {
@@ -41,14 +42,10 @@ public final class TestUtils {
                 .build();
     }
 
-    public static Transaction transactionAdapterStateDtoToTransaction() {
-        return null;
-    }
-
     public static TransactionAdapterStateDto transactionAdapterStateDto() {
         return TransactionAdapterStateDto.builder()
                 .externalId(EXTERNAL_ID)
-                .provider(PROVIDER.getProvider())
+                .provider(PROVIDER.getName())
                 .amount(AmountDto.builder()
                         .amount(AMOUNT)
                         .currency(CURRENCY)
@@ -62,17 +59,50 @@ public final class TestUtils {
                 .build();
     }
 
-    public static TransactionInfoDto getTransactionInfoDto() {
+    public static TransactionInfoDto transactionInfoDto() {
         return TransactionInfoDto.builder()
                 .id(ID)
                 .externalId(EXTERNAL_ID)
                 .status(STATUS)
-                .provider(PROVIDER.getProvider())
+                .provider(PROVIDER.getName())
                 .additionalData(ADDITIONAL_DATA)
                 .build();
     }
 
-    public static Transaction copy(Transaction transaction) {
+    public static TransactionInfoDto transactionToTransactionInfoDto() {
+        return TransactionInfoDto.builder()
+                .id(ID)
+                .externalId(EXTERNAL_ID)
+                .status(STATUS)
+                .provider(PROVIDER.getName())
+                .additionalData(ADDITIONAL_DATA)
+                .build();
+    }
+
+    public static Transaction transactionInfoDtoToTransaction() {
+        return Transaction.builder()
+                .id(ID)
+                .externalId(EXTERNAL_ID)
+                .status(STATUS)
+                .provider(NEW_PROVIDER)
+                .additionalData(ADDITIONAL_DATA)
+                .build();
+    }
+
+    public static Transaction transactionAdapterStateDtoToTransaction() {
+        return Transaction.builder()
+                .externalId(EXTERNAL_ID)
+                .provider(NEW_PROVIDER)
+                .amount(AMOUNT)
+                .currency(CURRENCY)
+                .commissionAmount(COMMISSION_AMOUNT)
+                .commissionCurrency(COMMISSION_CURRENCY)
+                .userId(USER_ID)
+                .additionalData(ADDITIONAL_DATA)
+                .build();
+    }
+
+   public static Transaction copy(Transaction transaction) {
         return Transaction.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())

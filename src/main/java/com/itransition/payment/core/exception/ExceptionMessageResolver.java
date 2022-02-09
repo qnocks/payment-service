@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public final class ExceptionMessageResolver {
+public class ExceptionMessageResolver {
 
     private final MessageSource exceptionMessageSource;
 

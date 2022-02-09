@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean existsByExternalId(String externalId) {
+    public Boolean existsByExternalId(String externalId) {
         return transactionRepository.existsByExternalId(externalId);
     }
 

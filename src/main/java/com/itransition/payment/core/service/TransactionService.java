@@ -3,8 +3,8 @@ package com.itransition.payment.core.service;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionAdminDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface TransactionService {
 
@@ -21,4 +21,6 @@ public interface TransactionService {
     TransactionInfoDto getByExternalId(String externalId);
 
     List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider);
+
+    List<TransactionAdminDto> getAll(Pageable pageable);
 }

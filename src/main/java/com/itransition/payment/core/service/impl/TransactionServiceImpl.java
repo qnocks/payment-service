@@ -2,7 +2,9 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
+import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionAdminDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +54,20 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionMapper.toDto(existingTransaction);
     }
 
+    @Transactional
+    @Override
+    public TransactionAdminDto update(TransactionAdminDto transactionAdminDto) {
+        Transaction transaction = transactionMapper.toEntity(transactionAdminDto);
+        initiateTransactionProvider(transaction, transactionAdminDto.getProvider());
+
+        Transaction existingTransaction = getById(transactionAdminDto.getId());
+
+        BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
+
+        transactionRepository.saveAndFlush(existingTransaction);
+        return transactionMapper.toAdminDto(existingTransaction);
+    }
+
     private void initiateTransactionProvider(@NotNull Transaction transaction, String provider) {
         PaymentProvider paymentProvider = paymentProviderService.getByProvider(provider);
 
@@ -64,6 +81,25 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(
                 exceptionMessageResolver.getMessage("transaction.cannot-get", id)));
     }
+
+    @Transactional
+    @Override
+    public TransactionAdminDto complete(String externalId, String provider) {
+        Transaction existingTransaction = getByExternalIdAndProvider(externalId, provider);
+        existingTransaction.setStatus(TransactionStatus.COMPLETED);
+        transactionRepository.saveAndFlush(existingTransaction);
+        return transactionMapper.toAdminDto(existingTransaction);
+    }
+
+    // TODO: Should be deleted while refactoring Transaction component
+    //  according to unique verification (externalId & provider) in Flow component
+    private Transaction getByExternalIdAndProvider(String externalId, String provider) {
+        return transactionRepository.findAllByExternalIdAndProviderName(externalId, provider).stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        exceptionMessageResolver.getMessage("transaction.cannot-get-by-external-id", externalId)));
+    }
+
 
     @Override
     public boolean existsByExternalId(String externalId) {
@@ -85,6 +121,14 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository
                 .findAllByExternalIdAndProviderName(externalId, name).stream()
                 .map(transactionMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransactionAdminDto> getAll(Pageable pageable) {
+        return transactionRepository.findAll(pageable)
+                .getContent().stream()
+                .map(transactionMapper::toAdminDto)
                 .collect(Collectors.toList());
     }
 }

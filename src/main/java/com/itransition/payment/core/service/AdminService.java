@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<TransactionAdminDto> searchTransactions();
+    List<TransactionAdminDto> searchTransactions(int page, int pageSize, String  sort, String order, String value);
 
     TransactionAdminDto updateTransaction(TransactionAdminDto transactionAdminDto);
 

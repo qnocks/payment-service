@@ -7,9 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReplenishmentStatus {
 
-    // TODO: Should be clarified according to specification
     INITIAL("initial"),
-    COMPLETED("completed"),
+    SUCCESS("success"),
     FAILED("failed");
 
     private final String name;

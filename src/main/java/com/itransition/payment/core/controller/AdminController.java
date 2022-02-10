@@ -19,9 +19,15 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @GetMapping(params = {"page", "sort", "order"})
-    public List<TransactionAdminDto> searchTransactions() {
-        return adminService.searchTransactions();
+    @GetMapping
+    public List<TransactionAdminDto> searchTransactions(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "pageSize", defaultValue = "3") int pageSize,
+            @RequestParam(value = "sort", defaultValue = "id") String sort,
+            @RequestParam(value = "order", defaultValue = "DESC") String order,
+            // TODO: Can be change according to clarification specification
+            @RequestParam(value = "value", defaultValue = "id") String value) {
+        return adminService.searchTransactions(page, pageSize, sort, order, value);
     }
 
     @PutMapping

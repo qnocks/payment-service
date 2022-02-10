@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface TransactionService {
 
-    TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto);
+    TransactionInfoDto save(TransactionAdapterStateDto adapterStateDto);
 
-    TransactionInfoDto update(TransactionInfoDto transactionInfoDto);
+    TransactionInfoDto update(TransactionInfoDto infoDto);
 
     boolean existsByExternalIdAndProvider(String externalId, String providerName);
 

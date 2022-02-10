@@ -32,8 +32,8 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
-            throw new IllegalStateException(
-                    exceptionMessageResolver.getMessage("flow.external-id-provider-non-uniqueness", externalId));
+            throw new IllegalStateException(exceptionMessageResolver.getMessage(
+                    "flow.external-id-provider-non-uniqueness", externalId, providerName));
         }
     }
 
@@ -47,14 +47,14 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public TransactionInfoDto updateTransaction(TransactionInfoDto transactionInfoDto) {
-        verifyStatusTransactionCorrectness(transactionInfoDto.getId());
-        return transactionService.update(transactionInfoDto);
+    public TransactionInfoDto updateTransaction(TransactionInfoDto infoDto) {
+        verifyStatusTransactionCorrectness(infoDto.getId());
+        return transactionService.update(infoDto);
     }
 
     private void verifyStatusTransactionCorrectness(Long id) {
         TransactionInfoDto existingTransaction = transactionService.getById(id);
-        TransactionStatus status = existingTransaction.getStatus();
+        var status = existingTransaction.getStatus();
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (!TransactionStatus.INITIAL.equals(status)) {

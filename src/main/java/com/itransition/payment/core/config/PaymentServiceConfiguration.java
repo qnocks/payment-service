@@ -18,7 +18,7 @@ public class PaymentServiceConfiguration {
 
     @Bean
     public MessageSource exceptionMessageSource() {
-        ReloadableResourceBundleMessageSource bundleMessageSource = new ReloadableResourceBundleMessageSource();
+        var bundleMessageSource = new ReloadableResourceBundleMessageSource();
         bundleMessageSource.setBasename("classpath:/messages/exception/exception");
         bundleMessageSource.setDefaultEncoding("UTF-8");
         return bundleMessageSource;

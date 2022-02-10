@@ -28,20 +28,20 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto) {
-        Transaction transaction = transactionMapper.toEntity(transactionAdapterStateDto);
-        initiateTransactionProvider(transaction, transactionAdapterStateDto.getProvider());
+    public TransactionInfoDto save(TransactionAdapterStateDto adapterStateDto) {
+        var transaction = transactionMapper.toEntity(adapterStateDto);
+        initiateTransactionProvider(transaction, adapterStateDto.getProvider());
         transactionRepository.saveAndFlush(transaction);
         return transactionMapper.toDto(transaction);
     }
 
     @Transactional
     @Override
-    public TransactionInfoDto update(TransactionInfoDto transactionInfoDto) {
-        Transaction transaction = transactionMapper.toEntity(transactionInfoDto);
-        initiateTransactionProvider(transaction, transactionInfoDto.getProvider());
+    public TransactionInfoDto update(TransactionInfoDto infoDto) {
+        var transaction = transactionMapper.toEntity(infoDto);
+        initiateTransactionProvider(transaction, infoDto.getProvider());
 
-        Transaction existingTransaction = getTransactionById(transaction.getId());
+        var existingTransaction = getTransactionById(transaction.getId());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 

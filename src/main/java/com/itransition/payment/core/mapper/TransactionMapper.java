@@ -11,9 +11,9 @@ public interface TransactionMapper {
 
     TransactionAdminDto toAdminDto(Transaction transaction);
 
-    Transaction toEntity(TransactionInfoDto transactionInfoDto);
+    Transaction toEntity(TransactionInfoDto infoDto);
 
-    Transaction toEntity(TransactionAdapterStateDto transactionAdapterStateDto);
+    Transaction toEntity(TransactionAdapterStateDto adapterStateDto);
 
-    Transaction toEntity(TransactionAdminDto transactionAdminDto);
+    Transaction toEntity(TransactionAdminDto adminDto);
 }

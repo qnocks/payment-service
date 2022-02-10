@@ -13,6 +13,8 @@ import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeansUtils;
 import com.sun.istack.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionMapper.toEntity(transactionAdminDto);
         initiateTransactionProvider(transaction, transactionAdminDto.getProvider());
 
-        Transaction existingTransaction = getById(transactionAdminDto.getId());
+        Transaction existingTransaction = getTransactionById(transactionAdminDto.getId());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 
@@ -83,21 +85,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionAdminDto complete(String externalId, String provider) {
-        Transaction existingTransaction = getByExternalIdAndProvider(externalId, provider);
+        TransactionInfoDto infoDto = getByExternalIdAndProvider(externalId, provider);
+        Transaction existingTransaction = getTransactionById(infoDto.getId());
+
         existingTransaction.setStatus(TransactionStatus.COMPLETED);
+
         transactionRepository.saveAndFlush(existingTransaction);
         return transactionMapper.toAdminDto(existingTransaction);
     }
-
-    // TODO: Should be deleted while refactoring Transaction component
-    //  according to unique verification (externalId & provider) in Flow component
-    private Transaction getByExternalIdAndProvider(String externalId, String provider) {
-        return transactionRepository.findAllByExternalIdAndProviderName(externalId, provider).stream()
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        exceptionMessageResolver.getMessage("transaction.cannot-get-by-external-id", externalId)));
-    }
-
 
     @Override
     public boolean existsByExternalIdAndProvider(String externalId, String providerName) {

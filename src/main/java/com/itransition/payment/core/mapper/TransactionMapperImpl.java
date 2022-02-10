@@ -52,47 +52,47 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
     @Override
-    public Transaction toEntity(TransactionInfoDto transactionInfoDto) {
+    public Transaction toEntity(TransactionInfoDto infoDto) {
         return Transaction.builder()
-                .id(transactionInfoDto.getId())
-                .externalId(transactionInfoDto.getExternalId())
-                .status(transactionInfoDto.getStatus())
-                .provider(PaymentProvider.builder().name(transactionInfoDto.getProvider()).build())
-                .additionalData(transactionInfoDto.getAdditionalData())
+                .id(infoDto.getId())
+                .externalId(infoDto.getExternalId())
+                .status(infoDto.getStatus())
+                .provider(PaymentProvider.builder().name(infoDto.getProvider()).build())
+                .additionalData(infoDto.getAdditionalData())
                 .build();
     }
 
     @Override
-    public Transaction toEntity(TransactionAdapterStateDto transactionAdapterStateDto) {
+    public Transaction toEntity(TransactionAdapterStateDto adapterStateDto) {
         return Transaction.builder()
-                .externalId(transactionAdapterStateDto.getExternalId())
+                .externalId(adapterStateDto.getExternalId())
                 .provider(PaymentProvider.builder()
-                        .name(transactionAdapterStateDto.getProvider())
+                        .name(adapterStateDto.getProvider())
                         .build())
-                .amount(transactionAdapterStateDto.getAmount().getAmount())
-                .currency(transactionAdapterStateDto.getAmount().getCurrency())
-                .commissionAmount(transactionAdapterStateDto.getCommissionAmount().getAmount())
-                .commissionCurrency(transactionAdapterStateDto.getCommissionAmount().getCurrency())
-                .userId(transactionAdapterStateDto.getUser())
-                .additionalData(transactionAdapterStateDto.getAdditionalData())
+                .amount(adapterStateDto.getAmount().getAmount())
+                .currency(adapterStateDto.getAmount().getCurrency())
+                .commissionAmount(adapterStateDto.getCommissionAmount().getAmount())
+                .commissionCurrency(adapterStateDto.getCommissionAmount().getCurrency())
+                .userId(adapterStateDto.getUser())
+                .additionalData(adapterStateDto.getAdditionalData())
                 .build();
     }
 
     @Override
-    public Transaction toEntity(TransactionAdminDto transactionAdminDto) {
+    public Transaction toEntity(TransactionAdminDto adminDto) {
         return Transaction.builder()
-                .id(transactionAdminDto.getId())
-                .externalId(transactionAdminDto.getExternalId())
-                .provider(PaymentProvider.builder().name(transactionAdminDto.getProvider()).build())
-                .status(transactionAdminDto.getStatus())
-                .amount(transactionAdminDto.getAmount().getAmount())
-                .currency(transactionAdminDto.getAmount().getCurrency())
-                .commissionAmount(transactionAdminDto.getCommissionAmount().getAmount())
-                .commissionCurrency(transactionAdminDto.getCommissionAmount().getCurrency())
-                .userId(transactionAdminDto.getUser())
+                .id(adminDto.getId())
+                .externalId(adminDto.getExternalId())
+                .provider(PaymentProvider.builder().name(adminDto.getProvider()).build())
+                .status(adminDto.getStatus())
+                .amount(adminDto.getAmount().getAmount())
+                .currency(adminDto.getAmount().getCurrency())
+                .commissionAmount(adminDto.getCommissionAmount().getAmount())
+                .commissionCurrency(adminDto.getCommissionAmount().getCurrency())
+                .userId(adminDto.getUser())
                 .createdAt(LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(transactionAdminDto.getTimestamp()), ZoneId.systemDefault()))
-                .additionalData(transactionAdminDto.getAdditionalData())
+                        Instant.ofEpochMilli(adminDto.getTimestamp()), ZoneId.systemDefault()))
+                .additionalData(adminDto.getAdditionalData())
                 .build();
     }
 }

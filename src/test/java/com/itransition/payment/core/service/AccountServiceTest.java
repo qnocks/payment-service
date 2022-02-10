@@ -1,44 +1,66 @@
 package com.itransition.payment.core.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.itransition.payment.core.AbstractIntegrationTest;
+import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
-import com.itransition.payment.core.dto.AuthResponse;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.service.impl.AccountServiceImpl;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class AccountServiceTest {
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class AccountServiceTest extends AbstractIntegrationTest {
 
-    @InjectMocks
+    @Autowired
     private AccountServiceImpl underTest;
 
-    @Mock
-    private WebClient webClient;
+    @Autowired
+    private ObjectMapper mapper;
 
-    @Mock
+    @MockBean
     private SecurityService securityService;
 
-    @Mock
-    private ExceptionMessageResolver exceptionMessageResolver;
+    private final int PORT = 7000;
+    private final WireMockServer server = new WireMockServer(PORT);
+    private final AccountDto expected = TestDataProvider.getAccountDto();
+    private final String ACCOUNT_ID = "1";
 
-    @Disabled
+    @BeforeAll
+    void setupServer() throws JsonProcessingException {
+        server.start();
+        WireMock.configureFor("localhost", PORT);
+        WireMock.stubFor(WireMock.post("/account/" + ACCOUNT_ID).willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                        .withBody(mapper.writeValueAsString(expected))
+                        .withStatus(200)
+        ));
+    }
+
+    @AfterAll
+    void tearDown() {
+        if (server.isRunning()) {
+            server.shutdownServer();
+        }
+    }
+
     @Test
     void shouldGetById() {
-        String accountId = "123";
         var authResponse = TestDataProvider.getAuthResponse();
-
         when(securityService.authorize("", "", "")).thenReturn(authResponse);
-
-        // TODO: Mock webclient chain call or within wiremock
-
-        var actual = underTest.getById(accountId);
+        var actual = underTest.getById(ACCOUNT_ID);
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 }

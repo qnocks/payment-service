@@ -3,6 +3,7 @@ package com.itransition.payment.core;
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
+import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AmountDto;
 import com.itransition.payment.core.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
@@ -81,6 +82,14 @@ public final class TestDataProvider {
                 .tokenType("Bearer")
                 .notBeforePolicy(0)
                 .scope("profile email")
+                .build();
+    }
+
+    public static AccountDto getAccountDto() {
+        return AccountDto.builder()
+                .firstName("John")
+                .lastName("Smith")
+                .middleName(null)
                 .build();
     }
 }

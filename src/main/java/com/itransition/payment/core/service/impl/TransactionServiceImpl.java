@@ -11,8 +11,6 @@ import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeansUtils;
 import com.sun.istack.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionMapper.toEntity(transactionInfoDto);
         initiateTransactionProvider(transaction, transactionInfoDto.getProvider());
 
-        Transaction existingTransaction = getById(transaction.getId());
+        Transaction existingTransaction = getTransactionById(transaction.getId());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 
@@ -59,32 +57,29 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private Transaction getById(Long id) {
+    private Transaction getTransactionById(Long id) {
         // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(
                 exceptionMessageResolver.getMessage("transaction.cannot-get", id)));
     }
 
     @Override
-    public boolean existsByExternalId(String externalId) {
-        return transactionRepository.existsByExternalId(externalId);
+    public boolean existsByExternalIdAndProvider(String externalId, String providerName) {
+        return transactionRepository.existsByExternalIdAndProviderName(externalId, providerName);
     }
 
     @Override
-    public TransactionInfoDto getByExternalId(String externalId) {
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        Transaction transaction = transactionRepository.findByExternalId(externalId)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        exceptionMessageResolver.getMessage("transaction.cannot-get-by-external-id", externalId)));
+    public TransactionInfoDto getByExternalIdAndProvider(String externalId, String name) {
+        Transaction transaction = transactionRepository.findByExternalIdAndProviderName(externalId, name)
+                .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
+                        "transaction.cannot-get-by-external-id-provider", externalId, name)));
 
         return transactionMapper.toDto(transaction);
     }
 
     @Override
-    public List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String name) {
-        return transactionRepository
-                .findAllByExternalIdAndProviderName(externalId, name).stream()
-                .map(transactionMapper::toDto)
-                .collect(Collectors.toList());
+    public TransactionInfoDto getById(Long id) {
+        Transaction transaction = getTransactionById(id);
+        return transactionMapper.toDto(transaction);
     }
 }

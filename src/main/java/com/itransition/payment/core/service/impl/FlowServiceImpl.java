@@ -21,19 +21,19 @@ public class FlowServiceImpl implements FlowService {
     private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
-    public TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto) {
-        verifyExternalIdUniqueness(transactionAdapterStateDto.getExternalId());
-        verifyAccountExistence(transactionAdapterStateDto.getUser());
-        return transactionService.save(transactionAdapterStateDto);
+    public TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto) {
+        verifyExternalIdAndProviderUniqueness(adapterStateDto.getExternalId(), adapterStateDto.getProvider());
+        verifyAccountExistence(adapterStateDto.getUser());
+        return transactionService.save(adapterStateDto);
     }
 
-    private void verifyExternalIdUniqueness(String externalId) {
-        boolean isTransactionExists = transactionService.existsByExternalId(externalId);
+    private void verifyExternalIdAndProviderUniqueness(String externalId, String providerName) {
+        boolean isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
             throw new IllegalStateException(
-                    exceptionMessageResolver.getMessage("flow.external-id-non-uniqueness", externalId));
+                    exceptionMessageResolver.getMessage("flow.external-id-provider-non-uniqueness", externalId));
         }
     }
 
@@ -48,23 +48,23 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public TransactionInfoDto updateTransaction(TransactionInfoDto transactionInfoDto) {
-        verifyStatusTransactionCorrectness(transactionInfoDto.getExternalId());
+        verifyStatusTransactionCorrectness(transactionInfoDto.getId());
         return transactionService.update(transactionInfoDto);
     }
 
-    private void verifyStatusTransactionCorrectness(String externalId) {
-        TransactionInfoDto existingTransaction = transactionService.getByExternalId(externalId);
+    private void verifyStatusTransactionCorrectness(Long id) {
+        TransactionInfoDto existingTransaction = transactionService.getById(id);
         TransactionStatus status = existingTransaction.getStatus();
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (!TransactionStatus.INITIAL.equals(status)) {
             throw new IllegalStateException(
-                    exceptionMessageResolver.getMessage("flow.transaction-status-incorrectness", status));
+                    exceptionMessageResolver.getMessage("flow.transaction-status-incorrectness", id, status));
         }
     }
 
     @Override
     public List<TransactionInfoDto> searchTransactions(String externalId, String provider) {
-        return transactionService.getAllByExternalIdOrProvider(externalId, provider);
+        return List.of(transactionService.getByExternalIdAndProvider(externalId, provider));
     }
 }

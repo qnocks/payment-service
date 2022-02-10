@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @ExtendWith(MockitoExtension.class)
-class SecurityServiceImplTest {
+class SecurityServiceTest {
 
     @InjectMocks
     private SecurityServiceImpl underTest;

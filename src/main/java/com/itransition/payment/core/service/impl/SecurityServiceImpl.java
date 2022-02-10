@@ -10,11 +10,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
+    private AuthResponse currentAuthorization;
     private final WebClient webClient;
 
     @Override
     public AuthResponse authorize(String grantType, String clientSecret, String clientId) {
-        return processAuthorization(grantType, clientSecret, clientId);
+        if (isTokenExpired()) {
+            currentAuthorization = processAuthorization(grantType, clientSecret, clientId);
+            return currentAuthorization;
+        }
+
+        return currentAuthorization;
+    }
+
+    private boolean isTokenExpired() {
+        if (currentAuthorization == null) {
+            return true;
+        }
+
+        // TODO: implement real token validation when Core Service will issue real tokens
+        return currentAuthorization.getExpiresIn() < 5000L;
     }
 
     private AuthResponse processAuthorization(String grantType, String clientSecret, String clientId) {

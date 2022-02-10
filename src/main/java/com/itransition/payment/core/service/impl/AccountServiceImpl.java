@@ -25,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private String getAuthHeader() {
-        AuthResponse authResponse = securityService.authorize("", "", "");
+        AuthResponse authResponse = securityService.authorize();
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 

@@ -22,12 +22,12 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto) {
-        verifyExternalIdAndProviderUniqueness(adapterStateDto.getExternalId(), adapterStateDto.getProvider());
+        verifyForUnique(adapterStateDto.getExternalId(), adapterStateDto.getProvider());
         verifyAccountExistence(adapterStateDto.getUser());
         return transactionService.save(adapterStateDto);
     }
 
-    private void verifyExternalIdAndProviderUniqueness(String externalId, String providerName) {
+    private void verifyForUnique(String externalId, String providerName) {
         boolean isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
         // TODO: Should be changed to custom exception when implementation of exception handling

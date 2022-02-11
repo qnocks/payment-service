@@ -70,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionInfoDto getByExternalIdAndProvider(String externalId, String name) {
-        Transaction transaction = transactionRepository.findByExternalIdAndProviderName(externalId, name)
+        var transaction = transactionRepository.findByExternalIdAndProviderName(externalId, name)
                 .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
                         "transaction.cannot-get-by-external-id-provider", externalId, name)));
 
@@ -79,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionInfoDto getById(Long id) {
-        Transaction transaction = getTransactionById(id);
+        var transaction = getTransactionById(id);
         return transactionMapper.toDto(transaction);
     }
 }

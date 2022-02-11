@@ -3,8 +3,6 @@ package com.itransition.payment.core.service;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 
-import java.util.List;
-
 public interface TransactionService {
 
     TransactionInfoDto save(TransactionAdapterStateDto adapterStateDto);

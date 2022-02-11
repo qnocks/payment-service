@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface FlowService {
 
-    TransactionInfoDto createTransaction(TransactionAdapterStateDto transactionAdapterStateDto);
+    TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto);
 
-    TransactionInfoDto updateTransaction(TransactionInfoDto transactionInfoDto);
+    TransactionInfoDto updateTransaction(TransactionInfoDto infoDto);
 
     List<TransactionInfoDto> searchTransactions(String externalId, String provider);
 }

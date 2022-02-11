@@ -3,17 +3,15 @@ package com.itransition.payment.core.service;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 
-import java.util.List;
-
 public interface TransactionService {
 
-    TransactionInfoDto save(TransactionAdapterStateDto transactionAdapterStateDto);
+    TransactionInfoDto save(TransactionAdapterStateDto adapterStateDto);
 
-    TransactionInfoDto update(TransactionInfoDto transactionInfoDto);
+    TransactionInfoDto update(TransactionInfoDto infoDto);
 
-    Boolean existsByExternalId(String externalId);
+    boolean existsByExternalIdAndProvider(String externalId, String providerName);
 
-    TransactionInfoDto getByExternalId(String externalId);
+    TransactionInfoDto getByExternalIdAndProvider(String externalId, String provider);
 
-    List<TransactionInfoDto> getAllByExternalIdOrProvider(String externalId, String provider);
+    TransactionInfoDto getById(Long id);
 }

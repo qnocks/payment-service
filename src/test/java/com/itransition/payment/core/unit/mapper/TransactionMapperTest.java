@@ -1,10 +1,11 @@
-package com.itransition.payment.core.mapper;
+package com.itransition.payment.core.unit.mapper;
 
 import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.mapper.TransactionMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +20,7 @@ class TransactionMapperTest {
     @Test
     void shouldMapTransactionToTransactionInfoDto() {
         var transaction = TestDataProvider.getTransaction();
-        var expected =TransactionInfoDto.builder()
+        var expected = TransactionInfoDto.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())
                 .status(transaction.getStatus())

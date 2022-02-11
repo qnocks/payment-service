@@ -20,13 +20,11 @@ public final class AssertionsHelper {
     public static void verifyFieldsEqualityActualExpected(Transaction actual, Transaction expected) {
         assertThat(actual.getId()).isEqualTo(expected.getId());
         assertThat(actual.getExternalId()).isEqualTo(expected.getExternalId());
-        assertThat(actual.getProvider()).isEqualTo(expected.getProvider());
+        assertThat(actual.getProvider().getName()).isEqualTo(expected.getProvider().getName());
         assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
         assertThat(actual.getReplenishmentStatus()).isEqualTo(expected.getReplenishmentStatus());
         assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
         assertThat(actual.getCurrency()).isEqualTo(expected.getCurrency());
-        assertThat(actual.getCommissionAmount()).isEqualTo(expected.getCommissionAmount());
-        assertThat(actual.getCommissionCurrency()).isEqualTo(expected.getCommissionCurrency());
         assertThat(actual.getAdditionalData()).isEqualTo(expected.getAdditionalData());
     }
 

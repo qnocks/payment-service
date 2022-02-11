@@ -2,6 +2,7 @@ package com.itransition.payment.core.controller;
 
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionUpdateDto;
 import com.itransition.payment.core.service.FlowService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ public class FlowController {
     }
 
     @PutMapping
-    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto transactionInfoDto) {
-        return flowService.updateTransaction(transactionInfoDto);
+    public TransactionInfoDto updateTransaction(@RequestBody TransactionUpdateDto updateDto) {
+        return flowService.updateTransaction(updateDto);
     }
 
     @GetMapping(params = {"external_id", "provider"})

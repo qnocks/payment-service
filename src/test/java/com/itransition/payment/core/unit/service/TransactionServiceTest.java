@@ -78,43 +78,43 @@ class TransactionServiceTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var existingTransaction = TestDataProvider.getTransaction();
-        var expected = TransactionInfoDto.builder()
-                .id(existingTransaction.getId())
-                .externalId(existingTransaction.getExternalId())
-                .status(TransactionStatus.COMPLETED)
-                .provider(existingTransaction.getProvider().getName())
-                .additionalData(existingTransaction.getAdditionalData())
-                .build();
-
+        var updateDto = TestDataProvider.getTransactionUpdateDto();
         var transaction = Transaction.builder()
-                .id(expected.getId())
-                .externalId(expected.getExternalId())
+                .externalId(updateDto.getExternalId())
                 .status(TransactionStatus.COMPLETED)
-                .provider(PaymentProvider.builder().name(expected.getProvider()).build())
-                .additionalData(expected.getAdditionalData())
+                .provider(PaymentProvider.builder().name(updateDto.getProvider()).build())
+                .additionalData(updateDto.getAdditionalData())
+                .build();
+        var expected = TransactionInfoDto.builder()
+                .id(1L)
+                .externalId(transaction.getExternalId())
+                .status(transaction.getStatus())
+                .provider(transaction.getProvider().getName())
+                .additionalData(transaction.getAdditionalData())
                 .build();
 
-        when(transactionMapper.toEntity(expected)).thenReturn(transaction);
+        when(transactionMapper.toEntity(updateDto)).thenReturn(transaction);
         when(paymentProviderService.getByProvider(transaction.getProvider().getName()))
                 .thenReturn(transaction.getProvider());
-        when(transactionRepository.findById(transaction.getId()))
-                .thenReturn(Optional.of(existingTransaction));
-        when(transactionMapper.toDto(existingTransaction)).thenReturn(expected);
+        when(transactionRepository.findByExternalIdAndProviderName(
+                transaction.getExternalId(),
+                transaction.getProvider().getName()))
+                .thenReturn(Optional.of(transaction));
+        when(transactionMapper.toDto(transaction)).thenReturn(expected);
 
-        var actual = underTest.update(expected);
+        var actual = underTest.update(updateDto);
 
-        verify(transactionRepository, times(1)).findById(transaction.getId());
-        verify(transactionRepository, times(1)).save(existingTransaction);
+        verify(transactionRepository, times(1))
+                .findByExternalIdAndProviderName(transaction.getExternalId(), transaction.getProvider().getName());
+        verify(transactionRepository, times(1)).save(transaction);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldThrow_when_updatingTransactionDoesntExist() {
-        var expected = TestDataProvider.getTransactionInfoDto();
+        var expected = TestDataProvider.getTransactionUpdateDto();
         var transaction = Transaction.builder()
-                .id(expected.getId())
                 .externalId(expected.getExternalId())
                 .status(TransactionStatus.COMPLETED)
                 .provider(PaymentProvider.builder().name(expected.getProvider()).build())
@@ -122,7 +122,8 @@ class TransactionServiceTest {
                 .build();
 
         when(transactionMapper.toEntity(expected)).thenReturn(transaction);
-        when(transactionRepository.findById(expected.getId())).thenReturn(Optional.empty());
+        when(transactionRepository.findByExternalIdAndProviderName(
+                expected.getExternalId(), expected.getProvider())).thenReturn(Optional.empty());
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         assertThrows(IllegalArgumentException.class, () -> underTest.update(expected));

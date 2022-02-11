@@ -50,6 +50,21 @@ class TransactionMapperTest {
     }
 
     @Test
+    void shouldMapTransactionUpdateDtoToTransaction() {
+        var updateDto = TestDataProvider.getTransactionUpdateDto();
+        var expected = Transaction.builder()
+                .externalId(updateDto.getExternalId())
+                .status(updateDto.getStatus())
+                .provider(PaymentProvider.builder().name(updateDto.getProvider()).build())
+                .additionalData(updateDto.getAdditionalData())
+                .build();
+
+        var actual = underTest.toEntity(updateDto);
+
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
     void shouldMapTransactionAdapterStateDtoToTransaction() {
         var stateDto = TestDataProvider.getTransactionAdapterStateDto();
         var expected = Transaction.builder()

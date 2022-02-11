@@ -6,11 +6,10 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
-import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionUpdateDto;
 import com.itransition.payment.core.it.AbstractIntegrationTest;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.FlowService;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,11 +66,11 @@ class FlowServiceIT extends AbstractIntegrationTest {
     void shouldUpdateTransaction() {
         var existingTransaction = transactionRepository.getById(0L);
 
-        underTest.updateTransaction(TransactionInfoDto.builder()
-                .id(existingTransaction.getId())
+        underTest.updateTransaction(TransactionUpdateDto.builder()
                 .externalId(existingTransaction.getExternalId())
-                .provider(existingTransaction.getProvider().getName())
                 .status(TransactionStatus.COMPLETED)
+                .provider(existingTransaction.getProvider().getName())
+                .additionalData(existingTransaction.getAdditionalData())
                 .build());
 
         var actual = transactionRepository.getById(0L);
@@ -81,9 +80,9 @@ class FlowServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldSearchTransactions() {
-        Transaction expected = transactionRepository.findByExternalIdAndProviderName(externalId, provider).get();
+        var expected = transactionRepository.findByExternalIdAndProviderName(externalId, provider).get();
 
-        List<TransactionInfoDto> actual = underTest.searchTransactions(externalId, provider);
+        var actual = underTest.searchTransactions(externalId, provider);
 
         assertThat(actual.size()).isEqualTo(1);
         assertThat(actual.get(0).getExternalId()).isEqualTo(expected.getExternalId());

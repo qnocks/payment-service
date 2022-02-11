@@ -16,11 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountServiceTest extends AbstractIntegrationTest {
 
@@ -59,7 +57,7 @@ class AccountServiceTest extends AbstractIntegrationTest {
     @Test
     void shouldGetById() {
         var authResponse = TestDataProvider.getAuthResponse();
-        when(securityService.authorize("", "", "")).thenReturn(authResponse);
+        when(securityService.authorize()).thenReturn(authResponse);
         var actual = underTest.getById(ACCOUNT_ID);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }

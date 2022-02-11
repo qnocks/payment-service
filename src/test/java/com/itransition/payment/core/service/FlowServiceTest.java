@@ -6,7 +6,6 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.impl.FlowServiceImpl;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +38,8 @@ class FlowServiceTest {
         var stateDto = TestDataProvider.getTransactionAdapterStateDto();
         var expected = TestDataProvider.getTransactionInfoDto();
 
-        when(transactionService.existsByExternalId(stateDto.getExternalId())).thenReturn(false);
+        when(transactionService.existsByExternalIdAndProvider(
+                stateDto.getExternalId(), stateDto.getProvider())).thenReturn(false);
         when(accountService.getById(stateDto.getUser())).thenReturn(AccountDto.builder().build());
         when(transactionService.save(stateDto)).thenReturn(expected);
 
@@ -52,7 +52,8 @@ class FlowServiceTest {
     @Test
     void shouldThrow_when_externalIdIsNotUnique() {
         var stateDto = TestDataProvider.getTransactionAdapterStateDto();
-        when(transactionService.existsByExternalId(stateDto.getExternalId())).thenReturn(true);
+        when(transactionService.existsByExternalIdAndProvider(
+                stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         assertThrows(IllegalStateException.class, () -> underTest.createTransaction(stateDto));
@@ -72,7 +73,7 @@ class FlowServiceTest {
         var existingInfoDto = TestDataProvider.getTransactionInfoDto();
         existingInfoDto.setStatus(TransactionStatus.COMPLETED);
 
-        when(transactionService.getByExternalId(existingInfoDto.getExternalId())).thenReturn(existingInfoDto);
+        when(transactionService.getById(existingInfoDto.getId())).thenReturn(existingInfoDto);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         assertThrows(IllegalStateException.class, () -> underTest.updateTransaction(existingInfoDto));
@@ -82,7 +83,7 @@ class FlowServiceTest {
     void shouldUpdateTransaction() {
         var infoDto = TestDataProvider.getTransactionInfoDto();
 
-        when(transactionService.getByExternalId(infoDto.getExternalId())).thenReturn(infoDto);
+        when(transactionService.getById(infoDto.getId())).thenReturn(infoDto);
         when(transactionService.update(infoDto)).thenReturn(infoDto);
 
         var actual = underTest.updateTransaction(infoDto);
@@ -95,8 +96,8 @@ class FlowServiceTest {
     void shouldSearchTransactions() {
         var infoDto = TestDataProvider.getTransactionInfoDto();
 
-        when(transactionService.getAllByExternalIdOrProvider(infoDto.getExternalId(), infoDto.getProvider()))
-                .thenReturn(List.of(infoDto));
+        when(transactionService.getByExternalIdAndProvider(infoDto.getExternalId(), infoDto.getProvider()))
+                .thenReturn(infoDto);
 
         var actual = underTest.searchTransactions(infoDto.getExternalId(), infoDto.getProvider());
 

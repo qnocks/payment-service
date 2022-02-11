@@ -66,7 +66,4 @@ class TransactionMapperTest {
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
-
-
-
 }

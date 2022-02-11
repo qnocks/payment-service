@@ -44,5 +44,4 @@ public final class AssertionsHelper {
         assertThat(actual.getNotBeforePolicy()).isEqualTo(expected.getNotBeforePolicy());
         assertThat(actual.getScope()).isEqualTo(expected.getScope());
     }
-
 }

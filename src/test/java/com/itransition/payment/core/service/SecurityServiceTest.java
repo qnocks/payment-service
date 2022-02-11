@@ -41,7 +41,7 @@ class SecurityServiceTest extends AbstractIntegrationTest {
 
     @Test
     void shouldAuthorize() {
-        var actual = underTest.authorize("", "", "");
+        var actual = underTest.authorize();
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 }

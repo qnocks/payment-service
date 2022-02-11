@@ -10,7 +10,6 @@ import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.impl.TransactionServiceImpl;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -131,47 +130,35 @@ class TransactionServiceTest {
     @Test
     void shouldReturnTrue_when_existsByExternalId() {
         var externalId = "123";
-        when(transactionRepository.existsByExternalId(externalId)).thenReturn(true);
-        boolean actual = underTest.existsByExternalId(externalId);
+        var providerName = "test";
+        when(transactionRepository.existsByExternalIdAndProviderName(externalId, providerName)).thenReturn(true);
+        boolean actual = underTest.existsByExternalIdAndProvider(externalId, providerName);
         assertThat(actual).isEqualTo(true);
     }
 
     @Test
-    void shouldGetByExternalId() {
-        var transaction = TestDataProvider.getTransaction();
-        var expected = TestDataProvider.getTransactionInfoDto();
-
-        when(transactionRepository.findByExternalId(transaction.getExternalId()))
-                .thenReturn(Optional.of(transaction));
-        when(transactionMapper.toDto(transaction)).thenReturn(expected);
-
-        var actual = underTest.getByExternalId(transaction.getExternalId());
-
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
-    }
-
-    @Test
-    void shouldThrow_when_GetByExternalId() {
-        var externalId = "123";
-        when(transactionRepository.findByExternalId(externalId)).thenReturn(Optional.empty());
-
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalArgumentException.class, () -> underTest.getByExternalId(externalId));
-    }
-
-    @Test
-    void shouldGetAllByExternalIdOrProvider() {
+    void shouldGetByExternalIdAndProvider() {
         var infoDto = TestDataProvider.getTransactionInfoDto();
         var transaction = TestDataProvider.getTransaction();
 
-        when(transactionRepository.findAllByExternalIdAndProviderName(infoDto.getExternalId(), infoDto.getProvider()))
-                .thenReturn(List.of(transaction));
+        when(transactionRepository.findByExternalIdAndProviderName(infoDto.getExternalId(), infoDto.getProvider()))
+                .thenReturn(Optional.of(transaction));
         when(transactionMapper.toDto(transaction)).thenReturn(TestDataProvider.getTransactionInfoDto());
 
-        var actual = underTest
-                .getAllByExternalIdOrProvider(infoDto.getExternalId(), infoDto.getProvider());
+        var actual = underTest.getByExternalIdAndProvider(infoDto.getExternalId(), infoDto.getProvider());
 
-        assertThat(actual.size()).isEqualTo(1);
-        assertThat(actual.get(0)).isEqualTo(infoDto);
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, infoDto);
+    }
+
+    @Test
+    void shouldThrow_when_GetByExternalIdAndProvider() {
+        var externalId = "123";
+        var providerName = "test";
+        when(transactionRepository.findByExternalIdAndProviderName(externalId, providerName))
+                .thenReturn(Optional.empty());
+
+        // TODO: Should be changed to custom exception when implementation of exception handling
+        assertThrows(IllegalArgumentException.class, () ->
+                underTest.getByExternalIdAndProvider(externalId, providerName));
     }
 }

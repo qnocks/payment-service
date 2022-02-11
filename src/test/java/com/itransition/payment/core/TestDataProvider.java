@@ -77,8 +77,8 @@ public final class TestDataProvider {
     public static AuthResponse getAuthResponse() {
         return AuthResponse.builder()
                 .accessToken("token")
-                .expiresIn(5400L)
-                .refreshExpiresIn(0L)
+                .expiresIn(5400)
+                .refreshExpiresIn(0)
                 .tokenType("Bearer")
                 .notBeforePolicy(0)
                 .scope("profile email")

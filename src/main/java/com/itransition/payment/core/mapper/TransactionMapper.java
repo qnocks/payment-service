@@ -8,7 +8,7 @@ public interface TransactionMapper {
 
     TransactionInfoDto toDto(Transaction transaction);
 
-    Transaction toEntity(TransactionInfoDto transactionInfoDto);
+    Transaction toEntity(TransactionInfoDto infoDto);
 
-    Transaction toEntity(TransactionAdapterStateDto transactionAdapterStateDto);
+    Transaction toEntity(TransactionAdapterStateDto adapterStateDto);
 }

@@ -13,8 +13,6 @@ import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeansUtils;
 import com.sun.istack.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
@@ -42,11 +40,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionInfoDto update(TransactionInfoDto infoDto) {
-        var transaction = transactionMapper.toEntity(infoDto);
-        initiateTransactionProvider(transaction, infoDto.getProvider());
+    public TransactionInfoDto update(TransactionInfoDto updateDto) {
+        var transaction = transactionMapper.toEntity(updateDto);
+        initiateTransactionProvider(transaction, updateDto.getProvider());
 
-        var existingTransaction = getTransactionById(transaction.getId());
+        var existingTransaction = getTransactionByExternalIdAndProvider(
+                transaction.getExternalId(),
+                transaction.getProvider().getName());
 
         BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
 
@@ -76,14 +76,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private Transaction getTransactionById(Long id) {
+    private Transaction getById(Long id) {
         // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(
                 exceptionMessageResolver.getMessage("transaction.cannot-get", id)));
     }
 
-    @Transactional
     @Override
+    public boolean existsByExternalIdAndProvider(String externalId, String providerName) {
+        return transactionRepository.existsByExternalIdAndProviderName(externalId, providerName);
     public TransactionAdminDto complete(String externalId, String provider) {
         TransactionInfoDto infoDto = getByExternalIdAndProvider(externalId, provider);
         Transaction existingTransaction = getTransactionById(infoDto.getId());
@@ -95,30 +96,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public boolean existsByExternalIdAndProvider(String externalId, String providerName) {
-        return transactionRepository.existsByExternalIdAndProviderName(externalId, providerName);
+    public TransactionInfoDto getByExternalIdAndProvider(String externalId, String name) {
+        var transaction = getTransactionByExternalIdAndProvider(externalId, name);
+        return transactionMapper.toDto(transaction);
     }
 
-    @Override
-    public TransactionInfoDto getByExternalIdAndProvider(String externalId, String name) {
-        Transaction transaction = transactionRepository.findByExternalIdAndProviderName(externalId, name)
+    private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
+        return transactionRepository.findByExternalIdAndProviderName(externalId, name)
                 .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
                         "transaction.cannot-get-by-external-id-provider", externalId, name)));
-
-        return transactionMapper.toDto(transaction);
-    }
-
-    @Override
-    public TransactionInfoDto getById(Long id) {
-        Transaction transaction = getTransactionById(id);
-        return transactionMapper.toDto(transaction);
-    }
-
-    @Override
-    public List<TransactionAdminDto> getAll(Pageable pageable) {
-        return transactionRepository.findAll(pageable)
-                .getContent().stream()
-                .map(transactionMapper::toAdminDto)
-                .collect(Collectors.toList());
     }
 }

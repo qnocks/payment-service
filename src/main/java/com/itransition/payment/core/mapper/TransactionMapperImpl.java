@@ -53,6 +53,7 @@ public class TransactionMapperImpl implements TransactionMapper {
 
     @Override
     public Transaction toEntity(TransactionInfoDto infoDto) {
+    public Transaction toEntity(TransactionInfoDto infoDto) {
         return Transaction.builder()
                 .id(infoDto.getId())
                 .externalId(infoDto.getExternalId())
@@ -66,33 +67,13 @@ public class TransactionMapperImpl implements TransactionMapper {
     public Transaction toEntity(TransactionAdapterStateDto adapterStateDto) {
         return Transaction.builder()
                 .externalId(adapterStateDto.getExternalId())
-                .provider(PaymentProvider.builder()
-                        .name(adapterStateDto.getProvider())
-                        .build())
+                .provider(PaymentProvider.builder().name(adapterStateDto.getProvider()).build())
                 .amount(adapterStateDto.getAmount().getAmount())
                 .currency(adapterStateDto.getAmount().getCurrency())
                 .commissionAmount(adapterStateDto.getCommissionAmount().getAmount())
                 .commissionCurrency(adapterStateDto.getCommissionAmount().getCurrency())
                 .userId(adapterStateDto.getUser())
                 .additionalData(adapterStateDto.getAdditionalData())
-                .build();
-    }
-
-    @Override
-    public Transaction toEntity(TransactionAdminDto adminDto) {
-        return Transaction.builder()
-                .id(adminDto.getId())
-                .externalId(adminDto.getExternalId())
-                .provider(PaymentProvider.builder().name(adminDto.getProvider()).build())
-                .status(adminDto.getStatus())
-                .amount(adminDto.getAmount().getAmount())
-                .currency(adminDto.getAmount().getCurrency())
-                .commissionAmount(adminDto.getCommissionAmount().getAmount())
-                .commissionCurrency(adminDto.getCommissionAmount().getCurrency())
-                .userId(adminDto.getUser())
-                .createdAt(LocalDateTime.ofInstant(
-                        Instant.ofEpochMilli(adminDto.getTimestamp()), ZoneId.systemDefault()))
-                .additionalData(adminDto.getAdditionalData())
                 .build();
     }
 }

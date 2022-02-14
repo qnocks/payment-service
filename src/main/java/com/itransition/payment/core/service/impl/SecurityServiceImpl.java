@@ -34,7 +34,7 @@ public class SecurityServiceImpl implements SecurityService {
         }
 
         // TODO: implement real token validation when Core Service will issue real tokens
-        return currentAuthorization.getExpiresIn() < 5000L;
+        return currentAuthorization.getExpiresIn() < 5000;
     }
 
     private AuthResponse processAuthorization() {

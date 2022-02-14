@@ -27,8 +27,8 @@ public class FlowController {
     }
 
     @PutMapping
-    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto transactionInfoDto) {
-        return flowService.updateTransaction(transactionInfoDto);
+    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto updateDto) {
+        return flowService.updateTransaction(updateDto);
     }
 
     @GetMapping(params = {"external_id", "provider"})

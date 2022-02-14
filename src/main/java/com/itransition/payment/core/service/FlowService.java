@@ -9,7 +9,7 @@ public interface FlowService {
 
     TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto);
 
-    TransactionInfoDto updateTransaction(TransactionInfoDto infoDto);
+    TransactionInfoDto updateTransaction(TransactionInfoDto updateDto);
 
     List<TransactionInfoDto> searchTransactions(String externalId, String provider);
 }

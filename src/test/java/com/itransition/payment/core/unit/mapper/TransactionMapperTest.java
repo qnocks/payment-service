@@ -4,7 +4,9 @@ import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
+import com.itransition.payment.core.dto.AmountDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.mapper.TransactionMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,31 @@ class TransactionMapperTest {
     }
 
     @Test
+    void shouldMapTransactionToTransactionStateDto() {
+        var transaction = TestDataProvider.getTransaction();
+        var expected = TransactionStateDto.builder()
+                .id(transaction.getId())
+                .externalId(transaction.getExternalId())
+                .provider(transaction.getProvider().getName())
+                .status(transaction.getStatus())
+                .amount(AmountDto.builder()
+                        .amount(transaction.getAmount())
+                        .currency(transaction.getCurrency())
+                        .build())
+                .commissionAmount(AmountDto.builder()
+                        .amount(transaction.getCommissionAmount())
+                        .currency(transaction.getCommissionCurrency())
+                        .build())
+                .user(transaction.getUserId())
+                .additionalData(transaction.getAdditionalData())
+                .build();
+
+        var actual = underTest.toAdminDto(transaction);
+
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
     void shouldMapTransactionInfoDtoToTransaction() {
         var infoDto = TestDataProvider.getTransactionInfoDto();
         var expected = Transaction.builder()
@@ -50,23 +77,7 @@ class TransactionMapperTest {
     }
 
     @Test
-    void shouldMapTransactionUpdateDtoToTransaction() {
-        var updateDto = TestDataProvider.getTransactionInfoDto();
-        updateDto.setId(null);
-        var expected = Transaction.builder()
-                .externalId(updateDto.getExternalId())
-                .status(updateDto.getStatus())
-                .provider(PaymentProvider.builder().name(updateDto.getProvider()).build())
-                .additionalData(updateDto.getAdditionalData())
-                .build();
-
-        var actual = underTest.toEntity(updateDto);
-
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
-    }
-
-    @Test
-    void shouldMapTransactionAdapterStateDtoToTransaction() {
+    void shouldMapTransactionStateDtoToTransaction() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         var expected = Transaction.builder()
                 .externalId(stateDto.getExternalId())

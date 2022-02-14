@@ -45,7 +45,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldSaveNewTransaction() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         var transaction = Transaction.builder()
                 .externalId(stateDto.getExternalId())
                 .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())

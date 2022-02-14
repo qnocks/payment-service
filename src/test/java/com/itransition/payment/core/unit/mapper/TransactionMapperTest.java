@@ -67,7 +67,7 @@ class TransactionMapperTest {
 
     @Test
     void shouldMapTransactionAdapterStateDtoToTransaction() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         var expected = Transaction.builder()
                 .externalId(stateDto.getExternalId())
                 .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())

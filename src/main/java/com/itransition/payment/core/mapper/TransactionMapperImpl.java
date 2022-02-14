@@ -3,15 +3,9 @@ package com.itransition.payment.core.mapper;
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.AmountDto;
-import com.itransition.payment.core.dto.TransactionAdapterStateDto;
-import com.itransition.payment.core.dto.TransactionAdminDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.service.AdminService;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.SimpleTimeZone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +25,8 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
     @Override
-    public TransactionAdminDto toAdminDto(Transaction transaction) {
-        return TransactionAdminDto.builder()
+    public TransactionStateDto toAdminDto(Transaction transaction) {
+        return TransactionStateDto.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())
                 .provider(transaction.getProvider().getName())
@@ -53,7 +47,6 @@ public class TransactionMapperImpl implements TransactionMapper {
 
     @Override
     public Transaction toEntity(TransactionInfoDto infoDto) {
-    public Transaction toEntity(TransactionInfoDto infoDto) {
         return Transaction.builder()
                 .id(infoDto.getId())
                 .externalId(infoDto.getExternalId())
@@ -64,16 +57,17 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
     @Override
-    public Transaction toEntity(TransactionAdapterStateDto adapterStateDto) {
+    public Transaction toEntity(TransactionStateDto stateDto) {
         return Transaction.builder()
-                .externalId(adapterStateDto.getExternalId())
-                .provider(PaymentProvider.builder().name(adapterStateDto.getProvider()).build())
-                .amount(adapterStateDto.getAmount().getAmount())
-                .currency(adapterStateDto.getAmount().getCurrency())
-                .commissionAmount(adapterStateDto.getCommissionAmount().getAmount())
-                .commissionCurrency(adapterStateDto.getCommissionAmount().getCurrency())
-                .userId(adapterStateDto.getUser())
-                .additionalData(adapterStateDto.getAdditionalData())
+                .externalId(stateDto.getExternalId())
+                .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
+                .amount(stateDto.getAmount().getAmount())
+                .currency(stateDto.getAmount().getCurrency())
+                .commissionAmount(stateDto.getCommissionAmount().getAmount())
+                .commissionCurrency(stateDto.getCommissionAmount().getCurrency())
+                .userId(stateDto.getUser())
+                .additionalData(stateDto.getAdditionalData())
                 .build();
     }
+
 }

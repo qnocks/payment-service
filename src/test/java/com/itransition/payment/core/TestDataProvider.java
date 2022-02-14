@@ -7,7 +7,7 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AmountDto;
 import com.itransition.payment.core.dto.AuthResponse;
-import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,8 +46,8 @@ public final class TestDataProvider {
                 .build();
     }
 
-    public static TransactionAdapterStateDto getTransactionAdapterStateDto() {
-        return TransactionAdapterStateDto.builder()
+    public static TransactionStateDto getTransactionStateDto() {
+        return TransactionStateDto.builder()
                 .externalId(EXTERNAL_ID)
                 .provider(PROVIDER.getName())
                 .amount(AmountDto.builder()

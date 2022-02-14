@@ -1,6 +1,6 @@
 package com.itransition.payment.core.controller;
 
-import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.service.FlowService;
 import java.util.List;
@@ -22,8 +22,8 @@ public class FlowController {
 
     @PostMapping
     public TransactionInfoDto createTransaction(
-            @RequestBody TransactionAdapterStateDto transactionAdapterStateDto) {
-        return flowService.createTransaction(transactionAdapterStateDto);
+            @RequestBody TransactionStateDto stateDto) {
+        return flowService.createTransaction(stateDto);
     }
 
     @PutMapping

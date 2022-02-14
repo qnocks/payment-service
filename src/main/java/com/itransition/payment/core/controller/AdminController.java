@@ -1,6 +1,6 @@
 package com.itransition.payment.core.controller;
 
-import com.itransition.payment.core.dto.TransactionAdminDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.service.AdminService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,23 +20,22 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping
-    public List<TransactionAdminDto> searchTransactions(
+    public List<TransactionStateDto> searchTransactions(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "pageSize", defaultValue = "3") int pageSize,
             @RequestParam(value = "sort", defaultValue = "id") String sort,
             @RequestParam(value = "order", defaultValue = "DESC") String order,
-            // TODO: Can be change according to clarification specification
             @RequestParam(value = "value", defaultValue = "id") String value) {
         return adminService.searchTransactions(page, pageSize, sort, order, value);
     }
 
     @PutMapping
-    public TransactionAdminDto updateTransaction(@RequestBody TransactionAdminDto transactionAdminDto) {
-        return adminService.updateTransaction(transactionAdminDto);
+    public TransactionStateDto updateTransaction(@RequestBody TransactionStateDto adminDto) {
+        return adminService.updateTransaction(adminDto);
     }
 
     @PostMapping(params = {"external_id", "provider"})
-    public TransactionAdminDto completeTransaction(
+    public TransactionStateDto completeTransaction(
             @RequestParam("external_id") String externalId,
             @RequestParam("provider") String provider) {
         return adminService.completeTransaction(externalId, provider);

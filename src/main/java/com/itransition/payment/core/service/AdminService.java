@@ -1,13 +1,13 @@
 package com.itransition.payment.core.service;
 
-import com.itransition.payment.core.dto.TransactionAdminDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import java.util.List;
 
 public interface AdminService {
 
-    List<TransactionAdminDto> searchTransactions(int page, int pageSize, String  sort, String order, String value);
+    List<TransactionStateDto> searchTransactions(int page, int pageSize, String  sort, String order, String value);
 
-    TransactionAdminDto updateTransaction(TransactionAdminDto transactionAdminDto);
+    TransactionStateDto updateTransaction(TransactionStateDto adminDto);
 
-    TransactionAdminDto completeTransaction(String externalId, String provider);
+    TransactionStateDto completeTransaction(String externalId, String provider);
 }

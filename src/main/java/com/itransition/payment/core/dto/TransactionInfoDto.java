@@ -12,10 +12,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "externalId", "status", "provider", "additionalData"})
 @EqualsAndHashCode(callSuper = true)
+@JsonPropertyOrder({"id", "externalId", "status", "provider", "additionalData"})
 public class TransactionInfoDto extends TransactionBaseDto {
 
     private Long id;
     private TransactionStatus status;
 }
+

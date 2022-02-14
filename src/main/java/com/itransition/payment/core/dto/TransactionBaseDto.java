@@ -2,7 +2,6 @@ package com.itransition.payment.core.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -10,10 +9,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class TransactionAdapterStateDto extends TransactionBaseDto {
+public class TransactionBaseDto {
 
-    private AmountDto amount;
-    private AmountDto commissionAmount;
-    private String user;
+    private String externalId;
+    private String provider;
+    private String additionalData;
 }

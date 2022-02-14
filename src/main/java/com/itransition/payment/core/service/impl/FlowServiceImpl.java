@@ -47,19 +47,19 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public TransactionInfoDto updateTransaction(TransactionInfoDto infoDto) {
-        verifyStatusTransactionCorrectness(infoDto.getId());
-        return transactionService.update(infoDto);
+    public TransactionInfoDto updateTransaction(TransactionInfoDto updateDto) {
+        verifyStatusTransactionCorrectness(updateDto.getExternalId(), updateDto.getProvider());
+        return transactionService.update(updateDto);
     }
 
-    private void verifyStatusTransactionCorrectness(Long id) {
-        TransactionInfoDto existingTransaction = transactionService.getById(id);
+    private void verifyStatusTransactionCorrectness(String externalId, String providerName) {
+        var existingTransaction = transactionService.getByExternalIdAndProvider(externalId, providerName);
         var status = existingTransaction.getStatus();
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (!TransactionStatus.INITIAL.equals(status)) {
-            throw new IllegalStateException(
-                    exceptionMessageResolver.getMessage("flow.transaction-status-incorrectness", id, status));
+            throw new IllegalStateException(exceptionMessageResolver.getMessage(
+                    "flow.transaction-status-incorrectness", externalId, providerName, status));
         }
     }
 

@@ -24,9 +24,9 @@ create table if not exists  transactions (
 );
 
 INSERT INTO payment_providers(name)
-VALUES ('secret');
+VALUES ('test');
 
 INSERT INTO transactions(id, external_id, status, replenishment_status, amount, currency, commission_amount,
                          commission_currency, user_id, created_at, updated_at, additional_data, provider)
-VALUES (0, 'secret', 'INITIAL', 'INITIAL', 123.123, 'USD', 12.12, 'USD', '321', '2022-02-10 19:06:35.940163',
-        '2022-02-10 19:06:35.940163', '{}', 'secret');
+VALUES (0, 'test', 'INITIAL', 'INITIAL', 123.123, 'USD', 12.12, 'USD', '321', '2022-02-10 19:06:35.940163',
+        '2022-02-10 19:06:35.940163', '{}', 'test');

@@ -37,9 +37,7 @@ public class TransactionMapperImpl implements TransactionMapper {
     public Transaction toEntity(TransactionAdapterStateDto adapterStateDto) {
         return Transaction.builder()
                 .externalId(adapterStateDto.getExternalId())
-                .provider(PaymentProvider.builder()
-                        .name(adapterStateDto.getProvider())
-                        .build())
+                .provider(PaymentProvider.builder().name(adapterStateDto.getProvider()).build())
                 .amount(adapterStateDto.getAmount().getAmount())
                 .currency(adapterStateDto.getAmount().getCurrency())
                 .commissionAmount(adapterStateDto.getCommissionAmount().getAmount())

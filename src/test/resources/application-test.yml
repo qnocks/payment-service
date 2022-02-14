@@ -9,5 +9,5 @@ spring:
     enabled: false
 
 test:
-  external-id: secret
-  provider: secret
+  external-id: test
+  provider: test

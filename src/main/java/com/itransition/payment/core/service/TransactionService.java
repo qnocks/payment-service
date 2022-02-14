@@ -7,11 +7,9 @@ public interface TransactionService {
 
     TransactionInfoDto save(TransactionAdapterStateDto adapterStateDto);
 
-    TransactionInfoDto update(TransactionInfoDto infoDto);
+    TransactionInfoDto update(TransactionInfoDto updateDto);
 
     boolean existsByExternalIdAndProvider(String externalId, String providerName);
 
     TransactionInfoDto getByExternalIdAndProvider(String externalId, String provider);
-
-    TransactionInfoDto getById(Long id);
 }

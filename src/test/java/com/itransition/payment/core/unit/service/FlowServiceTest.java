@@ -4,6 +4,7 @@ import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
+import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.TransactionService;
@@ -72,26 +73,36 @@ class FlowServiceTest {
 
     @Test
     void shouldThrow_when_transactionStatusCannotBeChanged() {
-        var existingInfoDto = TestDataProvider.getTransactionInfoDto();
-        existingInfoDto.setStatus(TransactionStatus.COMPLETED);
+        var updateDto = TestDataProvider.getTransactionInfoDto();
+        var infoDto = TestDataProvider.getTransactionInfoDto();
+        infoDto.setStatus(TransactionStatus.COMPLETED);
 
-        when(transactionService.getById(existingInfoDto.getId())).thenReturn(existingInfoDto);
+        when(transactionService.getByExternalIdAndProvider(
+                updateDto.getExternalId(), updateDto.getProvider())).thenReturn(infoDto);
 
         // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.updateTransaction(existingInfoDto));
+        assertThrows(IllegalStateException.class, () -> underTest.updateTransaction(updateDto));
     }
 
     @Test
     void shouldUpdateTransaction() {
-        var infoDto = TestDataProvider.getTransactionInfoDto();
+        var updateDto = TestDataProvider.getTransactionInfoDto();
+        var existingInfoDto = TestDataProvider.getTransactionInfoDto();
+        var expected = TransactionInfoDto.builder()
+                .externalId(updateDto.getExternalId())
+                .status(updateDto.getStatus())
+                .provider(updateDto.getProvider())
+                .additionalData(updateDto.getAdditionalData())
+                .build();
 
-        when(transactionService.getById(infoDto.getId())).thenReturn(infoDto);
-        when(transactionService.update(infoDto)).thenReturn(infoDto);
+        when(transactionService.getByExternalIdAndProvider(updateDto.getExternalId(), updateDto.getProvider()))
+                .thenReturn(existingInfoDto);
+        when(transactionService.update(updateDto)).thenReturn(expected);
 
-        var actual = underTest.updateTransaction(infoDto);
+        var actual = underTest.updateTransaction(updateDto);
 
-        verify(transactionService, times(1)).update(infoDto);
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, infoDto);
+        verify(transactionService, times(1)).update(updateDto);
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test

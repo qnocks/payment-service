@@ -51,7 +51,8 @@ class TransactionMapperTest {
 
     @Test
     void shouldMapTransactionUpdateDtoToTransaction() {
-        var updateDto = TestDataProvider.getTransactionUpdateDto();
+        var updateDto = TestDataProvider.getTransactionInfoDto();
+        updateDto.setId(null);
         var expected = Transaction.builder()
                 .externalId(updateDto.getExternalId())
                 .status(updateDto.getStatus())

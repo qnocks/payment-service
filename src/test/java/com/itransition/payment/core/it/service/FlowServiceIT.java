@@ -6,7 +6,7 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
-import com.itransition.payment.core.dto.TransactionUpdateDto;
+import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.it.AbstractIntegrationTest;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.FlowService;
@@ -66,7 +66,7 @@ class FlowServiceIT extends AbstractIntegrationTest {
     void shouldUpdateTransaction() {
         var existingTransaction = transactionRepository.getById(0L);
 
-        underTest.updateTransaction(TransactionUpdateDto.builder()
+        underTest.updateTransaction(TransactionInfoDto.builder()
                 .externalId(existingTransaction.getExternalId())
                 .status(TransactionStatus.COMPLETED)
                 .provider(existingTransaction.getProvider().getName())

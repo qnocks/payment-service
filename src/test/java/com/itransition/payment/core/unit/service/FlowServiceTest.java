@@ -73,7 +73,7 @@ class FlowServiceTest {
 
     @Test
     void shouldThrow_when_transactionStatusCannotBeChanged() {
-        var updateDto = TestDataProvider.getTransactionUpdateDto();
+        var updateDto = TestDataProvider.getTransactionInfoDto();
         var infoDto = TestDataProvider.getTransactionInfoDto();
         infoDto.setStatus(TransactionStatus.COMPLETED);
 
@@ -86,7 +86,7 @@ class FlowServiceTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var updateDto = TestDataProvider.getTransactionUpdateDto();
+        var updateDto = TestDataProvider.getTransactionInfoDto();
         var existingInfoDto = TestDataProvider.getTransactionInfoDto();
         var expected = TransactionInfoDto.builder()
                 .externalId(updateDto.getExternalId())

@@ -78,7 +78,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var updateDto = TestDataProvider.getTransactionUpdateDto();
+        var updateDto = TestDataProvider.getTransactionInfoDto();
         var transaction = Transaction.builder()
                 .externalId(updateDto.getExternalId())
                 .status(TransactionStatus.COMPLETED)
@@ -113,7 +113,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldThrow_when_updatingTransactionDoesntExist() {
-        var expected = TestDataProvider.getTransactionUpdateDto();
+        var expected = TestDataProvider.getTransactionInfoDto();
         var transaction = Transaction.builder()
                 .externalId(expected.getExternalId())
                 .status(TransactionStatus.COMPLETED)

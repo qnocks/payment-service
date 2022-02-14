@@ -4,7 +4,6 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.dto.TransactionUpdateDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
@@ -38,7 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionInfoDto update(TransactionUpdateDto updateDto) {
+    public TransactionInfoDto update(TransactionInfoDto updateDto) {
         var transaction = transactionMapper.toEntity(updateDto);
         initiateTransactionProvider(transaction, updateDto.getProvider());
 

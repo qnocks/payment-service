@@ -4,7 +4,6 @@ import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.dto.TransactionUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -45,16 +44,6 @@ public class TransactionMapperImpl implements TransactionMapper {
                 .commissionCurrency(adapterStateDto.getCommissionAmount().getCurrency())
                 .userId(adapterStateDto.getUser())
                 .additionalData(adapterStateDto.getAdditionalData())
-                .build();
-    }
-
-    @Override
-    public Transaction toEntity(TransactionUpdateDto updateDto) {
-        return Transaction.builder()
-                .externalId(updateDto.getExternalId())
-                .status(updateDto.getStatus())
-                .provider(PaymentProvider.builder().name(updateDto.getProvider()).build())
-                .additionalData(updateDto.getAdditionalData())
                 .build();
     }
 }

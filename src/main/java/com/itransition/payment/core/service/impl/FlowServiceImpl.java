@@ -4,7 +4,6 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.dto.TransactionUpdateDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.AccountService;
 import com.itransition.payment.core.service.FlowService;
@@ -48,7 +47,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public TransactionInfoDto updateTransaction(TransactionUpdateDto updateDto) {
+    public TransactionInfoDto updateTransaction(TransactionInfoDto updateDto) {
         verifyStatusTransactionCorrectness(updateDto.getExternalId(), updateDto.getProvider());
         return transactionService.update(updateDto);
     }

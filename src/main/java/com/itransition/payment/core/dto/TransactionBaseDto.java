@@ -1,19 +1,17 @@
 package com.itransition.payment.core.dto;
 
-import com.itransition.payment.core.domain.enums.TransactionStatus;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionUpdateDto {
+public class TransactionBaseDto {
 
     private String externalId;
-    private TransactionStatus status;
     private String provider;
     private String additionalData;
 }

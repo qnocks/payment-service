@@ -9,7 +9,6 @@ import com.itransition.payment.core.dto.AmountDto;
 import com.itransition.payment.core.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionAdapterStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.dto.TransactionUpdateDto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -69,15 +68,6 @@ public final class TestDataProvider {
                 .id(ID)
                 .externalId(EXTERNAL_ID)
                 .status(STATUS)
-                .provider(PROVIDER.getName())
-                .additionalData(ADDITIONAL_DATA)
-                .build();
-    }
-
-    public static TransactionUpdateDto getTransactionUpdateDto() {
-        return TransactionUpdateDto.builder()
-                .externalId(EXTERNAL_ID)
-                .status(TransactionStatus.COMPLETED)
                 .provider(PROVIDER.getName())
                 .additionalData(ADDITIONAL_DATA)
                 .build();

@@ -1,4 +1,4 @@
-package com.itransition.payment.core.service;
+package com.itransition.payment.core.unit.service;
 
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.repository.PaymentProviderRepository;

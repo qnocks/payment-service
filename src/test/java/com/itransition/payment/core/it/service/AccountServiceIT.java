@@ -1,14 +1,15 @@
-package com.itransition.payment.core.service;
+package com.itransition.payment.core.it.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.itransition.payment.core.AbstractIntegrationTest;
 import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.dto.AccountDto;
+import com.itransition.payment.core.it.AbstractIntegrationTest;
+import com.itransition.payment.core.service.SecurityService;
 import com.itransition.payment.core.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,7 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AccountServiceTest extends AbstractIntegrationTest {
+class AccountServiceIT extends AbstractIntegrationTest {
 
     @Autowired
     private AccountServiceImpl underTest;

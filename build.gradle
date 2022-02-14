@@ -35,6 +35,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "com.github.tomakehurst:wiremock-jre8:${wiremockVersion}"
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

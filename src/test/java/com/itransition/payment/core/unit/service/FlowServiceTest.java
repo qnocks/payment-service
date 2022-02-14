@@ -1,10 +1,12 @@
-package com.itransition.payment.core.service;
+package com.itransition.payment.core.unit.service;
 
 import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.service.AccountService;
+import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.service.impl.FlowServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

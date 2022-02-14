@@ -2,6 +2,7 @@ package com.itransition.payment.core;
 
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
+import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AmountDto;
@@ -16,6 +17,7 @@ public final class TestDataProvider {
     private static final Long ID = 1L;
     private static final String EXTERNAL_ID = "123";
     private static final TransactionStatus STATUS = TransactionStatus.INITIAL;
+    private static final ReplenishmentStatus REPLENISHMENT_STATUS = ReplenishmentStatus.INITIAL;
     private static final PaymentProvider PROVIDER = PaymentProvider.builder().id(1L).name("test").build();
     private static final BigDecimal AMOUNT = BigDecimal.valueOf(123.123);
     private static final String CURRENCY = "USD";
@@ -32,6 +34,7 @@ public final class TestDataProvider {
                 .externalId(EXTERNAL_ID)
                 .provider(PROVIDER)
                 .status(STATUS)
+                .replenishmentStatus(REPLENISHMENT_STATUS)
                 .amount(AMOUNT)
                 .currency(CURRENCY)
                 .commissionAmount(COMMISSION_AMOUNT)

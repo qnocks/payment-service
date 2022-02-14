@@ -1,4 +1,4 @@
-package com.itransition.payment.core.service;
+package com.itransition.payment.core.unit.service;
 
 import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
@@ -9,6 +9,7 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.impl.TransactionServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

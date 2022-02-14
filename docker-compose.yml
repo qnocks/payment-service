@@ -11,3 +11,18 @@ services:
       - "5433:5432"
     volumes:
     - ./pgdata:/var/lib/postgresql/data
+
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube
+    ports:
+    - "9000:9000"
+    volumes:
+    - sonarqube_conf:/opt/sonarqube/conf
+    - sonarqube_data:/opt/sonarqube/data
+    - sonarqube_extensions:/opt/sonarqube/extensions
+
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:

@@ -81,7 +81,6 @@ class FlowServiceIT extends AbstractIntegrationTest {
     @Test
     void shouldSearchTransactions() {
         var expected = transactionRepository.findByExternalIdAndProviderName(externalId, provider).get();
-
         var actual = underTest.searchTransactions(externalId, provider);
 
         assertThat(actual.size()).isEqualTo(1);

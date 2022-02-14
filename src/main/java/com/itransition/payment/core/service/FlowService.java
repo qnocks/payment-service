@@ -1,12 +1,13 @@
 package com.itransition.payment.core.service;
 
-import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+
 import java.util.List;
 
 public interface FlowService {
 
-    TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto);
+    TransactionInfoDto createTransaction(TransactionStateDto stateDto);
 
     TransactionInfoDto updateTransaction(TransactionInfoDto updateDto);
 

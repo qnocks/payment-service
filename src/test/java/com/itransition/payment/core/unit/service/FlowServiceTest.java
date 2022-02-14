@@ -38,7 +38,7 @@ class FlowServiceTest {
 
     @Test
     void shouldCreateTransaction() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         var expected = TestDataProvider.getTransactionInfoDto();
 
         when(transactionService.existsByExternalIdAndProvider(
@@ -54,7 +54,7 @@ class FlowServiceTest {
 
     @Test
     void shouldThrow_when_externalIdIsNotUnique() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
 
@@ -64,7 +64,7 @@ class FlowServiceTest {
 
     @Test
     void shouldThrow_when_accountIdDoesntExist() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
 
         // TODO: Should be changed to custom exception when implementation of exception handling

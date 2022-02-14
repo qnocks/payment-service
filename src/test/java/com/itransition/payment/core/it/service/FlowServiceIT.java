@@ -39,7 +39,7 @@ class FlowServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCreateTransaction() {
-        var stateDto = TestDataProvider.getTransactionAdapterStateDto();
+        var stateDto = TestDataProvider.getTransactionStateDto();
         var expected = Transaction.builder()
                 .id(1L)
                 .externalId(stateDto.getExternalId())

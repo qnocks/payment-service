@@ -4,6 +4,7 @@ import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,6 +15,16 @@ public final class AssertionsHelper {
         assertThat(actual.getExternalId()).isEqualTo(expected.getExternalId());
         assertThat(actual.getProvider()).isEqualTo(expected.getProvider());
         assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
+        assertThat(actual.getAdditionalData()).isEqualTo(expected.getAdditionalData());
+    }
+
+    public static void verifyFieldsEqualityActualExpected(TransactionStateDto actual, TransactionStateDto expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getExternalId()).isEqualTo(expected.getExternalId());
+        assertThat(actual.getProvider()).isEqualTo(expected.getProvider());
+        assertThat(actual.getStatus()).isEqualTo(expected.getStatus());
+        assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
+        assertThat(actual.getCommissionAmount()).isEqualTo(expected.getCommissionAmount());
         assertThat(actual.getAdditionalData()).isEqualTo(expected.getAdditionalData());
     }
 

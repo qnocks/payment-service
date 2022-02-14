@@ -2,7 +2,7 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
-import com.itransition.payment.core.dto.TransactionAdapterStateDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.service.AccountService;
@@ -21,10 +21,10 @@ public class FlowServiceImpl implements FlowService {
     private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
-    public TransactionInfoDto createTransaction(TransactionAdapterStateDto adapterStateDto) {
-        verifyForUnique(adapterStateDto.getExternalId(), adapterStateDto.getProvider());
-        verifyAccountExistence(adapterStateDto.getUser());
-        return transactionService.save(adapterStateDto);
+    public TransactionInfoDto createTransaction(TransactionStateDto stateDto) {
+        verifyForUnique(stateDto.getExternalId(), stateDto.getProvider());
+        verifyAccountExistence(stateDto.getUser());
+        return transactionService.save(stateDto);
     }
 
     private void verifyForUnique(String externalId, String providerName) {

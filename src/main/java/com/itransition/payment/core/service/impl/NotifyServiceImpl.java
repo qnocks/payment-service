@@ -24,6 +24,7 @@ public class NotifyServiceImpl implements NotifyService {
         return callExternalTransaction(authHeader, replenishDto);
     }
 
+    // TODO: Should be moved to SecurityService in next refactoring Pull Request
     private String getAuthHeader() {
         AuthResponse authResponse = securityService.authorize();
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();

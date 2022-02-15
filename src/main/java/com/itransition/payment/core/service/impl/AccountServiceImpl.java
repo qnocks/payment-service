@@ -24,6 +24,7 @@ public class AccountServiceImpl implements AccountService {
         return retrieveById(id, authHeader);
     }
 
+    // TODO: Should be moved to SecurityService in next refactoring Pull Request
     private String getAuthHeader() {
         AuthResponse authResponse = securityService.authorize();
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();

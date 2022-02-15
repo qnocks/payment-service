@@ -2,6 +2,8 @@ plugins {
     id 'org.springframework.boot' version '2.6.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "org.sonarqube" version "3.3"
+    id 'jacoco'
 }
 
 group = 'com.itransition'
@@ -38,6 +40,18 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+tasks.named('sonarqube').configure {
+    dependsOn test
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+

@@ -108,15 +108,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction getById(Long id) {
-        // TODO: Specify exception message
-        return transactionRepository.findById(id).orElseThrow(IllegalStateException::new);
-    }
-
-    @Override
-    public Optional<TransactionReplenishDto> findCompletedNotReplenished() {
-        Transaction transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
-                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL).stream()
+    public Optional<TransactionReplenishDto> findReadyToReplenish() {
+        var transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
+                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)
+                .stream()
                 .filter(t -> t.getReplenishAfter() == null || t.getReplenishAfter().isBefore(LocalDateTime.now()))
                 .findFirst()
                 .orElse(null);
@@ -130,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void setReplenishStatus(ReplenishmentStatus status, TransactionReplenishDto replenishDto) {
+    public void updateReplenishStatus(TransactionReplenishDto replenishDto, ReplenishmentStatus status) {
         var transaction = transactionMapper.toEntity(replenishDto);
         transaction.setReplenishmentStatus(status);
         processUpdate(transaction);
@@ -143,6 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setReplenishAfter(LocalDateTime.now().plusSeconds((long) replenishAfter));
         processUpdate(transaction);
     }
+
 
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
         // TODO: Should be changed to custom exception when implementation of exception handling

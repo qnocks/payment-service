@@ -1,10 +1,9 @@
 package com.itransition.payment.core.service;
 
-import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
+import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.dto.TransactionInfoDto;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +23,9 @@ public interface TransactionService {
 
     List<TransactionStateDto> getAll();
 
-    Transaction getById(Long id);
+    Optional<TransactionReplenishDto> findReadyToReplenish();
 
-    Optional<TransactionReplenishDto> findCompletedNotReplenished();
-
-    void setReplenishStatus(ReplenishmentStatus status, TransactionReplenishDto replenishDto);
+    void updateReplenishStatus(TransactionReplenishDto replenishDto, ReplenishmentStatus status);
 
     void setReplenishAfter(TransactionReplenishDto replenishDto, double replenishAfter);
 }

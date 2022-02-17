@@ -20,14 +20,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto getById(String id) {
-        String authHeader = getAuthHeader();
+        String authHeader = securityService.getAuthHeader();
         return retrieveById(id, authHeader);
-    }
-
-    // TODO: Should be moved to SecurityService in next refactoring Pull Request
-    private String getAuthHeader() {
-        AuthResponse authResponse = securityService.authorize();
-        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 
     private AccountDto retrieveById(String id, String authHeader) {

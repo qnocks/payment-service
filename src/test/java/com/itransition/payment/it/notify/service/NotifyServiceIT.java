@@ -53,7 +53,8 @@ class NotifyServiceIT extends AbstractIntegrationTest {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
 
-        when(securityService.authorize()).thenReturn(authResponse);
+        when(securityService.getAuthHeader())
+                .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
 
         var actual = underTest.sendTransaction(replenishDto);
 
@@ -71,7 +72,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
 
-        when(securityService.authorize()).thenReturn(authResponse);
+        when(securityService.getAuthHeader()).thenReturn(authResponse.getAccessToken());
 
         var actual = underTest.sendTransaction(replenishDto);
 

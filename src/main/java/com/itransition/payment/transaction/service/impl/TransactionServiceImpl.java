@@ -115,6 +115,10 @@ public class TransactionServiceImpl implements TransactionService {
                 .findFirst()
                 .orElse(null);
 
+        if (transaction == null) {
+            return null;
+        }
+
         return transactionMapper.toReplenishDto(transaction);
     }
 

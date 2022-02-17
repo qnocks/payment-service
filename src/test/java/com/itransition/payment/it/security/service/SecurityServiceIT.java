@@ -5,15 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
-import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.it.AbstractIntegrationTest;
+import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.impl.SecurityServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SecurityServiceIT extends AbstractIntegrationTest {
@@ -41,7 +42,7 @@ class SecurityServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldAuthorize() {
-        var actual = underTest.authorize();
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+        var actual = underTest.getAuthHeader();
+        assertThat(actual).isEqualTo(expected.getTokenType() + " " + expected.getAccessToken());
     }
 }

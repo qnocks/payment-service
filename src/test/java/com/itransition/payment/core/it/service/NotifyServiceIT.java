@@ -34,9 +34,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     void setupServer() {
         server.start();
         WireMock.configureFor("localhost", PORT);
-        WireMock.stubFor(WireMock.post("transaction/").willReturn(
-                ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(200)));
+
     }
 
     @AfterAll
@@ -47,7 +45,11 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldSendTransaction() {
+    void shouldReturnSuccessStatus_when_ApiCallSuccess() {
+        WireMock.stubFor(WireMock.post("transaction/").willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                        .withStatus(200)));
+
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
 
@@ -55,8 +57,25 @@ class NotifyServiceIT extends AbstractIntegrationTest {
 
         var actual = underTest.sendTransaction(replenishDto);
 
-        actual.subscribe(responseEntity -> {
-            assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build());
-        });
+        actual.subscribe(responseEntity -> assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build()));
+    }
+    
+    @Test
+    void shouldReturnInternalServerError_when_ApiCallFailed() {
+        var errorMessage = "test";
+        WireMock.stubFor(WireMock.post("transaction/").willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                        .withStatus(500)
+                        .withStatusMessage(errorMessage)));
+
+        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        var authResponse = TestDataProvider.getAuthResponse();
+
+        when(securityService.authorize()).thenReturn(authResponse);
+
+        var actual = underTest.sendTransaction(replenishDto);
+
+        actual.subscribe(responseEntity ->
+                assertThat(responseEntity).isEqualTo(ResponseEntity.internalServerError().build()));
     }
 }

@@ -52,7 +52,7 @@ class ReplenishServiceTest {
     void shouldUpdateReplenishStatusToSuccess_when_notifySuccess() {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
 
-        when(transactionService.findReadyToReplenish()).thenReturn(Optional.of(replenishDto));
+        when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto)).thenReturn(Mono.just(new ResponseEntity<>(HttpStatus.OK)));
 
         underTest.replenish();
@@ -68,10 +68,10 @@ class ReplenishServiceTest {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var transaction = TestDataProvider.getTransaction();
 
-        when(transactionService.findReadyToReplenish()).thenReturn(Optional.of(replenishDto));
+        when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto))
                 .thenReturn(Mono.error(() -> new IllegalStateException(exceptionMessage)));
-        when(attemptCalc.canTryReplenish()).thenReturn(true);
+        when(attemptCalc.canAnotherTry()).thenReturn(true);
         when(attemptCalc.calcNextAttemptTime()).thenReturn(replenishAfter);
         when(transactionRepository.findById(Long.valueOf(replenishDto.getGateId())))
                 .thenReturn(Optional.of(transaction));
@@ -91,10 +91,10 @@ class ReplenishServiceTest {
         var exceptionMessage = "test";
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
 
-        when(transactionService.findReadyToReplenish()).thenReturn(Optional.of(replenishDto));
+        when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto))
                 .thenReturn(Mono.error(() -> new IllegalStateException(exceptionMessage)));
-        when(attemptCalc.canTryReplenish()).thenReturn(false);
+        when(attemptCalc.canAnotherTry()).thenReturn(false);
 
         underTest.replenish();
 

@@ -23,7 +23,7 @@ public interface TransactionService {
 
     List<TransactionStateDto> getAll();
 
-    Optional<TransactionReplenishDto> findReadyToReplenish();
+    TransactionReplenishDto getReadyToReplenish();
 
     void updateReplenishStatus(TransactionReplenishDto replenishDto, ReplenishmentStatus status);
 

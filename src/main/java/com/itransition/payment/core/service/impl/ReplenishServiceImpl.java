@@ -28,10 +28,13 @@ public class ReplenishServiceImpl implements ReplenishService {
     @Scheduled(cron = "${app.replenish.cron}")
     @Override
     public void replenish() {
-        transactionService.findReadyToReplenish().ifPresent(replenishDto ->
-                notifyService.sendTransaction(replenishDto).subscribe(
-                        response -> successCallback(replenishDto),
-                        error -> failureCallback(replenishDto, error.getMessage())));
+        var replenishDto = transactionService.getReadyToReplenish();
+
+        if (replenishDto != null) {
+            notifyService.sendTransaction(replenishDto).subscribe(
+                    response -> successCallback(replenishDto),
+                    error -> failureCallback(replenishDto, error.getMessage()));
+        }
     }
 
     private void successCallback(TransactionReplenishDto replenishDto) {
@@ -39,7 +42,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     }
 
     private void failureCallback(TransactionReplenishDto replenishDto, String error) {
-        boolean canTryToReplenish = attemptCalc.canTryReplenish();
+        boolean canTryToReplenish = attemptCalc.canAnotherTry();
         if (canTryToReplenish) {
             saveReplenishError(error, replenishDto);
             setReplenishAfter(replenishDto, attemptCalc.calcNextAttemptTime());

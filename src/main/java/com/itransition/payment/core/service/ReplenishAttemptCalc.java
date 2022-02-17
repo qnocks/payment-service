@@ -2,7 +2,7 @@ package com.itransition.payment.core.service;
 
 public interface ReplenishAttemptCalc {
 
-    boolean canTryReplenish();
+    boolean canAnotherTry();
 
     double calcNextAttemptTime();
 }

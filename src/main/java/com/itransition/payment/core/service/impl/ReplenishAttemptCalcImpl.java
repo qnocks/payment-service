@@ -12,7 +12,7 @@ public class ReplenishAttemptCalcImpl implements ReplenishAttemptCalc {
     private int failedCount = 0;
 
     @Override
-    public boolean canTryReplenish() {
+    public boolean canAnotherTry() {
         boolean canTryToReplenish = ++failedCount <= threshold;
         if (!canTryToReplenish) {
             failedCount = 0;

@@ -15,7 +15,6 @@ import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeansUtils;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +107,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<TransactionReplenishDto> findReadyToReplenish() {
+    public TransactionReplenishDto getReadyToReplenish() {
         var transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
                 TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)
                 .stream()
@@ -116,11 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .findFirst()
                 .orElse(null);
 
-        if (transaction == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(transactionMapper.toReplenishDto(transaction));
+        return transactionMapper.toReplenishDto(transaction);
     }
 
     @Transactional

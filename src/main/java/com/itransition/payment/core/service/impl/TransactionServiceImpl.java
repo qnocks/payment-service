@@ -2,18 +2,21 @@ package com.itransition.payment.core.service.impl;
 
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
+import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
 import com.itransition.payment.core.domain.enums.TransactionStatus;
-import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.service.PaymentProviderService;
 import com.itransition.payment.core.service.TransactionService;
 import com.itransition.payment.core.util.BeansUtils;
-import com.sun.istack.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -103,7 +106,37 @@ public class TransactionServiceImpl implements TransactionService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public TransactionReplenishDto getReadyToReplenish() {
+        var transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
+                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)
+                .stream()
+                .filter(t -> t.getReplenishAfter() == null || t.getReplenishAfter().isBefore(LocalDateTime.now()))
+                .findFirst()
+                .orElse(null);
+
+        return transactionMapper.toReplenishDto(transaction);
+    }
+
+    @Transactional
+    @Override
+    public void updateReplenishStatus(TransactionReplenishDto replenishDto, ReplenishmentStatus status) {
+        var transaction = transactionMapper.toEntity(replenishDto);
+        transaction.setReplenishmentStatus(status);
+        processUpdate(transaction);
+    }
+
+    @Transactional
+    @Override
+    public void setReplenishAfter(TransactionReplenishDto replenishDto, double replenishAfter) {
+        var transaction = transactionMapper.toEntity(replenishDto);
+        transaction.setReplenishAfter(LocalDateTime.now().plusSeconds((long) replenishAfter));
+        processUpdate(transaction);
+    }
+
+
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
+        // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
                 .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
                         "transaction.cannot-get-by-external-id-provider", externalId, name)));

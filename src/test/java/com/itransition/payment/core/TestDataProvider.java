@@ -7,6 +7,7 @@ import com.itransition.payment.core.domain.enums.TransactionStatus;
 import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AmountDto;
 import com.itransition.payment.core.dto.AuthResponse;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import java.math.BigDecimal;
@@ -70,6 +71,17 @@ public final class TestDataProvider {
                 .status(STATUS)
                 .provider(PROVIDER.getName())
                 .additionalData(ADDITIONAL_DATA)
+                .build();
+    }
+
+    public static TransactionReplenishDto getTransactionReplenishDto() {
+        return TransactionReplenishDto.builder()
+                .provider(PROVIDER.getName())
+                .outerId(EXTERNAL_ID)
+                .gateId(String.valueOf(ID))
+                .account(Integer.valueOf(USER_ID))
+                .amount(AMOUNT)
+                .commissionAmount(COMMISSION_AMOUNT)
                 .build();
     }
 

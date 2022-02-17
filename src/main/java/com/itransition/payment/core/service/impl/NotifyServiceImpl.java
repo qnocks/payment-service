@@ -1,27 +1,27 @@
 package com.itransition.payment.core.service.impl;
 
-import com.itransition.payment.core.dto.AccountDto;
 import com.itransition.payment.core.dto.AuthResponse;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.service.AccountService;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
+import com.itransition.payment.core.service.NotifyService;
 import com.itransition.payment.core.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class AccountServiceImpl implements AccountService {
+public class NotifyServiceImpl implements NotifyService {
 
     private final WebClient webClient;
     private final SecurityService securityService;
-    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
-    public AccountDto getById(String id) {
+    public Mono<ResponseEntity<Void>> sendTransaction(TransactionReplenishDto replenishDto) {
         String authHeader = getAuthHeader();
-        return retrieveById(id, authHeader);
+        return callExternalTransaction(authHeader, replenishDto);
     }
 
     // TODO: Should be moved to SecurityService in next refactoring Pull Request
@@ -30,19 +30,13 @@ public class AccountServiceImpl implements AccountService {
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 
-    private AccountDto retrieveById(String id, String authHeader) {
-        AccountDto accountDto = webClient.get()
-                .uri("account/" + id)
+    private Mono<ResponseEntity<Void>> callExternalTransaction(String authHeader, TransactionReplenishDto replenishDto) {
+        return webClient
+                .post()
+                .uri("/transaction")
                 .header(HttpHeaders.AUTHORIZATION, authHeader)
+                .body(Mono.just(replenishDto), TransactionReplenishDto.class)
                 .retrieve()
-                .bodyToMono(AccountDto.class)
-                .block();
-
-        if (accountDto == null) {
-            // TODO: Should be changed to custom exception when implementation of exception handling
-            throw new IllegalStateException(exceptionMessageResolver.getMessage("account.cannot-get", id));
-        }
-
-        return accountDto;
+                .toBodilessEntity();
     }
 }

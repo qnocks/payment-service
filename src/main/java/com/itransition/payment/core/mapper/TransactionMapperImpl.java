@@ -3,6 +3,7 @@ package com.itransition.payment.core.mapper;
 import com.itransition.payment.core.domain.PaymentProvider;
 import com.itransition.payment.core.domain.Transaction;
 import com.itransition.payment.core.dto.AmountDto;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import java.time.ZoneOffset;
@@ -46,6 +47,19 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
     @Override
+    public TransactionReplenishDto toReplenishDto(Transaction transaction) {
+        return TransactionReplenishDto.builder()
+                .provider(transaction.getProvider().getName())
+                .outerId(transaction.getExternalId())
+                .gateId(String.valueOf(transaction.getId()))
+                .outerAt(transaction.getExternalDate())
+                .account(Integer.valueOf(transaction.getUserId()))
+                .amount(transaction.getAmount())
+                .commissionAmount(transaction.getCommissionAmount())
+                .build();
+    }
+
+    @Override
     public Transaction toEntity(TransactionInfoDto infoDto) {
         return Transaction.builder()
                 .id(infoDto.getId())
@@ -67,6 +81,14 @@ public class TransactionMapperImpl implements TransactionMapper {
                 .commissionCurrency(stateDto.getCommissionAmount().getCurrency())
                 .userId(stateDto.getUser())
                 .additionalData(stateDto.getAdditionalData())
+                .build();
+    }
+
+    @Override
+    public Transaction toEntity(TransactionReplenishDto replenishDto) {
+        return Transaction.builder()
+                .externalId(replenishDto.getOuterId())
+                .provider(PaymentProvider.builder().name(replenishDto.getProvider()).build())
                 .build();
     }
 

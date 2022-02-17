@@ -1,10 +1,10 @@
-package com.itransition.payment.core.it.service;
+package com.itransition.payment.it.notify.service;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.itransition.payment.core.TestDataProvider;
-import com.itransition.payment.core.it.AbstractIntegrationTest;
+import com.itransition.payment.TestDataProvider;
+import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.security.service.SecurityService;
 import org.junit.jupiter.api.AfterAll;

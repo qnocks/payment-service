@@ -1,6 +1,6 @@
-package com.itransition.payment.core.unit.service;
+package com.itransition.payment.unit.transaction.service;
 
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.transaction.repository.PaymentProviderRepository;
 import com.itransition.payment.transaction.service.impl.PaymentProviderServiceImpl;
 import java.util.Optional;

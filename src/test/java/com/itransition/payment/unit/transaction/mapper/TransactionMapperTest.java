@@ -1,7 +1,7 @@
-package com.itransition.payment.core.unit.mapper;
+package com.itransition.payment.unit.transaction.mapper;
 
-import com.itransition.payment.core.AssertionsHelper;
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.AssertionsHelper;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.dto.AmountDto;

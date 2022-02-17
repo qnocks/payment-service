@@ -1,7 +1,7 @@
-package com.itransition.payment.core.unit.service;
+package com.itransition.payment.unit.administration.service;
 
-import com.itransition.payment.core.AssertionsHelper;
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.AssertionsHelper;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.transaction.service.TransactionService;
 import com.itransition.payment.administration.service.impl.AdminServiceImpl;

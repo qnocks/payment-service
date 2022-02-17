@@ -1,4 +1,4 @@
-package com.itransition.payment.core.it;
+package com.itransition.payment.it;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,13 +1,13 @@
-package com.itransition.payment.core.it.service;
+package com.itransition.payment.it.flow.service;
 
-import com.itransition.payment.core.AssertionsHelper;
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.AssertionsHelper;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.it.AbstractIntegrationTest;
+import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.flow.service.FlowService;
 import org.junit.jupiter.api.Test;

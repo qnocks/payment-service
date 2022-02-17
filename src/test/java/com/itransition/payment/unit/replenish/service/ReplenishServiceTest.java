@@ -1,6 +1,6 @@
-package com.itransition.payment.core.unit.service;
+package com.itransition.payment.unit.replenish.service;
 
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.entity.ReplenishError;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;

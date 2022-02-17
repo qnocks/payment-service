@@ -1,14 +1,14 @@
-package com.itransition.payment.core.it.service;
+package com.itransition.payment.it.security.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.itransition.payment.core.AssertionsHelper;
-import com.itransition.payment.core.TestDataProvider;
+import com.itransition.payment.AssertionsHelper;
+import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.security.dto.AuthResponse;
-import com.itransition.payment.core.it.AbstractIntegrationTest;
+import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.security.service.impl.SecurityServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

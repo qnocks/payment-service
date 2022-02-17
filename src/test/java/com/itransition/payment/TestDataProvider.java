@@ -1,4 +1,4 @@
-package com.itransition.payment.core;
+package com.itransition.payment;
 
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;

@@ -1,12 +1,12 @@
 package com.itransition.payment.core.it.service;
 
 import com.itransition.payment.core.AssertionsHelper;
-import com.itransition.payment.core.domain.enums.TransactionStatus;
-import com.itransition.payment.core.dto.AmountDto;
+import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.transaction.dto.AmountDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.it.AbstractIntegrationTest;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.service.AdminService;
+import com.itransition.payment.administration.service.AdminService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

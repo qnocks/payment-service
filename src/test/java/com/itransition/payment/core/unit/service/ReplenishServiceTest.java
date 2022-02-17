@@ -1,15 +1,15 @@
 package com.itransition.payment.core.unit.service;
 
 import com.itransition.payment.core.TestDataProvider;
-import com.itransition.payment.core.domain.ReplenishError;
-import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
+import com.itransition.payment.core.entity.ReplenishError;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.repository.ReplenishErrorRepository;
+import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.service.NotifyService;
-import com.itransition.payment.core.service.ReplenishAttemptCalc;
-import com.itransition.payment.core.service.TransactionService;
-import com.itransition.payment.core.service.impl.ReplenishServiceImpl;
+import com.itransition.payment.notify.service.NotifyService;
+import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
+import com.itransition.payment.transaction.service.TransactionService;
+import com.itransition.payment.replenish.service.impl.ReplenishServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

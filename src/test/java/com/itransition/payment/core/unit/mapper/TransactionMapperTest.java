@@ -2,12 +2,12 @@ package com.itransition.payment.core.unit.mapper;
 
 import com.itransition.payment.core.AssertionsHelper;
 import com.itransition.payment.core.TestDataProvider;
-import com.itransition.payment.core.domain.PaymentProvider;
-import com.itransition.payment.core.domain.Transaction;
-import com.itransition.payment.core.dto.AmountDto;
+import com.itransition.payment.transaction.entity.PaymentProvider;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.transaction.dto.AmountDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.mapper.TransactionMapperImpl;
+import com.itransition.payment.transaction.mapper.TransactionMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

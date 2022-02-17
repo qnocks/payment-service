@@ -1,12 +1,12 @@
 package com.itransition.payment.core;
 
-import com.itransition.payment.core.domain.PaymentProvider;
-import com.itransition.payment.core.domain.Transaction;
-import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
-import com.itransition.payment.core.domain.enums.TransactionStatus;
-import com.itransition.payment.core.dto.AccountDto;
-import com.itransition.payment.core.dto.AmountDto;
-import com.itransition.payment.core.dto.AuthResponse;
+import com.itransition.payment.transaction.entity.PaymentProvider;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.account.dto.AccountDto;
+import com.itransition.payment.transaction.dto.AmountDto;
+import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;

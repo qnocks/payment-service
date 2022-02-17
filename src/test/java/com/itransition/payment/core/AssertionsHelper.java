@@ -1,8 +1,8 @@
 package com.itransition.payment.core;
 
-import com.itransition.payment.core.domain.Transaction;
-import com.itransition.payment.core.dto.AccountDto;
-import com.itransition.payment.core.dto.AuthResponse;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.account.dto.AccountDto;
+import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 

@@ -1,10 +1,8 @@
 package com.itransition.payment.core.repository;
 
-import com.itransition.payment.core.domain.Transaction;
-import com.itransition.payment.core.domain.enums.ReplenishmentStatus;
-import com.itransition.payment.core.domain.enums.TransactionStatus;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.types.TransactionStatus;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

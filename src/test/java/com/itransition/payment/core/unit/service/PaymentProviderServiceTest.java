@@ -1,8 +1,8 @@
 package com.itransition.payment.core.unit.service;
 
 import com.itransition.payment.core.TestDataProvider;
-import com.itransition.payment.core.repository.PaymentProviderRepository;
-import com.itransition.payment.core.service.impl.PaymentProviderServiceImpl;
+import com.itransition.payment.transaction.repository.PaymentProviderRepository;
+import com.itransition.payment.transaction.service.impl.PaymentProviderServiceImpl;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

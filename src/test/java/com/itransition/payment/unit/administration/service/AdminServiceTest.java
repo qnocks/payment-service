@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -26,13 +28,29 @@ class AdminServiceTest {
 
     @Test
     void shouldSearchTransactions() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
-        when(transactionService.getAll()).thenReturn(List.of(stateDto));
+        var content = List.of(
+                TransactionStateDto.builder().id(1L).build(),
+                TransactionStateDto.builder().id(2L).build(),
+                TransactionStateDto.builder().id(3L).build(),
+                TransactionStateDto.builder().id(4L).build());
+        int page = 0;
+        int pageSize = 2;
+        String sort = "id";
+        String order = "ASC";
 
-        var actual = underTest.searchTransactions(0, 0, "", "", "");
+        when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)));
 
-        assertThat(actual.size()).isEqualTo(1);
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(0), stateDto);
+        var actual = underTest.searchTransactions(page, pageSize, sort, order, null);
+
+        assertThat(actual.size()).isEqualTo(pageSize);
+
+//        var stateDto = TestDataProvider.getTransactionStateDto();
+//        when(transactionService.getAll()).thenReturn(List.of(stateDto));
+//
+//        var actual = underTest.searchTransactions(0, 0, "", "", "");
+//
+//        assertThat(actual.size()).isEqualTo(1);
+//        AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(0), stateDto);
     }
 
     @Test

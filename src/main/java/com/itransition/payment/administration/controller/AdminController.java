@@ -19,6 +19,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    // TODO: add 'value' param process when clarify specification
     @GetMapping
     public List<TransactionStateDto> searchTransactions(
             @RequestParam(value = "page", defaultValue = "0") int page,

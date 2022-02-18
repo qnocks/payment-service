@@ -4,6 +4,7 @@ import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.core.exception.custom.AccountAbsenceException;
+import com.itransition.payment.core.exception.custom.ExternalAuthException;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -31,16 +32,13 @@ public class AccountServiceImpl implements AccountService {
                 .uri("account/" + id)
                 .header(HttpHeaders.AUTHORIZATION, authHeader)
                 .retrieve()
-                .onStatus(
-                        HttpStatus::is4xxClientError,
+                .onStatus(HttpStatus::is4xxClientError,
                         response -> Mono.error(getAccountAbsenceException(id))
                 )
                 .bodyToMono(AccountDto.class)
                 .block();
 
         if (accountDto == null) {
-            // TODO: Should be changed to custom exception when implementation of exception handling
-//            throw new AccountAbsenceException(exceptionMessageResolver.getMessage("account.cannot-get", id));
             throw getAccountAbsenceException(id);
         }
 

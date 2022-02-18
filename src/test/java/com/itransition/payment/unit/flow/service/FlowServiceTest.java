@@ -2,6 +2,9 @@ package com.itransition.payment.unit.flow.service;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
+import com.itransition.payment.core.exception.custom.AccountAbsenceException;
+import com.itransition.payment.core.exception.custom.TransactionNotUniqueException;
+import com.itransition.payment.core.exception.custom.TransactionStatusCannotBeChangedException;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
@@ -58,17 +61,14 @@ class FlowServiceTest {
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.createTransaction(stateDto));
+        assertThrows(TransactionNotUniqueException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
     void shouldThrow_when_accountIdDoesntExist() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
-
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.createTransaction(stateDto));
+        assertThrows(AccountAbsenceException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
@@ -80,8 +80,7 @@ class FlowServiceTest {
         when(transactionService.getByExternalIdAndProvider(
                 updateDto.getExternalId(), updateDto.getProvider())).thenReturn(infoDto);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.updateTransaction(updateDto));
+        assertThrows(TransactionStatusCannotBeChangedException.class, () -> underTest.updateTransaction(updateDto));
     }
 
     @Test

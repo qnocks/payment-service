@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,7 +142,6 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
-        // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
                 .orElseThrow(() -> new TransactionNotFoundException(exceptionMessageResolver.getMessage(
                         "transaction.cannot-get-by-external-id-provider", externalId, name)));

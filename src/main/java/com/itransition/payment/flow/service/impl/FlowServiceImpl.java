@@ -33,7 +33,6 @@ public class FlowServiceImpl implements FlowService {
     private void verifyForUnique(String externalId, String providerName) {
         boolean isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
             throw new TransactionNotUniqueException(exceptionMessageResolver.getMessage(
                     "flow.external-id-provider-non-uniqueness", externalId, providerName));
@@ -43,7 +42,6 @@ public class FlowServiceImpl implements FlowService {
     private void verifyAccountExistence(String userId) {
         AccountDto accountDto = accountService.getById(userId);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {
             throw new AccountAbsenceException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
         }
@@ -59,7 +57,6 @@ public class FlowServiceImpl implements FlowService {
         var existingTransaction = transactionService.getByExternalIdAndProvider(externalId, providerName);
         var status = existingTransaction.getStatus();
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
         if (!TransactionStatus.INITIAL.equals(status)) {
             throw new TransactionStatusCannotBeChangedException(exceptionMessageResolver.getMessage(
                     "flow.transaction-status-incorrectness", externalId, providerName, status));

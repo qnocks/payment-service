@@ -1,11 +1,14 @@
 package com.itransition.payment.security.service.impl;
 
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.exception.custom.ExternalAuthException;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +56,11 @@ public class SecurityServiceImpl implements SecurityService {
                         .queryParam("client_id", CLIENT_ID)
                         .build())
                 .retrieve()
+                .onStatus(
+                        HttpStatus::is5xxServerError,
+                        response -> Mono.error(new ExternalAuthException(
+                                exceptionMessageResolver.getMessage("security.auth-error")))
+                )
                 .bodyToMono(AuthResponse.class)
                 .block();
     }

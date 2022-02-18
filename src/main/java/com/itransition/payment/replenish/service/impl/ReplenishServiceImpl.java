@@ -58,7 +58,6 @@ public class ReplenishServiceImpl implements ReplenishService {
     }
 
     private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
-        // TODO: Should be changed to custom exception when implementation of exception handling
         var transaction = transactionRepository.findById(Long.valueOf(replenishDto.getGateId()))
                 .orElseThrow(() -> new TransactionNotFoundException(
                         exceptionMessages.getMessage("transaction.cannot-get-by-id", replenishDto.getGateId())));

@@ -1,7 +1,7 @@
 package com.itransition.payment.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.itransition.payment.core.domain.enums.TransactionStatus;
+import com.itransition.payment.core.types.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

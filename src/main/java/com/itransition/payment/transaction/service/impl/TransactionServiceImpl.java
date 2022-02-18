@@ -101,13 +101,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionStateDto> getAll() {
-        return transactionRepository.findAll().stream()
-                .map(transactionMapper::toAdminDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<TransactionStateDto> getAll(Pageable pageable) {
         return transactionRepository.findAll(pageable)
                 .getContent().stream()

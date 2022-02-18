@@ -21,8 +21,6 @@ public interface TransactionService {
 
     TransactionInfoDto getByExternalIdAndProvider(String externalId, String provider);
 
-    List<TransactionStateDto> getAll();
-
     List<TransactionStateDto> getAll(Pageable pageable);
 
     TransactionReplenishDto getReadyToReplenish();

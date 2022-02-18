@@ -28,29 +28,22 @@ class AdminServiceTest {
 
     @Test
     void shouldSearchTransactions() {
-        var content = List.of(
+        var pagedTransactions = List.of(
                 TransactionStateDto.builder().id(1L).build(),
-                TransactionStateDto.builder().id(2L).build(),
-                TransactionStateDto.builder().id(3L).build(),
-                TransactionStateDto.builder().id(4L).build());
+                TransactionStateDto.builder().id(2L).build());
         int page = 0;
         int pageSize = 2;
         String sort = "id";
         String order = "ASC";
 
-        when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)));
+        when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)))
+                .thenReturn(pagedTransactions);
 
         var actual = underTest.searchTransactions(page, pageSize, sort, order, null);
 
         assertThat(actual.size()).isEqualTo(pageSize);
-
-//        var stateDto = TestDataProvider.getTransactionStateDto();
-//        when(transactionService.getAll()).thenReturn(List.of(stateDto));
-//
-//        var actual = underTest.searchTransactions(0, 0, "", "", "");
-//
-//        assertThat(actual.size()).isEqualTo(1);
-//        AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(0), stateDto);
+        assertThat(actual.get(0).getId()).isEqualTo(1L);
+        assertThat(actual.get(1).getId()).isEqualTo(2L);
     }
 
     @Test

@@ -1,5 +1,8 @@
 package com.itransition.payment.flow.service.impl;
 
+import com.itransition.payment.core.exception.custom.AccountAbsenceException;
+import com.itransition.payment.core.exception.custom.TransactionNotUniqueException;
+import com.itransition.payment.core.exception.custom.TransactionStatusCannotBeChangedException;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
@@ -32,7 +35,7 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (isTransactionExists) {
-            throw new IllegalStateException(exceptionMessageResolver.getMessage(
+            throw new TransactionNotUniqueException(exceptionMessageResolver.getMessage(
                     "flow.external-id-provider-non-uniqueness", externalId, providerName));
         }
     }
@@ -42,7 +45,7 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (accountDto == null) {
-            throw new IllegalStateException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
+            throw new AccountAbsenceException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
         }
     }
 
@@ -58,7 +61,7 @@ public class FlowServiceImpl implements FlowService {
 
         // TODO: Should be changed to custom exception when implementation of exception handling
         if (!TransactionStatus.INITIAL.equals(status)) {
-            throw new IllegalStateException(exceptionMessageResolver.getMessage(
+            throw new TransactionStatusCannotBeChangedException(exceptionMessageResolver.getMessage(
                     "flow.transaction-status-incorrectness", externalId, providerName, status));
         }
     }

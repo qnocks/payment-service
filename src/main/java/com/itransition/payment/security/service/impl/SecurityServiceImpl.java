@@ -1,5 +1,6 @@
 package com.itransition.payment.security.service.impl;
 
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     private AuthResponse currentAuthorization;
     private final WebClient webClient;
+    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
     public String getAuthHeader() {
@@ -49,8 +51,8 @@ public class SecurityServiceImpl implements SecurityService {
                         .queryParam("grant_type", GRANT_TYPE)
                         .queryParam("client_secret", CLIENT_SECRET)
                         .queryParam("client_id", CLIENT_ID)
-                        .build()
-                ).retrieve()
+                        .build())
+                .retrieve()
                 .bodyToMono(AuthResponse.class)
                 .block();
     }

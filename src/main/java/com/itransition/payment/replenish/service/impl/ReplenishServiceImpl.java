@@ -1,6 +1,7 @@
 package com.itransition.payment.replenish.service.impl;
 
 import com.itransition.payment.core.entity.ReplenishError;
+import com.itransition.payment.core.exception.custom.TransactionNotFoundException;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
@@ -59,7 +60,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
         // TODO: Should be changed to custom exception when implementation of exception handling
         var transaction = transactionRepository.findById(Long.valueOf(replenishDto.getGateId()))
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new TransactionNotFoundException(
                         exceptionMessages.getMessage("transaction.cannot-get-by-id", replenishDto.getGateId())));
 
         replenishErrorRepository.save(ReplenishError.builder()

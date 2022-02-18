@@ -1,5 +1,6 @@
 package com.itransition.payment.transaction.service.impl;
 
+import com.itransition.payment.core.exception.custom.TransactionNotFoundException;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.core.types.ReplenishmentStatus;
@@ -142,7 +143,7 @@ public class TransactionServiceImpl implements TransactionService {
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
         // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
-                .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
+                .orElseThrow(() -> new TransactionNotFoundException(exceptionMessageResolver.getMessage(
                         "transaction.cannot-get-by-external-id-provider", externalId, name)));
     }
 }

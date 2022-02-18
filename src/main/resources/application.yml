@@ -1,5 +1,8 @@
 server:
   port: 8081
+  error:
+    include-message: always
+    include-stacktrace: on_param
 
 spring:
   application:
@@ -24,3 +27,6 @@ app:
   replenish:
     threshold: 3
     cron: '*/30 * * * * *'
+
+  exception:
+    trace: true

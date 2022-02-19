@@ -1,12 +1,12 @@
 package com.itransition.payment.flow.controller;
 
-import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.flow.service.FlowService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,25 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/transactions")
 @RequiredArgsConstructor
-@PropertySource("classpath:/messages/swagger/swagger.properties")
+@Tag(name = "Flow Controller", description = "API for management and lifecycle of transactions")
 public class FlowController {
 
     private final FlowService flowService;
 
-    @ApiOperation(value = "${swagger.flow.create-transaction}", response = TransactionInfoDto.class)
+    @Operation(summary = "Update Transaction", description = "Updates transaction according to allowed dataflow")
+    @PutMapping
+    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto updateDto) {
+        return flowService.updateTransaction(updateDto);
+    }
+
+    @Operation(
+            summary = "Create Transaction",
+            description = "Creates transaction with the provided amount in Initial state"
+    )
     @PostMapping
     public TransactionInfoDto createTransaction(
             @RequestBody TransactionStateDto stateDto) {
         return flowService.createTransaction(stateDto);
     }
 
-    @ApiOperation(value = "${swagger.flow.update-transaction}", response = TransactionInfoDto.class)
-    @PutMapping
-    public TransactionInfoDto updateTransaction(@RequestBody TransactionInfoDto updateDto) {
-        return flowService.updateTransaction(updateDto);
-    }
-
-    @ApiOperation(value = "${swagger.flow.search-transactions}", response = TransactionInfoDto.class)
+    @Operation(summary = "Search transactions", description = "Retrieves transactions with provided external id")
     @GetMapping(params = {"external_id", "provider"})
     public List<TransactionInfoDto> searchTransaction(
             @RequestParam("external_id") String externalId,

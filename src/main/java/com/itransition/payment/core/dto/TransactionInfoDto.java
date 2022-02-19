@@ -16,10 +16,7 @@ import lombok.experimental.SuperBuilder;
 @JsonPropertyOrder({"id", "externalId", "status", "provider", "additionalData"})
 public class TransactionInfoDto extends TransactionBaseDto {
 
-//    @ApiModelProperty(position = 0)
     private Long id;
-
-//    @ApiModelProperty(notes = "transaction status", position = 2)
     private TransactionStatus status;
 }
 

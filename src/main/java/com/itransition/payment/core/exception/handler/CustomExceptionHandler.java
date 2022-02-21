@@ -1,10 +1,8 @@
 package com.itransition.payment.core.exception.handler;
 
-import com.itransition.payment.core.exception.custom.AccountAbsenceException;
+import com.itransition.payment.core.exception.custom.AccountException;
 import com.itransition.payment.core.exception.custom.ExternalAuthException;
-import com.itransition.payment.core.exception.custom.TransactionNotFoundException;
-import com.itransition.payment.core.exception.custom.TransactionNotUniqueException;
-import com.itransition.payment.core.exception.custom.TransactionStatusCannotBeChangedException;
+import com.itransition.payment.core.exception.custom.TransactionException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
@@ -24,28 +22,15 @@ public class CustomExceptionHandler {
     @Value("${app.exception.trace}")
     private boolean printStackTrace;
 
-    @ExceptionHandler(AccountAbsenceException.class)
+    @ExceptionHandler(AccountException.class)
     public ResponseEntity<ErrorResponse> handleAccountAbsenceException(
-            AccountAbsenceException e, WebRequest request) {
+            AccountException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(TransactionNotUniqueException.class)
-    public ResponseEntity<ErrorResponse> handleTransactionNotUniqueException(
-            TransactionNotUniqueException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(),  HttpStatus.BAD_REQUEST, request);
-    }
-
-    @ExceptionHandler(TransactionStatusCannotBeChangedException.class)
-    public ResponseEntity<ErrorResponse> handleTransactionStatusCannotBeChangedException(
-            TransactionStatusCannotBeChangedException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
-    }
-
-    @ExceptionHandler(TransactionNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTransactionNotFoundException(
-            TransactionNotFoundException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(), HttpStatus.NOT_FOUND, request);
+    @ExceptionHandler(TransactionException.class)
+    public ResponseEntity<ErrorResponse> handleTransactionException(TransactionException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
     @ExceptionHandler(ExternalAuthException.class)

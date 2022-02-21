@@ -1,17 +1,18 @@
 package com.itransition.payment.replenish.service.impl;
 
-import com.itransition.payment.core.entity.ReplenishError;
-import com.itransition.payment.core.exception.custom.TransactionNotFoundException;
-import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
+import com.itransition.payment.core.entity.ReplenishError;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
+import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
+import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
 import com.itransition.payment.replenish.service.ReplenishService;
 import com.itransition.payment.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     private final TransactionRepository transactionRepository;
     private final NotifyService notifyService;
     private final ReplenishAttemptCalc attemptCalc;
-    private final ExceptionMessageResolver exceptionMessages;
+    private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Scheduled(cron = "${app.replenish.cron}")
     @Override
@@ -59,8 +60,11 @@ public class ReplenishServiceImpl implements ReplenishService {
 
     private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
         var transaction = transactionRepository.findById(Long.valueOf(replenishDto.getGateId()))
-                .orElseThrow(() -> new TransactionNotFoundException(
-                        exceptionMessages.getMessage("transaction.cannot-get-by-id", replenishDto.getGateId())));
+                .orElseThrow(() -> TransactionException.builder()
+                        .message(exceptionMessageResolver.getMessage(
+                                "transaction.cannot-get-by-id", replenishDto.getGateId()))
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build());
 
         replenishErrorRepository.save(ReplenishError.builder()
                 .error(error)

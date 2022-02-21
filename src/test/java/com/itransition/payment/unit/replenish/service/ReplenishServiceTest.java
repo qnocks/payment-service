@@ -46,7 +46,7 @@ class ReplenishServiceTest {
     private ReplenishAttemptCalc attemptCalc;
 
     @Mock
-    private ExceptionMessageResolver messageResolver;
+    private ExceptionMessageResolver exceptionMessageResolver;
 
     @Test
     void shouldUpdateReplenishStatusToSuccess_when_notifySuccess() {

@@ -7,7 +7,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class ExternalAuthException extends RuntimeException {
+public class AccountException extends RuntimeException {
 
     private String message;
 }
+

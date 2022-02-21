@@ -58,9 +58,9 @@ public class SecurityServiceImpl implements SecurityService {
                 .retrieve()
                 .onStatus(
                         HttpStatus::is5xxServerError,
-                        response -> Mono.error(new ExternalAuthException(
-                                exceptionMessageResolver.getMessage("security.auth-error")))
-                )
+                        response -> Mono.error(ExternalAuthException.builder()
+                                .message(exceptionMessageResolver.getMessage("security.auth-error"))
+                                .build()))
                 .bodyToMono(AuthResponse.class)
                 .block();
     }

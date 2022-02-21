@@ -3,8 +3,7 @@ package com.itransition.payment.account.service.impl;
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.exception.custom.AccountAbsenceException;
-import com.itransition.payment.core.exception.custom.ExternalAuthException;
+import com.itransition.payment.core.exception.custom.AccountException;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +44,10 @@ public class AccountServiceImpl implements AccountService {
         return accountDto;
     }
 
-    private AccountAbsenceException getAccountAbsenceException(String id) {
-        return new AccountAbsenceException(exceptionMessageResolver.getMessage("account.cannot-get", id));
+    private AccountException getAccountAbsenceException(String id) {
+        return AccountException.builder()
+                .message(exceptionMessageResolver.getMessage("account.cannot-get", id))
+                .build();
+//        return new AccountException(exceptionMessageResolver.getMessage("account.cannot-get", id));
     }
 }

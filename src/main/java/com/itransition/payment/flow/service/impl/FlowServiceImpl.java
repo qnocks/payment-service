@@ -1,18 +1,18 @@
 package com.itransition.payment.flow.service.impl;
 
-import com.itransition.payment.core.exception.custom.AccountAbsenceException;
-import com.itransition.payment.core.exception.custom.TransactionNotUniqueException;
-import com.itransition.payment.core.exception.custom.TransactionStatusCannotBeChangedException;
-import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.account.dto.AccountDto;
-import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import com.itransition.payment.account.service.AccountService;
+import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.exception.custom.AccountException;
+import com.itransition.payment.core.exception.custom.TransactionException;
+import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.flow.service.FlowService;
 import com.itransition.payment.transaction.service.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,8 +34,11 @@ public class FlowServiceImpl implements FlowService {
         boolean isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
         if (isTransactionExists) {
-            throw new TransactionNotUniqueException(exceptionMessageResolver.getMessage(
-                    "flow.external-id-provider-non-uniqueness", externalId, providerName));
+            throw TransactionException.builder()
+                    .message(exceptionMessageResolver.getMessage(
+                            "flow.external-id-provider-non-uniqueness", externalId, providerName))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
     }
 
@@ -43,7 +46,10 @@ public class FlowServiceImpl implements FlowService {
         AccountDto accountDto = accountService.getById(userId);
 
         if (accountDto == null) {
-            throw new AccountAbsenceException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
+            throw AccountException.builder()
+                    .message(exceptionMessageResolver.getMessage("flow.account-absence", userId))
+                    .build();
+//            throw new AccountException(exceptionMessageResolver.getMessage("flow.account-absence", userId));
         }
     }
 
@@ -58,8 +64,11 @@ public class FlowServiceImpl implements FlowService {
         var status = existingTransaction.getStatus();
 
         if (!TransactionStatus.INITIAL.equals(status)) {
-            throw new TransactionStatusCannotBeChangedException(exceptionMessageResolver.getMessage(
-                    "flow.transaction-status-incorrectness", externalId, providerName, status));
+            throw TransactionException.builder()
+                    .message(exceptionMessageResolver.getMessage(
+                            "flow.transaction-status-incorrectness", externalId, providerName, status))
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
     }
 

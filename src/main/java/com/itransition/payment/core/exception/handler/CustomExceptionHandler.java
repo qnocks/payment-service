@@ -1,7 +1,6 @@
 package com.itransition.payment.core.exception.handler;
 
-import com.itransition.payment.core.exception.custom.AccountException;
-import com.itransition.payment.core.exception.custom.ExternalAuthException;
+import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -22,21 +21,14 @@ public class CustomExceptionHandler {
     @Value("${app.exception.trace}")
     private boolean printStackTrace;
 
-    @ExceptionHandler(AccountException.class)
-    public ResponseEntity<ErrorResponse> handleAccountAbsenceException(
-            AccountException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
-    }
-
     @ExceptionHandler(TransactionException.class)
     public ResponseEntity<ErrorResponse> handleTransactionException(TransactionException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
-    @ExceptionHandler(ExternalAuthException.class)
-    public ResponseEntity<ErrorResponse> handleExternalAuthException(
-            ExternalAuthException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    @ExceptionHandler(ExternalException.class)
+    public ResponseEntity<ErrorResponse> handleExternalAuthException(ExternalException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
     @ExceptionHandler(Exception.class)

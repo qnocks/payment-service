@@ -3,8 +3,7 @@ package com.itransition.payment.transaction.service.impl;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.exception.custom.TransactionException;
+import com.itransition.payment.core.exception.ExceptionEnricher;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
@@ -32,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final PaymentProviderService paymentProviderService;
     private final TransactionMapper transactionMapper;
-    private final ExceptionMessageResolver exceptionMessageResolver;
+    private final ExceptionEnricher exceptionEnricher;
 
     @Transactional
     @Override
@@ -140,13 +139,11 @@ public class TransactionServiceImpl implements TransactionService {
         processUpdate(transaction);
     }
 
-
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
-                .orElseThrow(() -> TransactionException.builder()
-                        .message(exceptionMessageResolver.getMessage(
-                                "transaction.cannot-get-by-external-id-provider", externalId, name))
-                        .status(HttpStatus.NOT_FOUND)
-                        .build());
+                .orElseThrow(() -> exceptionEnricher.buildTransactionException(
+                        HttpStatus.NOT_FOUND,
+                        "transaction.cannot-get-by-external-id-provider",
+                        externalId, name));
     }
 }

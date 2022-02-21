@@ -1,6 +1,5 @@
 package com.itransition.payment.transaction.entity;
 
-import com.itransition.payment.transaction.entity.Transaction;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

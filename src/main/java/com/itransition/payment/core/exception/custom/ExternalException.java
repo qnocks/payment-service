@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class TransactionException extends RuntimeException {
+public class ExternalException extends RuntimeException {
 
     @Builder.Default
-    private String message = "Error occurred while transaction processing";
+    private String message = "Error occurred while external communication";
 
     @Builder.Default
-    private HttpStatus status = HttpStatus.BAD_REQUEST;
+    private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 }

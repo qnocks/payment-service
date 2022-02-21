@@ -6,7 +6,7 @@ import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.exception.custom.AccountException;
+import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.flow.service.impl.FlowServiceImpl;
@@ -67,7 +67,7 @@ class FlowServiceTest {
     void shouldThrow_when_accountIdDoesntExist() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
-        assertThrows(AccountException.class, () -> underTest.createTransaction(stateDto));
+        assertThrows(ExternalException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test

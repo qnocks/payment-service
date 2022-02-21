@@ -2,8 +2,8 @@ package com.itransition.payment.account.service.impl;
 
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.core.exception.custom.AccountException;
+import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +18,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final WebClient webClient;
     private final SecurityService securityService;
-    private final ExceptionMessageResolver exceptionMessageResolver;
+    private final ExceptionEnricher exceptionEnricher;
 
     @Override
     public AccountDto getById(String id) {
@@ -44,9 +44,7 @@ public class AccountServiceImpl implements AccountService {
         return accountDto;
     }
 
-    private AccountException getAccountAbsenceException(String id) {
-        return AccountException.builder()
-                .message(exceptionMessageResolver.getMessage("account.cannot-get", id))
-                .build();
+    private ExternalException getAccountAbsenceException(String id) {
+        return exceptionEnricher.buildExternalException(HttpStatus.BAD_REQUEST, "account.cannot-get", id);
     }
 }

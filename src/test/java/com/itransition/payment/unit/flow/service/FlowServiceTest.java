@@ -2,13 +2,15 @@ package com.itransition.payment.unit.flow.service;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
-import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.account.dto.AccountDto;
+import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.account.service.AccountService;
-import com.itransition.payment.transaction.service.TransactionService;
+import com.itransition.payment.core.exception.custom.ExternalException;
+import com.itransition.payment.core.exception.custom.TransactionException;
+import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.flow.service.impl.FlowServiceImpl;
+import com.itransition.payment.transaction.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,17 +60,14 @@ class FlowServiceTest {
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.createTransaction(stateDto));
+        assertThrows(TransactionException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
     void shouldThrow_when_accountIdDoesntExist() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
-
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.createTransaction(stateDto));
+        assertThrows(ExternalException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
@@ -80,8 +79,7 @@ class FlowServiceTest {
         when(transactionService.getByExternalIdAndProvider(
                 updateDto.getExternalId(), updateDto.getProvider())).thenReturn(infoDto);
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalStateException.class, () -> underTest.updateTransaction(updateDto));
+        assertThrows(TransactionException.class, () -> underTest.updateTransaction(updateDto));
     }
 
     @Test

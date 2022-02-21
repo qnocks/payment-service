@@ -1,6 +1,6 @@
 package com.itransition.payment.security.service.impl;
 
-import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     private AuthResponse currentAuthorization;
     private final WebClient webClient;
-    private final ExceptionEnricher exceptionEnricher;
+    private final ExceptionHelper exceptionHelper;
 
     @Override
     public String getAuthHeader() {
@@ -57,7 +57,7 @@ public class SecurityServiceImpl implements SecurityService {
                 .retrieve()
                 .onStatus(
                         HttpStatus::is5xxServerError,
-                        response -> Mono.error(exceptionEnricher.buildExternalException("security.auth-error")))
+                        response -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
                 .bodyToMono(AuthResponse.class)
                 .block();
     }

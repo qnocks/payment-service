@@ -2,7 +2,7 @@ package com.itransition.payment.replenish.service.impl;
 
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.entity.ReplenishError;
-import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
@@ -24,7 +24,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     private final TransactionRepository transactionRepository;
     private final NotifyService notifyService;
     private final ReplenishAttemptCalc attemptCalc;
-    private final ExceptionEnricher exceptionEnricher;
+    private final ExceptionHelper exceptionHelper;
 
     @Scheduled(cron = "${app.replenish.cron}")
     @Override
@@ -59,7 +59,7 @@ public class ReplenishServiceImpl implements ReplenishService {
 
     private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
         var transaction = transactionRepository.findById(Long.valueOf(replenishDto.getGateId()))
-                .orElseThrow(() -> exceptionEnricher.buildTransactionException(
+                .orElseThrow(() -> exceptionHelper.buildTransactionException(
                         HttpStatus.INTERNAL_SERVER_ERROR, "transaction.cannot-get-by-id"));
 
         replenishErrorRepository.save(ReplenishError.builder()

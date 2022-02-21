@@ -2,7 +2,7 @@ package com.itransition.payment.account.service.impl;
 
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
-import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final WebClient webClient;
     private final SecurityService securityService;
-    private final ExceptionEnricher exceptionEnricher;
+    private final ExceptionHelper exceptionHelper;
 
     @Override
     public AccountDto getById(String id) {
@@ -45,6 +45,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private ExternalException getAccountAbsenceException(String id) {
-        return exceptionEnricher.buildExternalException(HttpStatus.BAD_REQUEST, "account.cannot-get", id);
+        return exceptionHelper.buildExternalException(HttpStatus.BAD_REQUEST, "account.cannot-get", id);
     }
 }

@@ -4,7 +4,7 @@ import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.flow.service.FlowService;
 import com.itransition.payment.transaction.service.TransactionService;
@@ -19,7 +19,7 @@ public class FlowServiceImpl implements FlowService {
 
     private final TransactionService transactionService;
     private final AccountService accountService;
-    private final ExceptionEnricher exceptionEnricher;
+    private final ExceptionHelper exceptionHelper;
 
     @Override
     public TransactionInfoDto createTransaction(TransactionStateDto stateDto) {
@@ -32,7 +32,7 @@ public class FlowServiceImpl implements FlowService {
         boolean isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
         if (isTransactionExists) {
-            throw exceptionEnricher.buildTransactionException(
+            throw exceptionHelper.buildTransactionException(
                     "flow.external-id-provider-non-uniqueness", externalId, providerName);
         }
     }
@@ -41,7 +41,7 @@ public class FlowServiceImpl implements FlowService {
         AccountDto accountDto = accountService.getById(userId);
 
         if (accountDto == null) {
-            throw exceptionEnricher.buildExternalException(HttpStatus.BAD_REQUEST, "flow.account-absence", userId);
+            throw exceptionHelper.buildExternalException(HttpStatus.BAD_REQUEST, "flow.account-absence", userId);
         }
     }
 
@@ -56,7 +56,7 @@ public class FlowServiceImpl implements FlowService {
         var status = existingTransaction.getStatus();
 
         if (!TransactionStatus.INITIAL.equals(status)) {
-            throw exceptionEnricher.buildTransactionException(
+            throw exceptionHelper.buildTransactionException(
                     "flow.transaction-status-incorrectness", providerName, status);
         }
     }

@@ -3,7 +3,7 @@ package com.itransition.payment.transaction.service.impl;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.exception.ExceptionEnricher;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
@@ -31,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final PaymentProviderService paymentProviderService;
     private final TransactionMapper transactionMapper;
-    private final ExceptionEnricher exceptionEnricher;
+    private final ExceptionHelper exceptionHelper;
 
     @Transactional
     @Override
@@ -141,7 +141,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
-                .orElseThrow(() -> exceptionEnricher.buildTransactionException(
+                .orElseThrow(() -> exceptionHelper.buildTransactionException(
                         HttpStatus.NOT_FOUND,
                         "transaction.cannot-get-by-external-id-provider",
                         externalId, name));

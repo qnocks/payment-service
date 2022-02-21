@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ExceptionEnricher {
+public class ExceptionHelper {
 
     private final ExceptionMessageResolver exceptionMessageResolver;
 

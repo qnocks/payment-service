@@ -1,5 +1,6 @@
 package com.itransition.payment;
 
+import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.security.dto.AuthResponse;
@@ -26,6 +27,17 @@ public final class AssertionsHelper {
         assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
         assertThat(actual.getCommissionAmount()).isEqualTo(expected.getCommissionAmount());
         assertThat(actual.getAdditionalData()).isEqualTo(expected.getAdditionalData());
+    }
+
+    public static void verifyFieldsEqualityActualExpected(
+            TransactionReplenishDto actual, TransactionReplenishDto expected) {
+        assertThat(actual.getProvider()).isEqualTo(expected.getProvider());
+        assertThat(actual.getOuterId()).isEqualTo(expected.getOuterId());
+        assertThat(actual.getGateId()).isEqualTo(expected.getGateId());
+        assertThat(actual.getOuterAt()).isEqualTo(expected.getOuterAt());
+        assertThat(actual.getAccount()).isEqualTo(expected.getAccount());
+        assertThat(actual.getAmount()).isEqualTo(expected.getAmount());
+        assertThat(actual.getCommissionAmount()).isEqualTo(expected.getCommissionAmount());
     }
 
     public static void verifyFieldsEqualityActualExpected(Transaction actual, Transaction expected) {

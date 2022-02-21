@@ -11,3 +11,4 @@ spring:
 test:
   external-id: test
   provider: test
+  threshold: 3

@@ -43,7 +43,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     private AuthResponse processAuthorization() {
-        return webClient.post()
+        AuthResponse response = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auth/token")
                         .queryParam("grant_type", GRANT_TYPE)
@@ -53,5 +53,11 @@ public class SecurityServiceImpl implements SecurityService {
                 ).retrieve()
                 .bodyToMono(AuthResponse.class)
                 .block();
+
+        if (response == null) {
+            throw new IllegalStateException();
+        }
+
+        return response;
     }
 }

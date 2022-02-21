@@ -2,6 +2,7 @@ package com.itransition.payment.unit.transaction.mapper;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.dto.AmountDto;
@@ -31,6 +32,24 @@ class TransactionMapperTest {
                 .build();
 
         var actual = underTest.toDto(transaction);
+
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
+    void shouldMapTransactionToReplenishDto() {
+        var transaction = TestDataProvider.getTransaction();
+        var expected = TransactionReplenishDto.builder()
+                .provider(transaction.getProvider().getName())
+                .outerId(transaction.getExternalId())
+                .gateId(String.valueOf(transaction.getId()))
+                .outerAt(transaction.getExternalDate())
+                .account(Integer.valueOf(transaction.getUserId()))
+                .amount(transaction.getAmount())
+                .commissionAmount(transaction.getCommissionAmount())
+                .build();
+
+        var actual = underTest.toReplenishDto(transaction);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
@@ -91,6 +110,19 @@ class TransactionMapperTest {
                 .build();
 
         var actual = underTest.toEntity(stateDto);
+
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
+    void shouldMapTransactionReplenishDtoToTransaction() {
+        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        var expected = Transaction.builder()
+                .externalId(replenishDto.getOuterId())
+                .provider(PaymentProvider.builder().name(replenishDto.getProvider()).build())
+                .build();
+
+        var actual = underTest.toEntity(replenishDto);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }

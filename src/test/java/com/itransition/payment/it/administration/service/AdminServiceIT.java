@@ -40,7 +40,8 @@ class AdminServiceIT extends AbstractIntegrationTest {
                 .findByExternalIdAndProviderName(externalId, provider).get();
 
         // TODO: Should be added real pagination params when there will be pagination feature
-        var actual = underTest.searchTransactions(0, 0, "", "", "");
+        var actual = underTest.searchTransactions(
+                0, 1, "externalId", "ASC", null);
 
         assertThat(actual.size()).isEqualTo(1);
         assertThat(actual.get(0).getId()).isEqualTo(existingTransaction.getId());

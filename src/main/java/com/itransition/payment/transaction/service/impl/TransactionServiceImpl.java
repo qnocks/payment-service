@@ -1,24 +1,25 @@
 package com.itransition.payment.transaction.service.impl;
 
-import com.itransition.payment.transaction.entity.PaymentProvider;
-import com.itransition.payment.transaction.entity.Transaction;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.transaction.mapper.TransactionMapper;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.util.BeansUtils;
+import com.itransition.payment.transaction.entity.PaymentProvider;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.transaction.mapper.TransactionMapper;
 import com.itransition.payment.transaction.service.PaymentProviderService;
 import com.itransition.payment.transaction.service.TransactionService;
-import com.itransition.payment.core.util.BeansUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,8 +101,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionStateDto> getAll() {
-        return transactionRepository.findAll().stream()
+    public List<TransactionStateDto> getAll(Pageable pageable) {
+        return transactionRepository.findAll(pageable)
+                .getContent().stream()
                 .map(transactionMapper::toAdminDto)
                 .collect(Collectors.toList());
     }

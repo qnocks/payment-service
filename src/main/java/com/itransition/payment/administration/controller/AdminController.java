@@ -1,5 +1,6 @@
 package com.itransition.payment.administration.controller;
 
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.administration.service.AdminService;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @Operation(summary = "Search transactions", description = "Search for transactions based on provided parameters")
+    // TODO: add 'value' param process when clarify specification
     @GetMapping
     public List<TransactionStateDto> searchTransactions(
             @RequestParam(value = "page", defaultValue = "0") int page,

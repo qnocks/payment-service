@@ -1,10 +1,11 @@
 package com.itransition.payment.transaction.service;
 
-import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface TransactionService {
 
@@ -20,7 +21,7 @@ public interface TransactionService {
 
     TransactionInfoDto getByExternalIdAndProvider(String externalId, String provider);
 
-    List<TransactionStateDto> getAll();
+    List<TransactionStateDto> getAll(Pageable pageable);
 
     TransactionReplenishDto getReadyToReplenish();
 

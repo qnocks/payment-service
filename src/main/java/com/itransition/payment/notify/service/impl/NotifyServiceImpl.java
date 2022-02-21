@@ -1,6 +1,5 @@
 package com.itransition.payment.notify.service.impl;
 
-import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.security.service.SecurityService;
@@ -20,14 +19,8 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Override
     public Mono<ResponseEntity<Void>> sendTransaction(TransactionReplenishDto replenishDto) {
-        String authHeader = getAuthHeader();
+        String authHeader = securityService.getAuthHeader();
         return callExternalTransaction(authHeader, replenishDto);
-    }
-
-    // TODO: Should be moved to SecurityService in next refactoring Pull Request
-    private String getAuthHeader() {
-        AuthResponse authResponse = securityService.authorize();
-        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 
     private Mono<ResponseEntity<Void>> callExternalTransaction(String authHeader, TransactionReplenishDto replenishDto) {

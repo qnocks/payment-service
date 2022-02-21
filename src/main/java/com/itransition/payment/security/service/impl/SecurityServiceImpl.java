@@ -19,7 +19,12 @@ public class SecurityServiceImpl implements SecurityService {
     private final WebClient webClient;
 
     @Override
-    public AuthResponse authorize() {
+    public String getAuthHeader() {
+        AuthResponse authResponse = authorize();
+        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
+    }
+
+    private AuthResponse authorize() {
         if (isTokenExpired()) {
             currentAuthorization = processAuthorization();
             return currentAuthorization;

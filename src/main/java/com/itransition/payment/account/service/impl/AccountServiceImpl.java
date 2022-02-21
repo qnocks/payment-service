@@ -48,6 +48,5 @@ public class AccountServiceImpl implements AccountService {
         return AccountException.builder()
                 .message(exceptionMessageResolver.getMessage("account.cannot-get", id))
                 .build();
-//        return new AccountException(exceptionMessageResolver.getMessage("account.cannot-get", id));
     }
 }

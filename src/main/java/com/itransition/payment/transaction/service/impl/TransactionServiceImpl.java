@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -101,8 +102,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionStateDto> getAll() {
-        return transactionRepository.findAll().stream()
+    public List<TransactionStateDto> getAll(Pageable pageable) {
+        return transactionRepository.findAll(pageable)
+                .getContent().stream()
                 .map(transactionMapper::toAdminDto)
                 .collect(Collectors.toList());
     }

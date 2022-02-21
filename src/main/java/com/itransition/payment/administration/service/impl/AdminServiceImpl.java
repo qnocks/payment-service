@@ -5,6 +5,8 @@ import com.itransition.payment.administration.service.AdminService;
 import com.itransition.payment.transaction.service.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +18,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<TransactionStateDto> searchTransactions(
             int page, int pageSize, String sort, String order, String value) {
-
-        // TODO: Should be added pagination and sorting when main flow of payment service is over
-        return transactionService.getAll();
+        return transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort));
     }
 
     @Override

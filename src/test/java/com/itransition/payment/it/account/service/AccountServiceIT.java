@@ -60,7 +60,7 @@ class AccountServiceIT extends AbstractIntegrationTest {
         var authResponse = TestDataProvider.getAuthResponse();
         when(securityService.getAuthHeader())
                 .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
-      
+
         var actual = underTest.getById(ACCOUNT_ID);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }

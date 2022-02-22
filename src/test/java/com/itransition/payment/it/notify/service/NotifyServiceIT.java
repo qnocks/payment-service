@@ -27,14 +27,13 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    private final int PORT = 7000;
-    private final WireMockServer server = new WireMockServer(PORT);
+    private final int port = 7000;
+    private final WireMockServer server = new WireMockServer(port);
 
     @BeforeAll
     void setupServer() {
         server.start();
-        WireMock.configureFor("localhost", PORT);
-
+        WireMock.configureFor("localhost", port);
     }
 
     @AfterAll
@@ -45,7 +44,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldReturnSuccessStatus_when_ApiCallSuccess() {
+    void shouldReturnSuccessStatusWhenApiCallSuccess() {
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(200)));
@@ -62,7 +61,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     }
     
     @Test
-    void shouldReturnInternalServerError_when_ApiCallFailed() {
+    void shouldReturnInternalServerErrorWhenApiCallFailed() {
         var errorMessage = "test";
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()

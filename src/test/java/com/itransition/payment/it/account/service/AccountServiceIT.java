@@ -32,16 +32,16 @@ class AccountServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    private final int PORT = 7000;
-    private final WireMockServer server = new WireMockServer(PORT);
+    private final int port = 7000;
+    private final WireMockServer server = new WireMockServer(port);
     private final AccountDto expected = TestDataProvider.getAccountDto();
-    private final String ACCOUNT_ID = "1";
+    private final String accountId = "1";
 
     @BeforeAll
     void setupServer() throws JsonProcessingException {
         server.start();
-        WireMock.configureFor("localhost", PORT);
-        WireMock.stubFor(WireMock.post("/account/" + ACCOUNT_ID).willReturn(
+        WireMock.configureFor("localhost", port);
+        WireMock.stubFor(WireMock.post("/account/" + accountId).willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
                         .withBody(mapper.writeValueAsString(expected))
                         .withStatus(200)
@@ -61,7 +61,7 @@ class AccountServiceIT extends AbstractIntegrationTest {
         when(securityService.getAuthHeader())
                 .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
 
-        var actual = underTest.getById(ACCOUNT_ID);
+        var actual = underTest.getById(accountId);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 }

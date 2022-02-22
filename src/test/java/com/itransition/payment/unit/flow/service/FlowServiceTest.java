@@ -5,7 +5,7 @@ import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.account.service.AccountService;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.types.TransactionStatus;
@@ -16,8 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,7 +37,7 @@ class FlowServiceTest {
     private AccountService accountService;
 
     @Mock
-    private ExceptionMessageResolver exceptionMessageResolver;
+    private ExceptionHelper exceptionHelper;
 
     @Test
     void shouldCreateTransaction() {
@@ -55,29 +56,40 @@ class FlowServiceTest {
     }
 
     @Test
-    void shouldThrow_when_externalIdIsNotUnique() {
+    void shouldThrowWhenExternalIdIsNotUnique() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
+        when(exceptionHelper.buildTransactionException(
+                "flow.external-id-provider-non-uniqueness",
+                stateDto.getExternalId(), stateDto.getProvider())).thenThrow(TransactionException.builder().build());
 
         assertThrows(TransactionException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
-    void shouldThrow_when_accountIdDoesntExist() {
+    void shouldThrowWhenAccountIdDoesntExist() {
         var stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
+        when(exceptionHelper.buildExternalException(
+                HttpStatus.BAD_REQUEST,
+                "flow.account-absence",
+                stateDto.getUser())).thenThrow(ExternalException.builder().build());
+
         assertThrows(ExternalException.class, () -> underTest.createTransaction(stateDto));
     }
 
     @Test
-    void shouldThrow_when_transactionStatusCannotBeChanged() {
+    void shouldThrowWhenTransactionStatusCannotBeChanged() {
         var updateDto = TestDataProvider.getTransactionInfoDto();
         var infoDto = TestDataProvider.getTransactionInfoDto();
         infoDto.setStatus(TransactionStatus.COMPLETED);
 
         when(transactionService.getByExternalIdAndProvider(
                 updateDto.getExternalId(), updateDto.getProvider())).thenReturn(infoDto);
+        when(exceptionHelper.buildTransactionException(
+                "flow.transaction-status-incorrectness",
+                infoDto.getProvider(), infoDto.getStatus())).thenThrow(TransactionException.builder().build());
 
         assertThrows(TransactionException.class, () -> underTest.updateTransaction(updateDto));
     }
@@ -112,7 +124,7 @@ class FlowServiceTest {
 
         var actual = underTest.searchTransactions(infoDto.getExternalId(), infoDto.getProvider());
 
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
         assertThat(actual.get(0)).isEqualTo(infoDto);
     }
 }

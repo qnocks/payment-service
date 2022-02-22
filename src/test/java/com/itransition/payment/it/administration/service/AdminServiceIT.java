@@ -1,12 +1,12 @@
 package com.itransition.payment.it.administration.service;
 
 import com.itransition.payment.AssertionsHelper;
-import com.itransition.payment.core.types.TransactionStatus;
-import com.itransition.payment.transaction.dto.AmountDto;
-import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.it.AbstractIntegrationTest;
-import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.administration.service.AdminService;
+import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.it.AbstractIntegrationTest;
+import com.itransition.payment.transaction.dto.AmountDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +43,7 @@ class AdminServiceIT extends AbstractIntegrationTest {
         var actual = underTest.searchTransactions(
                 0, 1, "externalId", "ASC", null);
 
-        assertThat(actual.size()).isEqualTo(1);
+        assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getId()).isEqualTo(existingTransaction.getId());
     }
 

@@ -14,9 +14,9 @@ import reactor.core.publisher.Mono;
 public class SecurityServiceImpl implements SecurityService {
 
     // TODO: Should be changed to config external file when implement real auth flow in Core Service
-    private final String GRANT_TYPE = "";
-    private final String CLIENT_SECRET = "";
-    private final String CLIENT_ID = "";
+    private final String grantType = "";
+    private final String clientSecret = "";
+    private final String clientId = "";
 
     private AuthResponse currentAuthorization;
     private final WebClient webClient;
@@ -50,14 +50,14 @@ public class SecurityServiceImpl implements SecurityService {
         AuthResponse response = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auth/token")
-                        .queryParam("grant_type", GRANT_TYPE)
-                        .queryParam("client_secret", CLIENT_SECRET)
-                        .queryParam("client_id", CLIENT_ID)
+                        .queryParam("grant_type", grantType)
+                        .queryParam("client_secret", clientSecret)
+                        .queryParam("client_id", clientId)
                         .build())
                 .retrieve()
                 .onStatus(
                         HttpStatus::is5xxServerError,
-                        response -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
+                        clientResponse -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
                 .bodyToMono(AuthResponse.class)
                 .block();
 

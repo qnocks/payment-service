@@ -49,7 +49,7 @@ class ReplenishServiceTest {
     private ExceptionMessageResolver exceptionMessageResolver;
 
     @Test
-    void shouldUpdateReplenishStatusToSuccess_when_notifySuccess() {
+    void shouldUpdateReplenishStatusToSuccessWhenNotifySuccess() {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
 
         when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
@@ -62,7 +62,7 @@ class ReplenishServiceTest {
     }
 
     @Test
-    void shouldSaveReplenishErrorAndSetReplenishAfter_when_notifyFailed() {
+    void shouldSaveReplenishErrorAndSetReplenishAfterWhenNotifyFailed() {
         var exceptionMessage = "test";
         var replenishAfter = 10.0;
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
@@ -87,7 +87,7 @@ class ReplenishServiceTest {
     }
 
     @Test
-    void shouldUpdateReplenishStatusToFailed_when_notifyFailedAndThresholdLimited() {
+    void shouldUpdateReplenishStatusToFailedWhenNotifyFailedAndThresholdLimited() {
         var exceptionMessage = "test";
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
 

@@ -47,8 +47,7 @@ public class ReplenishServiceImpl implements ReplenishService {
         if (canTryToReplenish) {
             saveReplenishError(error, replenishDto);
             setReplenishAfter(replenishDto, attemptCalc.calcNextAttemptTime());
-        }
-        else {
+        } else {
             updateReplenishStatus(replenishDto, ReplenishmentStatus.FAILED);
         }
     }

@@ -26,14 +26,14 @@ class SecurityServiceIT extends AbstractIntegrationTest {
     @Autowired
     private ObjectMapper mapper;
 
-    private final int PORT = 7001;
-    private final WireMockServer server = new WireMockServer(PORT);
+    private final int port = 7000;
+    private final WireMockServer server = new WireMockServer(port);
     private final AuthResponse expected = TestDataProvider.getAuthResponse();
 
     @BeforeAll
     void setupServer() throws JsonProcessingException {
         server.start();
-        WireMock.configureFor("localhost", PORT);
+        WireMock.configureFor("localhost", port);
         WireMock.stubFor(WireMock.post("auth/token/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
                         .withBody(mapper.writeValueAsString(expected))

@@ -31,6 +31,7 @@ class AdminServiceTest {
         var pagedTransactions = List.of(
                 TransactionStateDto.builder().id(1L).build(),
                 TransactionStateDto.builder().id(2L).build());
+
         int page = 0;
         int pageSize = 2;
         String sort = "id";
@@ -41,7 +42,7 @@ class AdminServiceTest {
 
         var actual = underTest.searchTransactions(page, pageSize, sort, order, null);
 
-        assertThat(actual.size()).isEqualTo(pageSize);
+        assertThat(actual).hasSize(pageSize);
         assertThat(actual.get(0).getId()).isEqualTo(1L);
         assertThat(actual.get(1).getId()).isEqualTo(2L);
     }

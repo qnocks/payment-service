@@ -38,7 +38,7 @@ class PaymentProviderServiceTest {
     }
 
     @Test
-    void shouldGetNull_when_PaymentProviderDoesntExist() {
+    void shouldGetNullWhenPaymentProviderDoesntExist() {
         String providerName = "test";
 
         when(paymentProviderRepository.findByName(providerName)).thenReturn(Optional.empty());

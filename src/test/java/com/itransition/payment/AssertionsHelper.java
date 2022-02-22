@@ -6,9 +6,12 @@ import com.itransition.payment.account.dto.AccountDto;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AssertionsHelper {
 
     public static void verifyFieldsEqualityActualExpected(TransactionInfoDto actual, TransactionInfoDto expected) {

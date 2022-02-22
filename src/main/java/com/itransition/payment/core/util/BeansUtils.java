@@ -15,8 +15,9 @@ public final class BeansUtils {
 
         for (var propertyDescriptor : propertyDescriptors) {
             var value = beanWrapper.getPropertyValue(propertyDescriptor.getName());
-            if (value == null)
+            if (value == null) {
                 emptyNames.add(propertyDescriptor.getName());
+            }
         }
 
         var result = new String[emptyNames.size()];

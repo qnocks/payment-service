@@ -1,6 +1,5 @@
 package com.itransition.payment.administration.controller;
 
-import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.administration.service.AdminService;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import io.swagger.v3.oas.annotations.Operation;

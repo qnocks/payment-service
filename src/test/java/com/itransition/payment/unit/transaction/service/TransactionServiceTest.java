@@ -2,13 +2,14 @@ package com.itransition.payment.unit.transaction.service;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
-import com.itransition.payment.transaction.entity.PaymentProvider;
-import com.itransition.payment.transaction.entity.Transaction;
-import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.transaction.mapper.TransactionMapper;
+import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.transaction.entity.PaymentProvider;
+import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.transaction.mapper.TransactionMapper;
 import com.itransition.payment.transaction.service.PaymentProviderService;
 import com.itransition.payment.transaction.service.impl.TransactionServiceImpl;
 import java.util.Optional;
@@ -125,8 +126,8 @@ class TransactionServiceTest {
         when(transactionRepository.findByExternalIdAndProviderName(
                 expected.getExternalId(), expected.getProvider())).thenReturn(Optional.empty());
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalArgumentException.class, () -> underTest.update(expected));
+
+        assertThrows(TransactionException.class, () -> underTest.update(expected));
     }
 
     @Test
@@ -159,8 +160,7 @@ class TransactionServiceTest {
         when(transactionRepository.findByExternalIdAndProviderName(externalId, providerName))
                 .thenReturn(Optional.empty());
 
-        // TODO: Should be changed to custom exception when implementation of exception handling
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(TransactionException.class, () ->
                 underTest.getByExternalIdAndProvider(externalId, providerName));
     }
 }

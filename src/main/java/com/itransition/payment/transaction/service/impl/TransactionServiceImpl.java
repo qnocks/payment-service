@@ -3,7 +3,7 @@ package com.itransition.payment.transaction.service.impl;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final PaymentProviderService paymentProviderService;
     private final TransactionMapper transactionMapper;
-    private final ExceptionMessageResolver exceptionMessageResolver;
+    private final ExceptionHelper exceptionHelper;
 
     @Transactional
     @Override
@@ -140,11 +141,11 @@ public class TransactionServiceImpl implements TransactionService {
         processUpdate(transaction);
     }
 
-
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {
-        // TODO: Should be changed to custom exception when implementation of exception handling
         return transactionRepository.findByExternalIdAndProviderName(externalId, name)
-                .orElseThrow(() -> new IllegalArgumentException(exceptionMessageResolver.getMessage(
-                        "transaction.cannot-get-by-external-id-provider", externalId, name)));
+                .orElseThrow(() -> exceptionHelper.buildTransactionException(
+                        HttpStatus.NOT_FOUND,
+                        "transaction.cannot-get-by-external-id-provider",
+                        externalId, name));
     }
 }

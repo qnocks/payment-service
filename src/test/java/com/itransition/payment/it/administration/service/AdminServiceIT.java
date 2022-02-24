@@ -39,7 +39,6 @@ class AdminServiceIT extends AbstractIntegrationTest {
         var existingTransaction = transactionRepository
                 .findByExternalIdAndProviderName(externalId, provider).get();
 
-        // TODO: Should be added real pagination params when there will be pagination feature
         var actual = underTest.searchTransactions(
                 0, 1, "externalId", "ASC", null);
 

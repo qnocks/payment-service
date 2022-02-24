@@ -3,6 +3,7 @@ package com.itransition.payment.unit.transaction.service;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.repository.TransactionRepository;
@@ -20,10 +21,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -188,6 +193,27 @@ class TransactionServiceTest {
         var actual = underTest.getReadyToReplenish();
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
+    void shouldGetPageableResult() {
+        var pagedTransactions = List.of(
+                Transaction.builder().id(1L).build(),
+                Transaction.builder().id(2L).build());
+
+        int page = 0;
+        int pageSize = pagedTransactions.size();
+        String sort = "id";
+        String order = "ASC";
+
+        var pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
+
+        when(transactionRepository.findAll(pageable)).thenReturn(new PageImpl<>(pagedTransactions, pageable, pageSize));
+        when(transactionMapper.toAdminDto(any(Transaction.class))).thenReturn(TransactionStateDto.builder().build());
+
+        var actual = underTest.getAll(pageable);
+
+        assertThat(actual).hasSize(pagedTransactions.size());
     }
 
     @Test

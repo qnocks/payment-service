@@ -1,15 +1,23 @@
 package com.itransition.payment.it.flow.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
-import com.itransition.payment.transaction.entity.PaymentProvider;
-import com.itransition.payment.transaction.entity.Transaction;
+import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
-import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.it.AbstractIntegrationTest;
-import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.flow.service.FlowService;
+import com.itransition.payment.it.AbstractIntegrationTest;
+import com.itransition.payment.transaction.entity.PaymentProvider;
+import com.itransition.payment.transaction.entity.Transaction;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,35 +39,77 @@ class FlowServiceIT extends AbstractIntegrationTest {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private ObjectMapper mapper;
+
     @Value("${test.external-id}")
     private String externalId;
 
     @Value("${test.provider}")
     private String provider;
 
-    @Test
-    void shouldCreateTransaction() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
-        var expected = Transaction.builder()
-                .id(1L)
-                .externalId(stateDto.getExternalId())
-                .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
-                .status(TransactionStatus.INITIAL)
-                .replenishmentStatus(ReplenishmentStatus.INITIAL)
-                .amount(stateDto.getAmount().getAmount())
-                .currency(stateDto.getAmount().getCurrency())
-                .commissionAmount(stateDto.getCommissionAmount().getAmount())
-                .commissionCurrency(stateDto.getCommissionAmount().getCurrency())
-                .additionalData(stateDto.getAdditionalData())
-                .userId(stateDto.getUser())
-                .build();
+    @Value("${test.api.port}")
+    private int port;
 
-        underTest.createTransaction(stateDto);
+    @Nested
+    class FlowCreatingTransactionTest {
 
-        var actual = transactionRepository
-                .findByExternalIdAndProviderName(stateDto.getExternalId(), stateDto.getProvider());
+        private WireMockServer server;
 
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(), expected);
+        @BeforeEach
+        void setupServer() throws JsonProcessingException {
+            int accountId = 321;
+            var accountDto = TestDataProvider.getAccountDto();
+            var authResponse = TestDataProvider.getAuthResponse();
+
+            server = new WireMockServer(port);
+            server.start();
+            WireMock.configureFor("localhost", port);
+            WireMock.stubFor(WireMock.get("/account/" + accountId).willReturn(
+                    ResponseDefinitionBuilder.responseDefinition()
+                            .withBody(mapper.writeValueAsString(accountDto))
+                            .withHeader("Content-type", "application/json")
+                            .withStatus(200)));
+            WireMock.stubFor(WireMock.post("/auth/token?grant_type=&client_secret=&client_id=")
+                    .willReturn(ResponseDefinitionBuilder.responseDefinition()
+                            .withBody(mapper.writeValueAsString(authResponse))
+                            .withHeader("Content-type", "application/json")
+                            .withStatus(200)));
+        }
+
+        @AfterEach
+        void tearDown() {
+            if (server.isRunning()) {
+                server.shutdownServer();
+            }
+        }
+
+        @Test
+        void shouldCreateTransaction() {
+            var stateDto = TestDataProvider.getTransactionStateDto();
+            var expected = Transaction.builder()
+                    .id(1L)
+                    .externalId(stateDto.getExternalId())
+                    .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
+                    .status(TransactionStatus.INITIAL)
+                    .replenishmentStatus(ReplenishmentStatus.INITIAL)
+                    .amount(stateDto.getAmount().getAmount())
+                    .currency(stateDto.getAmount().getCurrency())
+                    .commissionAmount(stateDto.getCommissionAmount().getAmount())
+                    .commissionCurrency(stateDto.getCommissionAmount().getCurrency())
+                    .additionalData(stateDto.getAdditionalData())
+                    .userId(stateDto.getUser())
+                    .build();
+
+            underTest.createTransaction(stateDto);
+
+            var actual = transactionRepository
+                    .findByExternalIdAndProviderName(stateDto.getExternalId(), stateDto.getProvider());
+
+            AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(), expected);
+
+            server.shutdownServer();
+        }
     }
 
     @Test

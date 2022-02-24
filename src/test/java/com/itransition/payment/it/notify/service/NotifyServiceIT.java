@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 
@@ -28,15 +27,26 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    @Value("${test.api.port}")
-    private int port;
     private WireMockServer server;
 
     @BeforeAll
     void setupServer() {
+        int port = 7000;
         server = new WireMockServer(port);
+
+        if (server.isRunning()) {
+            server.shutdownServer();
+        }
+
         server.start();
         WireMock.configureFor("localhost", port);
+        WireMock.stubFor(WireMock.post("transaction/").willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                        .withStatus(200)));
+
+        WireMock.stubFor(WireMock.post("transaction/").willReturn(
+                ResponseDefinitionBuilder.responseDefinition()
+                        .withStatus(500)));
     }
 
     @AfterAll
@@ -48,10 +58,6 @@ class NotifyServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnSuccessStatusWhenApiCallSuccess() {
-        WireMock.stubFor(WireMock.post("transaction/").willReturn(
-                ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(200)));
-
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
 
@@ -65,11 +71,6 @@ class NotifyServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldReturnInternalServerErrorWhenApiCallFailed() {
-        var errorMessage = "test";
-        WireMock.stubFor(WireMock.post("transaction/").willReturn(
-                ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(500)
-                        .withStatusMessage(errorMessage)));
 
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();

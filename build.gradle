@@ -65,6 +65,10 @@ jacocoTestCoverageVerification {
 jacocoTestReport {
     dependsOn test
 
+    reports {
+        xml.enabled true
+    }
+
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
@@ -79,92 +83,9 @@ jacocoTestReport {
             ])
         }))
     }
-
-//    finalizedBy jacocoTestCoverageVerification
 }
 
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
-
-// ТОже не работает (
-//tasks.named('sonarqube').configure {
-//    dependsOn test
-//}
-//
-//jacocoTestCoverageVerification {
-//    afterEvaluate {
-//        classDirectories.setFrom(files(classDirectories.files.collect {
-//            fileTree(dir: it, exclude: [
-//                    "com/itransition/payment/PaymentServiceApplication.class",
-//                    "/**/config/*",
-//                    "/**/dto/*",
-//                    "/**/entity/*",
-//                    "/**/types/*",
-//                    "/**/exception/**",
-//                    "/**/util/*",
-//                    "/**/controller/*"
-//            ])
-//        }))
-//    }
-//
-//    violationRules {
-//        rule {
-//            limit {
-//                minimum = 0.6
-//            }
-//        }
-//    }
-//}
-//
-//jacocoTestReport {
-//    dependsOn(test)
-//    finalizedBy(jacocoTestCoverageVerification)
-//}
-//
-//tasks.named('test') {
-//    useJUnitPlatform()
-//    finalizedBy jacocoTestReport
-//}
-
-
-// не рабочий вариант, но хоть какой-то
-//tasks.named('sonarqube').configure {
-//    dependsOn test
-//}
-//
-//jacocoTestCoverageVerification {
-//    afterEvaluate {
-//        classDirectories.setFrom(files(classDirectories.files.collect {
-//            fileTree(dir: it, exclude: [
-//                    "com/itransition/payment/PaymentServiceApplication.class",
-//                    "/**/config/*",
-//                    "/**/dto/*",
-//                    "/**/entity/*",
-//                    "/**/types/*",
-//                    "/**/exception/**",
-//                    "/**/util/*",
-//                    "/**/controller/*"
-//            ])
-//        }))
-//    }
-//
-//    violationRules {
-//        rule {
-//            limit {
-//                minimum = 0.6
-//            }
-//        }
-//    }
-//}
-//
-//jacocoTestReport {
-//    dependsOn test
-//    finalizedBy jacocoTestCoverageVerification
-//}
-//
-//tasks.named('test') {
-//    useJUnitPlatform()
-//    finalizedBy jacocoTestReport
-//}

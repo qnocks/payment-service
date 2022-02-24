@@ -8,14 +8,15 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.account.dto.AccountDto;
+import com.itransition.payment.account.service.impl.AccountServiceImpl;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.security.service.SecurityService;
-import com.itransition.payment.account.service.impl.AccountServiceImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.mockito.Mockito.when;
@@ -32,18 +33,21 @@ class AccountServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    private final int port = 7000;
-    private final WireMockServer server = new WireMockServer(port);
+    @Value("${test.api.port}")
+    private int port;
+    private WireMockServer server;
     private final AccountDto expected = TestDataProvider.getAccountDto();
     private final String accountId = "1";
 
     @BeforeAll
     void setupServer() throws JsonProcessingException {
+        server = new WireMockServer(port);
         server.start();
         WireMock.configureFor("localhost", port);
-        WireMock.stubFor(WireMock.post("/account/" + accountId).willReturn(
+        WireMock.stubFor(WireMock.get("/account/" + accountId).willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
                         .withBody(mapper.writeValueAsString(expected))
+                        .withHeader("Content-type", "application/json")
                         .withStatus(200)
         ));
     }

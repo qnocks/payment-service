@@ -42,119 +42,17 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
 }
 
-//jacocoTestCoverageVerification {
-//    violationRules {
-//        rule {
-//            element = 'PACKAGE'
-////            excludes = [
-////                "com/itransition/payment/PaymentServiceApplication.class",
-////                "com/itransition/payment/**/config/*",
-////                "com/itransition/payment/**/dto/*",
-////                "com/itransition/payment/**/entity/*",
-////                "com/itransition/payment/**/types/*",
-////                "com/itransition/payment/**/exception/*",
-////                "com/itransition/payment/**/util/*",
-////                "com/itransition/payment/**/controller/*"
-////            ]
-//            limit {
-//                minimum = 0.4
-//            }
-//        }
-////        rule {
-////            element = 'CLASS'
-////            excludes = [
-////                    'com.itransition.payment.*Application',
-////                    'com.itransition.payment.*Configuration',
-////                    'com.itransition.payment.*.exception.*',
-////                    'com.itransition.payment.*.types.*',
-////                    'com.itransition.payment.*.dto.*',
-////                    'com.itransition.payment.*.entity.*',
-////                    'com.itransition.payment.*.controller.*'
-////            ]
-////            limit {
-////                minimum = 0.3
-////            }
-////        }
-//    }
-//}
-
-//jacocoTestCoverageVerification {
-//    afterEvaluate {
-//        classDirectories.setFrom(files(classDirectories.files.collect {
-//            fileTree(dir: it, exclude: [
-//                    "com/itransition/payment/PaymentServiceApplication.class",
-//                    "com/itransition/payment/**/config/*",
-//                    "com/itransition/payment/**/dto/*",
-//                    "com/itransition/payment/**/entity/*",
-//                    "com/itransition/payment/**/types/*",
-//                    "com/itransition/payment/**/exception/**",
-//                    "com/itransition/payment/**/util/*",
-//                    "com/itransition/payment/**/controller/*"
-//            ])
-//        }))
-//    }
-//
-//    violationRules {
-//        rule {
-//            limit {
-//                minimum = 0.5
-//            }
-//        }
-//    }
-//}
-//
-//
-//jacocoTestReport {
-//    dependsOn(test)
-//    reports {
-//        xml.enabled true
-//    }
-//
-////    afterEvaluate {
-////        classDirectories.setFrom(files(classDirectories.files.collect {
-////            fileTree(dir: it, exclude: [
-////                    "com/itransition/payment/PaymentServiceApplication.class",
-////                    "com/itransition/payment/**/config/*",
-////                    "com/itransition/payment/**/dto/*",
-////                    "com/itransition/payment/**/entity/*",
-////                    "com/itransition/payment/**/types/*",
-////                    "com/itransition/payment/**/exception/**",
-////                    "com/itransition/payment/**/util/*",
-////                    "com/itransition/payment/**/controller/*"
-////            ])
-////        }))
-////    }
-//
-//    finalizedBy(jacocoTestCoverageVerification)
-//}
-//
-//tasks.named('sonarqube').configure {
-//    dependsOn test
-//}
-//
-
-//
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'http://localhost:9000'
+    }
+}
 
 tasks.named('sonarqube').configure {
-    dependsOn jacocoTestReport
+    dependsOn test
 }
 
 jacocoTestCoverageVerification {
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    "com/itransition/payment/PaymentServiceApplication.class",
-                    "/**/config/*",
-                    "/**/dto/*",
-                    "/**/entity/*",
-                    "/**/types/*",
-                    "/**/exception/**",
-                    "/**/util/*",
-                    "/**/controller/*"
-            ])
-        }))
-    }
-
     violationRules {
         rule {
             limit {
@@ -166,10 +64,107 @@ jacocoTestCoverageVerification {
 
 jacocoTestReport {
     dependsOn test
-    finalizedBy jacocoTestCoverageVerification
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/itransition/payment/PaymentServiceApplication.class",
+                    "com/itransition/payment/**/*Configuration.*",
+                    "com/itransition/payment/**/*Dto*",
+                    "com/itransition/payment/**/entity/*",
+                    "com/itransition/payment/**/types/*",
+                    "com/itransition/payment/**/*Exception*",
+                    "com/itransition/payment/**/util/*",
+                    "com/itransition/payment/**/*Controller.*"
+            ])
+        }))
+    }
+
+//    finalizedBy jacocoTestCoverageVerification
 }
 
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
+
+// ТОже не работает (
+//tasks.named('sonarqube').configure {
+//    dependsOn test
+//}
+//
+//jacocoTestCoverageVerification {
+//    afterEvaluate {
+//        classDirectories.setFrom(files(classDirectories.files.collect {
+//            fileTree(dir: it, exclude: [
+//                    "com/itransition/payment/PaymentServiceApplication.class",
+//                    "/**/config/*",
+//                    "/**/dto/*",
+//                    "/**/entity/*",
+//                    "/**/types/*",
+//                    "/**/exception/**",
+//                    "/**/util/*",
+//                    "/**/controller/*"
+//            ])
+//        }))
+//    }
+//
+//    violationRules {
+//        rule {
+//            limit {
+//                minimum = 0.6
+//            }
+//        }
+//    }
+//}
+//
+//jacocoTestReport {
+//    dependsOn(test)
+//    finalizedBy(jacocoTestCoverageVerification)
+//}
+//
+//tasks.named('test') {
+//    useJUnitPlatform()
+//    finalizedBy jacocoTestReport
+//}
+
+
+// не рабочий вариант, но хоть какой-то
+//tasks.named('sonarqube').configure {
+//    dependsOn test
+//}
+//
+//jacocoTestCoverageVerification {
+//    afterEvaluate {
+//        classDirectories.setFrom(files(classDirectories.files.collect {
+//            fileTree(dir: it, exclude: [
+//                    "com/itransition/payment/PaymentServiceApplication.class",
+//                    "/**/config/*",
+//                    "/**/dto/*",
+//                    "/**/entity/*",
+//                    "/**/types/*",
+//                    "/**/exception/**",
+//                    "/**/util/*",
+//                    "/**/controller/*"
+//            ])
+//        }))
+//    }
+//
+//    violationRules {
+//        rule {
+//            limit {
+//                minimum = 0.6
+//            }
+//        }
+//    }
+//}
+//
+//jacocoTestReport {
+//    dependsOn test
+//    finalizedBy jacocoTestCoverageVerification
+//}
+//
+//tasks.named('test') {
+//    useJUnitPlatform()
+//    finalizedBy jacocoTestReport
+//}

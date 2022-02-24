@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,19 +27,21 @@ class SecurityServiceIT extends AbstractIntegrationTest {
     @Autowired
     private ObjectMapper mapper;
 
-    private final int port = 7000;
-    private final WireMockServer server = new WireMockServer(port);
+    @Value("${test.api.port}")
+    private int port;
+    private WireMockServer server;
     private final AuthResponse expected = TestDataProvider.getAuthResponse();
 
     @BeforeAll
     void setupServer() throws JsonProcessingException {
+        server = new WireMockServer(port);
         server.start();
         WireMock.configureFor("localhost", port);
-        WireMock.stubFor(WireMock.post("auth/token/").willReturn(
-                ResponseDefinitionBuilder.responseDefinition()
+        WireMock.stubFor(WireMock.post("/auth/token?grant_type=&client_secret=&client_id=")
+                .willReturn(ResponseDefinitionBuilder.responseDefinition()
                         .withBody(mapper.writeValueAsString(expected))
-                        .withStatus(200)
-        ));
+                        .withHeader("Content-type", "application/json")
+                        .withStatus(200)));
     }
 
     @AfterAll

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 
@@ -27,11 +28,13 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    private final int port = 7000;
-    private final WireMockServer server = new WireMockServer(port);
+    @Value("${test.api.port}")
+    private int port;
+    private WireMockServer server;
 
     @BeforeAll
     void setupServer() {
+        server = new WireMockServer(port);
         server.start();
         WireMock.configureFor("localhost", port);
     }
@@ -59,7 +62,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
 
         actual.subscribe(responseEntity -> assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build()));
     }
-    
+
     @Test
     void shouldReturnInternalServerErrorWhenApiCallFailed() {
         var errorMessage = "test";

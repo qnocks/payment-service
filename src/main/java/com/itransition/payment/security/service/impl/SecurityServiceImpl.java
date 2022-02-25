@@ -3,7 +3,9 @@ package com.itransition.payment.security.service.impl;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,9 +16,9 @@ import reactor.core.publisher.Mono;
 public class SecurityServiceImpl implements SecurityService {
 
     // TODO: Should be changed to config external file when implement real auth flow in Core Service
-    private final String GRANT_TYPE = "";
-    private final String CLIENT_SECRET = "";
-    private final String CLIENT_ID = "";
+    private static final String GRANT_TYPE = "";
+    private static final String CLIENT_SECRET = "";
+    private static final String CLIENT_ID = "";
 
     private AuthResponse currentAuthorization;
     private final WebClient webClient;
@@ -24,8 +26,8 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String getAuthHeader() {
-        AuthResponse authResponse = authorize();
-        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
+        val authResponse = authorize();
+        return getToken(authResponse);
     }
 
     private AuthResponse authorize() {
@@ -56,9 +58,16 @@ public class SecurityServiceImpl implements SecurityService {
                         .build())
                 .retrieve()
                 .onStatus(
-                        HttpStatus::is5xxServerError,
+                        HttpStatus::isError,
                         response -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
                 .bodyToMono(AuthResponse.class)
-                .block();
+                .onErrorResume(
+                        error -> Mono.error(exceptionHelper.buildExternalException("security.service-not-available")))
+                .blockOptional()
+                .orElseThrow(() -> exceptionHelper.buildExternalException("security.auth-error"));
+    }
+
+    private String getToken(@NotNull AuthResponse authResponse) {
+        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 }

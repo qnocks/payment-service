@@ -3,24 +3,32 @@ package com.itransition.payment.unit.transaction.service;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.mapper.TransactionMapper;
 import com.itransition.payment.transaction.service.PaymentProviderService;
 import com.itransition.payment.transaction.service.impl.TransactionServiceImpl;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,7 +50,7 @@ class TransactionServiceTest {
     private TransactionMapper transactionMapper;
 
     @Mock
-    private ExceptionMessageResolver exceptionMessageResolver;
+    private ExceptionHelper exceptionHelper;
 
     @Test
     void shouldSaveNewTransaction() {
@@ -113,7 +121,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void shouldThrow_when_updatingTransactionDoesntExist() {
+    void shouldThrowWhenUpdatingTransactionDoesntExist() {
         var expected = TestDataProvider.getTransactionInfoDto();
         var transaction = Transaction.builder()
                 .externalId(expected.getExternalId())
@@ -125,18 +133,21 @@ class TransactionServiceTest {
         when(transactionMapper.toEntity(expected)).thenReturn(transaction);
         when(transactionRepository.findByExternalIdAndProviderName(
                 expected.getExternalId(), expected.getProvider())).thenReturn(Optional.empty());
-
+        when(exceptionHelper.buildTransactionException(
+                HttpStatus.NOT_FOUND,
+                "transaction.cannot-get-by-external-id-provider",
+                expected.getExternalId(), expected.getProvider())).thenThrow(TransactionException.builder().build());
 
         assertThrows(TransactionException.class, () -> underTest.update(expected));
     }
 
     @Test
-    void shouldReturnTrue_when_existsByExternalId() {
+    void shouldReturnTrueWhenExistsByExternalId() {
         var externalId = "123";
         var providerName = "test";
         when(transactionRepository.existsByExternalIdAndProviderName(externalId, providerName)).thenReturn(true);
         boolean actual = underTest.existsByExternalIdAndProvider(externalId, providerName);
-        assertThat(actual).isEqualTo(true);
+        assertThat(actual).isTrue();
     }
 
     @Test
@@ -154,13 +165,100 @@ class TransactionServiceTest {
     }
 
     @Test
-    void shouldThrow_when_GetByExternalIdAndProvider() {
+    void shouldThrowWhenGetByExternalIdAndProvider() {
         var externalId = "123";
         var providerName = "test";
         when(transactionRepository.findByExternalIdAndProviderName(externalId, providerName))
                 .thenReturn(Optional.empty());
 
+        when(exceptionHelper.buildTransactionException(
+                HttpStatus.NOT_FOUND,
+                "transaction.cannot-get-by-external-id-provider",
+                externalId, providerName)).thenThrow(TransactionException.builder().build());
+
         assertThrows(TransactionException.class, () ->
                 underTest.getByExternalIdAndProvider(externalId, providerName));
+    }
+
+    @Test
+    void shouldGetReadyToReplenish() {
+        var transaction = TestDataProvider.getTransaction();
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        var expected = TestDataProvider.getTransactionReplenishDto();
+
+        when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
+                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)).thenReturn(List.of(transaction));
+        when(transactionMapper.toReplenishDto(transaction)).thenReturn(expected);
+
+        var actual = underTest.getReadyToReplenish();
+
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
+    }
+
+    @Test
+    void shouldGetPageableResult() {
+        var pagedTransactions = List.of(
+                Transaction.builder().id(1L).build(),
+                Transaction.builder().id(2L).build());
+
+        int page = 0;
+        int pageSize = pagedTransactions.size();
+        String sort = "id";
+        String order = "ASC";
+
+        var pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
+
+        when(transactionRepository.findAll(pageable)).thenReturn(new PageImpl<>(pagedTransactions, pageable, pageSize));
+        when(transactionMapper.toAdminDto(any(Transaction.class))).thenReturn(TransactionStateDto.builder().build());
+
+        var actual = underTest.getAll(pageable);
+
+        assertThat(actual).hasSize(pagedTransactions.size());
+    }
+
+    @Test
+    void shouldGetNullWhenNothingReadyToReplenish() {
+        var transaction = TestDataProvider.getTransaction();
+
+        when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
+                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)).thenReturn(List.of(transaction));
+
+        var actual = underTest.getReadyToReplenish();
+
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void shouldUpdateReplenishStatus() {
+        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        var transaction = TestDataProvider.getTransaction();
+        var status = ReplenishmentStatus.FAILED;
+
+        when(transactionMapper.toEntity(replenishDto)).thenReturn(transaction);
+        when(paymentProviderService.getByProvider(transaction.getProvider().getName()))
+                .thenReturn(transaction.getProvider());
+        when(transactionRepository.findByExternalIdAndProviderName(
+                transaction.getExternalId(), transaction.getProvider().getName())).thenReturn(Optional.of(transaction));
+
+        underTest.updateReplenishStatus(replenishDto, status);
+
+        verify(transactionRepository, times(1)).save(transaction);
+    }
+
+    @Test
+    void shouldSetReplenishAfter() {
+        double replenishAfter = 10.25;
+        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        var transaction = TestDataProvider.getTransaction();
+
+        when(transactionMapper.toEntity(replenishDto)).thenReturn(transaction);
+        when(paymentProviderService.getByProvider(transaction.getProvider().getName()))
+                .thenReturn(transaction.getProvider());
+        when(transactionRepository.findByExternalIdAndProviderName(
+                transaction.getExternalId(), transaction.getProvider().getName())).thenReturn(Optional.of(transaction));
+
+        underTest.setReplenishAfter(replenishDto, replenishAfter);
+
+        verify(transactionRepository, times(1)).save(transaction);
     }
 }

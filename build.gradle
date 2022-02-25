@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id "org.sonarqube" version "3.3"
     id 'jacoco'
+    id 'checkstyle'
 }
 
 group = 'com.itransition'
@@ -25,7 +26,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation "org.apache.commons:commons-lang3:3.0"
     implementation 'io.swagger.core.v3:swagger-annotations:2.1.6'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.4'
 
@@ -34,15 +34,17 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation "com.github.tomakehurst:wiremock-jre8:2.32.0"
+    testImplementation 'com.github.tomakehurst:wiremock-jre8:2.32.0'
     testRuntimeOnly 'com.h2database:h2'
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'http://localhost:9000'
     }
 }
 
@@ -50,8 +52,40 @@ tasks.named('sonarqube').configure {
     dependsOn test
 }
 
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.6
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.enabled true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/itransition/payment/PaymentServiceApplication.class",
+                    "com/itransition/payment/**/*Configuration.*",
+                    "com/itransition/payment/**/*Dto*",
+                    "com/itransition/payment/**/entity/*",
+                    "com/itransition/payment/**/types/*",
+                    "com/itransition/payment/**/*Exception*",
+                    "com/itransition/payment/**/util/*",
+                    "com/itransition/payment/**/*Controller.*"
+            ])
+        }))
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
-

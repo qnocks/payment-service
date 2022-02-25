@@ -8,7 +8,6 @@ import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.core.util.BeansUtils;
-import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.mapper.TransactionMapper;
 import com.itransition.payment.transaction.service.PaymentProviderService;
@@ -18,9 +17,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +37,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionInfoDto save(TransactionStateDto stateDto) {
-        var transaction = transactionMapper.toEntity(stateDto);
+        val transaction = transactionMapper.toEntity(stateDto);
         initiateTransactionProvider(transaction, stateDto.getProvider());
         transactionRepository.saveAndFlush(transaction);
         return transactionMapper.toDto(transaction);
@@ -46,21 +46,21 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionInfoDto update(TransactionInfoDto updateDto) {
-        var transaction = transactionMapper.toEntity(updateDto);
-        Transaction updatedTransaction = processUpdate(transaction);
+        val transaction = transactionMapper.toEntity(updateDto);
+        val updatedTransaction = processUpdate(transaction);
         return transactionMapper.toDto(updatedTransaction);
     }
 
     @Transactional
     @Override
     public TransactionStateDto update(TransactionStateDto adminDto) {
-        var transaction = transactionMapper.toEntity(adminDto);
-        Transaction updatedTransaction = processUpdate(transaction);
+        val transaction = transactionMapper.toEntity(adminDto);
+        val updatedTransaction = processUpdate(transaction);
         return transactionMapper.toAdminDto(updatedTransaction);
     }
 
     private void initiateTransactionProvider(@NotNull Transaction transaction, String provider) {
-        PaymentProvider paymentProvider = paymentProviderService.getByProvider(provider);
+        val paymentProvider = paymentProviderService.getByProvider(provider);
 
         if (paymentProvider != null) {
             transaction.setProvider(paymentProvider);
@@ -70,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
     private Transaction processUpdate(Transaction transaction) {
         initiateTransactionProvider(transaction, transaction.getProvider().getName());
 
-        var existingTransaction = getTransactionByExternalIdAndProvider(
+        val existingTransaction = getTransactionByExternalIdAndProvider(
                 transaction.getExternalId(),
                 transaction.getProvider().getName());
 
@@ -88,7 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionStateDto complete(String externalId, String provider) {
-        var existingTransaction = getTransactionByExternalIdAndProvider(externalId, provider);
+        val existingTransaction = getTransactionByExternalIdAndProvider(externalId, provider);
         existingTransaction.setStatus(TransactionStatus.COMPLETED);
 
         transactionRepository.saveAndFlush(existingTransaction);
@@ -97,7 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionInfoDto getByExternalIdAndProvider(String externalId, String name) {
-        var transaction = getTransactionByExternalIdAndProvider(externalId, name);
+        val transaction = getTransactionByExternalIdAndProvider(externalId, name);
         return transactionMapper.toDto(transaction);
     }
 
@@ -111,7 +111,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionReplenishDto getReadyToReplenish() {
-        var transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
+        val transaction = transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
                 TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)
                 .stream()
                 .filter(t -> t.getReplenishAfter() == null || t.getReplenishAfter().isBefore(LocalDateTime.now()))
@@ -128,7 +128,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public void updateReplenishStatus(TransactionReplenishDto replenishDto, ReplenishmentStatus status) {
-        var transaction = transactionMapper.toEntity(replenishDto);
+        val transaction = transactionMapper.toEntity(replenishDto);
         transaction.setReplenishmentStatus(status);
         processUpdate(transaction);
     }
@@ -136,7 +136,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public void setReplenishAfter(TransactionReplenishDto replenishDto, double replenishAfter) {
-        var transaction = transactionMapper.toEntity(replenishDto);
+        val transaction = transactionMapper.toEntity(replenishDto);
         transaction.setReplenishAfter(LocalDateTime.now().plusSeconds((long) replenishAfter));
         processUpdate(transaction);
     }

@@ -5,6 +5,7 @@ import com.itransition.payment.core.exception.custom.TransactionException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import lombok.val;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class CustomExceptionHandler {
 
     private ResponseEntity<ErrorResponse> buildResponse(
             Exception e, String message, HttpStatus status, WebRequest request) {
-        var response = ErrorResponse.builder()
+        val response = ErrorResponse.builder()
                 .message(message)
                 .status(status.value())
                 .error(status)
@@ -53,7 +54,7 @@ public class CustomExceptionHandler {
     }
 
     private boolean isTraceOn(WebRequest request) {
-        var value = request.getParameterValues(TRACE);
+        val value = request.getParameterValues(TRACE);
         return Objects.nonNull(value)
                 && value.length > 0
                 && value[0].contentEquals("true");

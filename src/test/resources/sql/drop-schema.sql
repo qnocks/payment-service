@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS transactions;
-DROP TABLE IF EXISTS payment_providers;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS payment_providers CASCADE;

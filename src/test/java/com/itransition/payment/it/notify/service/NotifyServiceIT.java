@@ -1,23 +1,23 @@
 package com.itransition.payment.it.notify.service;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.security.service.SecurityService;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+@WireMockTest(httpPort = 8082)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NotifyServiceIT extends AbstractIntegrationTest {
 
@@ -27,28 +27,11 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     @MockBean
     private SecurityService securityService;
 
-    private final int PORT = 7000;
-    private final WireMockServer server = new WireMockServer(PORT);
-
-    @BeforeAll
-    void setupServer() {
-        server.start();
-        WireMock.configureFor("localhost", PORT);
-
-    }
-
-    @AfterAll
-    void tearDown() {
-        if (server.isRunning()) {
-            server.shutdownServer();
-        }
-    }
-
     @Test
-    void shouldReturnSuccessStatus_when_ApiCallSuccess() {
+    void shouldReturnSuccessStatusWhenApiCallSuccess() {
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(200)));
+                        .withStatus(HttpStatus.OK.value())));
 
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
@@ -60,14 +43,12 @@ class NotifyServiceIT extends AbstractIntegrationTest {
 
         actual.subscribe(responseEntity -> assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build()));
     }
-    
+
     @Test
-    void shouldReturnInternalServerError_when_ApiCallFailed() {
-        var errorMessage = "test";
+    void shouldReturnInternalServerErrorWhenApiCallFailed() {
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(500)
-                        .withStatusMessage(errorMessage)));
+                        .withStatus(HttpStatus.OK.value())));
 
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();

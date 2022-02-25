@@ -1,10 +1,9 @@
 package com.itransition.payment.it.flow.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionInfoDto;
@@ -15,12 +14,14 @@ import com.itransition.payment.flow.service.FlowService;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,41 +52,29 @@ class FlowServiceIT extends AbstractIntegrationTest {
     @Value("${test.api.port}")
     private int port;
 
+    @WireMockTest(httpPort = 8082)
     @Nested
     class FlowCreatingTransactionTest {
 
-        private WireMockServer server;
-
-        @BeforeEach
-        void setupServer() throws JsonProcessingException {
+        @SneakyThrows
+        @Test
+        void shouldCreateTransaction() {
             int accountId = 321;
             var accountDto = TestDataProvider.getAccountDto();
             var authResponse = TestDataProvider.getAuthResponse();
 
-            server = new WireMockServer(port);
-            server.start();
-            WireMock.configureFor("localhost", port);
             WireMock.stubFor(WireMock.get("/account/" + accountId).willReturn(
                     ResponseDefinitionBuilder.responseDefinition()
                             .withBody(mapper.writeValueAsString(accountDto))
-                            .withHeader("Content-type", "application/json")
-                            .withStatus(200)));
+                            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                            .withStatus(HttpStatus.OK.value())));
+
             WireMock.stubFor(WireMock.post("/auth/token?grant_type=&client_secret=&client_id=")
                     .willReturn(ResponseDefinitionBuilder.responseDefinition()
                             .withBody(mapper.writeValueAsString(authResponse))
-                            .withHeader("Content-type", "application/json")
-                            .withStatus(200)));
-        }
+                            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                            .withStatus(HttpStatus.OK.value())));
 
-        @AfterEach
-        void tearDown() {
-            if (server.isRunning()) {
-                server.shutdownServer();
-            }
-        }
-
-        @Test
-        void shouldCreateTransaction() {
             var stateDto = TestDataProvider.getTransactionStateDto();
             var expected = Transaction.builder()
                     .id(1L)
@@ -107,8 +96,6 @@ class FlowServiceIT extends AbstractIntegrationTest {
                     .findByExternalIdAndProviderName(stateDto.getExternalId(), stateDto.getProvider());
 
             AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(), expected);
-
-            server.shutdownServer();
         }
     }
 

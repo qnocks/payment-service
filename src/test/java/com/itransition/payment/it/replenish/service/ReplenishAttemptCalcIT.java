@@ -20,13 +20,14 @@ class ReplenishAttemptCalcIT extends AbstractIntegrationTest {
     @Value("${test.threshold}")
     private int threshold;
     private int failedCount;
+    private final int executionCount = 5;
 
     @BeforeAll
     void setup() {
         failedCount = 0;
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(value = executionCount)
     void shouldCalcPossibilityToAnotherTry() {
         boolean expected = calcPossibility();
         boolean actual = underTest.canAnotherTry();

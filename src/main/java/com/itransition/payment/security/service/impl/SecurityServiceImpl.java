@@ -4,6 +4,7 @@ import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,9 +15,9 @@ import reactor.core.publisher.Mono;
 public class SecurityServiceImpl implements SecurityService {
 
     // TODO: Should be changed to config external file when implement real auth flow in Core Service
-    private final String grantType = "";
-    private final String clientSecret = "";
-    private final String clientId = "";
+    private static final String GRANT_TYPE = "";
+    private static final String CLIENT_SECRET = "";
+    private static final String CLIENT_ID = "";
 
     private AuthResponse currentAuthorization;
     private final WebClient webClient;
@@ -24,7 +25,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String getAuthHeader() {
-        AuthResponse authResponse = authorize();
+        val authResponse = authorize();
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 
@@ -47,24 +48,20 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     private AuthResponse processAuthorization() {
-        AuthResponse response = webClient.post()
+        return webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/auth/token")
-                        .queryParam("grant_type", grantType)
-                        .queryParam("client_secret", clientSecret)
-                        .queryParam("client_id", clientId)
+                        .queryParam("grant_type", GRANT_TYPE)
+                        .queryParam("client_secret", CLIENT_SECRET)
+                        .queryParam("client_id", CLIENT_ID)
                         .build())
                 .retrieve()
                 .onStatus(
-                        HttpStatus::is5xxServerError,
-                        clientResponse -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
+                        HttpStatus::isError,
+                        response -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
                 .bodyToMono(AuthResponse.class)
+                .onErrorResume(
+                        error -> Mono.error(exceptionHelper.buildExternalException("security.service-not-available")))
                 .block();
-
-        if (response == null) {
-            throw new IllegalStateException();
-        }
-
-        return response;
     }
 }

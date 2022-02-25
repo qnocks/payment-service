@@ -87,9 +87,9 @@ class FlowServiceTest {
 
         when(transactionService.getByExternalIdAndProvider(
                 updateDto.getExternalId(), updateDto.getProvider())).thenReturn(infoDto);
-        when(exceptionHelper.buildTransactionException(
-                "flow.transaction-status-incorrectness",
-                infoDto.getProvider(), infoDto.getStatus())).thenThrow(TransactionException.builder().build());
+        when(exceptionHelper.buildTransactionException("flow.transaction-status-incorrectness",
+                infoDto.getExternalId(), infoDto.getProvider(), infoDto.getStatus()))
+                .thenThrow(TransactionException.builder().build());
 
         assertThrows(TransactionException.class, () -> underTest.updateTransaction(updateDto));
     }

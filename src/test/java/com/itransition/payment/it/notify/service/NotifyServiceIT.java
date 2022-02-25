@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@WireMockTest(httpPort = 7000)
+@WireMockTest(httpPort = 8082)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class NotifyServiceIT extends AbstractIntegrationTest {
 
@@ -30,7 +31,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     void shouldReturnSuccessStatusWhenApiCallSuccess() {
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(200)));
+                        .withStatus(HttpStatus.OK.value())));
 
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();
@@ -47,7 +48,7 @@ class NotifyServiceIT extends AbstractIntegrationTest {
     void shouldReturnInternalServerErrorWhenApiCallFailed() {
         WireMock.stubFor(WireMock.post("transaction/").willReturn(
                 ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(500)));
+                        .withStatus(HttpStatus.OK.value())));
 
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var authResponse = TestDataProvider.getAuthResponse();

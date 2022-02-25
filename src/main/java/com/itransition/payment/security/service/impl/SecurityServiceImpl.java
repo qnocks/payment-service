@@ -3,6 +3,7 @@ package com.itransition.payment.security.service.impl;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public String getAuthHeader() {
         val authResponse = authorize();
-        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
+        return getToken(authResponse);
     }
 
     private AuthResponse authorize() {
@@ -62,6 +63,11 @@ public class SecurityServiceImpl implements SecurityService {
                 .bodyToMono(AuthResponse.class)
                 .onErrorResume(
                         error -> Mono.error(exceptionHelper.buildExternalException("security.service-not-available")))
-                .block();
+                .blockOptional()
+                .orElseThrow(() -> exceptionHelper.buildExternalException("security.auth-error"));
+    }
+
+    private String getToken(@NotNull AuthResponse authResponse) {
+        return authResponse.getTokenType() + " " + authResponse.getAccessToken();
     }
 }

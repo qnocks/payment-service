@@ -4,6 +4,7 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.transaction.entity.Transaction;
+import lombok.val;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.ConfigurableMapper;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class OrikaMapperConfiguration extends ConfigurableMapper {
 
     private MapperFactory buildMapperFactory() {
-        var mapperFactory = new DefaultMapperFactory.Builder()
+        val mapperFactory = new DefaultMapperFactory.Builder()
                 .mapNulls(false)
                 .build();
 

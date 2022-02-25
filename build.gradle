@@ -30,7 +30,6 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-annotations:2.1.6'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.4'
 
-
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 

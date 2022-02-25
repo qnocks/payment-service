@@ -10,6 +10,7 @@ import com.itransition.payment.transaction.dto.AmountDto;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.mapper.TransactionMapperOrikaImpl;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,8 +21,8 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
 
     @Test
     void shouldMapTransactionToTransactionInfoDto() {
-        var transaction = TestDataProvider.getTransaction();
-        var expected = TransactionInfoDto.builder()
+        val transaction = TestDataProvider.getTransaction();
+        val expected = TransactionInfoDto.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())
                 .status(transaction.getStatus())
@@ -29,15 +30,15 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .additionalData(transaction.getAdditionalData())
                 .build();
 
-        var actual = underTest.toDto(transaction);
+        val actual = underTest.toDto(transaction);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldMapTransactionToReplenishDto() {
-        var transaction = TestDataProvider.getTransaction();
-        var expected = TransactionReplenishDto.builder()
+        val transaction = TestDataProvider.getTransaction();
+        val expected = TransactionReplenishDto.builder()
                 .provider(transaction.getProvider().getName())
                 .outerId(transaction.getExternalId())
                 .gateId(String.valueOf(transaction.getId()))
@@ -47,15 +48,15 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .commissionAmount(transaction.getCommissionAmount())
                 .build();
 
-        var actual = underTest.toReplenishDto(transaction);
+        val actual = underTest.toReplenishDto(transaction);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldMapTransactionToTransactionStateDto() {
-        var transaction = TestDataProvider.getTransaction();
-        var expected = TransactionStateDto.builder()
+        val transaction = TestDataProvider.getTransaction();
+        val expected = TransactionStateDto.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())
                 .provider(transaction.getProvider().getName())
@@ -72,15 +73,15 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .additionalData(transaction.getAdditionalData())
                 .build();
 
-        var actual = underTest.toAdminDto(transaction);
+        val actual = underTest.toAdminDto(transaction);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldMapTransactionInfoDtoToTransaction() {
-        var infoDto = TestDataProvider.getTransactionInfoDto();
-        var expected = Transaction.builder()
+        val infoDto = TestDataProvider.getTransactionInfoDto();
+        val expected = Transaction.builder()
                 .id(infoDto.getId())
                 .externalId(infoDto.getExternalId())
                 .status(infoDto.getStatus())
@@ -88,15 +89,15 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .additionalData(infoDto.getAdditionalData())
                 .build();
 
-        var actual = underTest.toEntity(infoDto);
+        val actual = underTest.toEntity(infoDto);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldMapTransactionStateDtoToTransaction() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
-        var expected = Transaction.builder()
+        val stateDto = TestDataProvider.getTransactionStateDto();
+        val expected = Transaction.builder()
                 .externalId(stateDto.getExternalId())
                 .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
                 .amount(stateDto.getAmount().getAmount())
@@ -107,15 +108,15 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .additionalData(stateDto.getAdditionalData())
                 .build();
 
-        var actual = underTest.toEntity(stateDto);
+        val actual = underTest.toEntity(stateDto);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldMapTransactionReplenishDtoToTransaction() {
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var expected = Transaction.builder()
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val expected = Transaction.builder()
                 .id(Long.valueOf(replenishDto.getGateId()))
                 .externalId(replenishDto.getOuterId())
                 .provider(PaymentProvider.builder().name(replenishDto.getProvider()).build())
@@ -125,7 +126,7 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
                 .externalDate(replenishDto.getOuterAt())
                 .build();
 
-        var actual = underTest.toEntity(replenishDto);
+        val actual = underTest.toEntity(replenishDto);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }

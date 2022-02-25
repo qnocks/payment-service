@@ -1,24 +1,22 @@
-package com.itransition.payment.unit.transaction.mapper;
+package com.itransition.payment.it.transaction.mapper;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
+import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
+import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.it.AbstractIntegrationTest;
+import com.itransition.payment.transaction.dto.AmountDto;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
-import com.itransition.payment.transaction.dto.AmountDto;
-import com.itransition.payment.core.dto.TransactionInfoDto;
-import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.transaction.mapper.TransactionMapperImpl;
+import com.itransition.payment.transaction.mapper.TransactionMapperOrikaImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class TransactionMapperTest {
+public class TransactionMapperIT extends AbstractIntegrationTest {
 
-    @InjectMocks
-    private TransactionMapperImpl underTest;
+    @Autowired
+    private TransactionMapperOrikaImpl underTest;
 
     @Test
     void shouldMapTransactionToTransactionInfoDto() {
@@ -118,12 +116,18 @@ class TransactionMapperTest {
     void shouldMapTransactionReplenishDtoToTransaction() {
         var replenishDto = TestDataProvider.getTransactionReplenishDto();
         var expected = Transaction.builder()
+                .id(Long.valueOf(replenishDto.getGateId()))
                 .externalId(replenishDto.getOuterId())
                 .provider(PaymentProvider.builder().name(replenishDto.getProvider()).build())
+                .amount(replenishDto.getAmount())
+                .commissionAmount(replenishDto.getCommissionAmount())
+                .userId(String.valueOf(replenishDto.getAccount()))
+                .externalDate(replenishDto.getOuterAt())
                 .build();
 
         var actual = underTest.toEntity(replenishDto);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
+
 }

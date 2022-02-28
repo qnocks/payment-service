@@ -16,6 +16,7 @@ import com.itransition.payment.transaction.service.PaymentProviderService;
 import com.itransition.payment.transaction.service.impl.TransactionServiceImpl;
 import java.util.List;
 import java.util.Optional;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -54,8 +55,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldSaveNewTransaction() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
-        var transaction = Transaction.builder()
+        val stateDto = TestDataProvider.getTransactionStateDto();
+        val transaction = Transaction.builder()
                 .externalId(stateDto.getExternalId())
                 .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
                 .amount(stateDto.getAmount().getAmount())
@@ -66,7 +67,7 @@ class TransactionServiceTest {
                 .additionalData(stateDto.getAdditionalData())
                 .build();
 
-        var expected = TransactionInfoDto.builder()
+        val expected = TransactionInfoDto.builder()
                 .id(transaction.getId())
                 .externalId(transaction.getExternalId())
                 .status(transaction.getStatus())
@@ -78,7 +79,7 @@ class TransactionServiceTest {
         given(transactionMapper.toDto(transaction)).willReturn(expected);
         when(paymentProviderService.getByProvider(stateDto.getProvider())).thenReturn(transaction.getProvider());
 
-        var actual = underTest.save(stateDto);
+        val actual = underTest.save(stateDto);
 
         verify(transactionRepository, times(1)).saveAndFlush(transaction);
 
@@ -87,14 +88,14 @@ class TransactionServiceTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var updateDto = TestDataProvider.getTransactionInfoDto();
-        var transaction = Transaction.builder()
+        val updateDto = TestDataProvider.getTransactionInfoDto();
+        val transaction = Transaction.builder()
                 .externalId(updateDto.getExternalId())
                 .status(TransactionStatus.COMPLETED)
                 .provider(PaymentProvider.builder().name(updateDto.getProvider()).build())
                 .additionalData(updateDto.getAdditionalData())
                 .build();
-        var expected = TransactionInfoDto.builder()
+        val expected = TransactionInfoDto.builder()
                 .id(1L)
                 .externalId(transaction.getExternalId())
                 .status(transaction.getStatus())
@@ -111,7 +112,7 @@ class TransactionServiceTest {
                 .thenReturn(Optional.of(transaction));
         when(transactionMapper.toDto(transaction)).thenReturn(expected);
 
-        var actual = underTest.update(updateDto);
+        val actual = underTest.update(updateDto);
 
         verify(transactionRepository, times(1))
                 .findByExternalIdAndProviderName(transaction.getExternalId(), transaction.getProvider().getName());
@@ -122,8 +123,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldThrowWhenUpdatingTransactionDoesntExist() {
-        var expected = TestDataProvider.getTransactionInfoDto();
-        var transaction = Transaction.builder()
+        val expected = TestDataProvider.getTransactionInfoDto();
+        val transaction = Transaction.builder()
                 .externalId(expected.getExternalId())
                 .status(TransactionStatus.COMPLETED)
                 .provider(PaymentProvider.builder().name(expected.getProvider()).build())
@@ -143,8 +144,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldReturnTrueWhenExistsByExternalId() {
-        var externalId = "123";
-        var providerName = "test";
+        val externalId = "123";
+        val providerName = "test";
         when(transactionRepository.existsByExternalIdAndProviderName(externalId, providerName)).thenReturn(true);
         boolean actual = underTest.existsByExternalIdAndProvider(externalId, providerName);
         assertThat(actual).isTrue();
@@ -152,22 +153,22 @@ class TransactionServiceTest {
 
     @Test
     void shouldGetByExternalIdAndProvider() {
-        var infoDto = TestDataProvider.getTransactionInfoDto();
-        var transaction = TestDataProvider.getTransaction();
+        val infoDto = TestDataProvider.getTransactionInfoDto();
+        val transaction = TestDataProvider.getTransaction();
 
         when(transactionRepository.findByExternalIdAndProviderName(infoDto.getExternalId(), infoDto.getProvider()))
                 .thenReturn(Optional.of(transaction));
         when(transactionMapper.toDto(transaction)).thenReturn(TestDataProvider.getTransactionInfoDto());
 
-        var actual = underTest.getByExternalIdAndProvider(infoDto.getExternalId(), infoDto.getProvider());
+        val actual = underTest.getByExternalIdAndProvider(infoDto.getExternalId(), infoDto.getProvider());
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, infoDto);
     }
 
     @Test
     void shouldThrowWhenGetByExternalIdAndProvider() {
-        var externalId = "123";
-        var providerName = "test";
+        val externalId = "123";
+        val providerName = "test";
         when(transactionRepository.findByExternalIdAndProviderName(externalId, providerName))
                 .thenReturn(Optional.empty());
 
@@ -182,57 +183,57 @@ class TransactionServiceTest {
 
     @Test
     void shouldGetReadyToReplenish() {
-        var transaction = TestDataProvider.getTransaction();
+        val transaction = TestDataProvider.getTransaction();
         transaction.setStatus(TransactionStatus.COMPLETED);
-        var expected = TestDataProvider.getTransactionReplenishDto();
+        val expected = TestDataProvider.getTransactionReplenishDto();
 
         when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
                 TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)).thenReturn(List.of(transaction));
         when(transactionMapper.toReplenishDto(transaction)).thenReturn(expected);
 
-        var actual = underTest.getReadyToReplenish();
+        val actual = underTest.getReadyToReplenish();
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 
     @Test
     void shouldGetPageableResult() {
-        var pagedTransactions = List.of(
+        val pagedTransactions = List.of(
                 Transaction.builder().id(1L).build(),
                 Transaction.builder().id(2L).build());
 
         int page = 0;
         int pageSize = pagedTransactions.size();
-        String sort = "id";
-        String order = "ASC";
+        val sort = "id";
+        val order = "ASC";
 
-        var pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
+        val pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
 
         when(transactionRepository.findAll(pageable)).thenReturn(new PageImpl<>(pagedTransactions, pageable, pageSize));
         when(transactionMapper.toAdminDto(any(Transaction.class))).thenReturn(TransactionStateDto.builder().build());
 
-        var actual = underTest.getAll(pageable);
+        val actual = underTest.getAll(pageable);
 
         assertThat(actual).hasSize(pagedTransactions.size());
     }
 
     @Test
     void shouldGetNullWhenNothingReadyToReplenish() {
-        var transaction = TestDataProvider.getTransaction();
+        val transaction = TestDataProvider.getTransaction();
 
         when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
                 TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)).thenReturn(List.of(transaction));
 
-        var actual = underTest.getReadyToReplenish();
+        val actual = underTest.getReadyToReplenish();
 
         assertThat(actual).isNull();
     }
 
     @Test
     void shouldUpdateReplenishStatus() {
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var transaction = TestDataProvider.getTransaction();
-        var status = ReplenishmentStatus.FAILED;
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val transaction = TestDataProvider.getTransaction();
+        val status = ReplenishmentStatus.FAILED;
 
         when(transactionMapper.toEntity(replenishDto)).thenReturn(transaction);
         when(paymentProviderService.getByProvider(transaction.getProvider().getName()))
@@ -248,8 +249,8 @@ class TransactionServiceTest {
     @Test
     void shouldSetReplenishAfter() {
         double replenishAfter = 10.25;
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var transaction = TestDataProvider.getTransaction();
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val transaction = TestDataProvider.getTransaction();
 
         when(transactionMapper.toEntity(replenishDto)).thenReturn(transaction);
         when(paymentProviderService.getByProvider(transaction.getProvider().getName()))

@@ -2,14 +2,13 @@ package com.itransition.payment.unit.replenish.service;
 
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.entity.ReplenishError;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
+import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
-import com.itransition.payment.transaction.service.TransactionService;
 import com.itransition.payment.replenish.service.impl.ReplenishServiceImpl;
+import com.itransition.payment.transaction.service.TransactionService;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,9 +43,6 @@ class ReplenishServiceTest {
 
     @Mock
     private ReplenishAttemptCalc attemptCalc;
-
-    @Mock
-    private ExceptionMessageResolver exceptionMessageResolver;
 
     @Test
     void shouldUpdateReplenishStatusToSuccessWhenNotifySuccess() {

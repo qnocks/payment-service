@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TransactionMapperOrikaImpl implements TransactionMapper {
+public class TransactionMapperImpl implements TransactionMapper {
 
     private final MapperFacade mapperFacade;
 

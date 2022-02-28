@@ -49,9 +49,6 @@ class FlowServiceIT extends AbstractIntegrationTest {
     @Value("${test.provider}")
     private String provider;
 
-    @Value("${test.api.port}")
-    private int port;
-
     @WireMockTest(httpPort = 8082)
     @Nested
     class FlowCreatingTransactionTest {

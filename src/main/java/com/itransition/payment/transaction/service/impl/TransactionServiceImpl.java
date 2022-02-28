@@ -59,27 +59,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionMapper.toAdminDto(updatedTransaction);
     }
 
-    private void initiateTransactionProvider(@NotNull Transaction transaction, String provider) {
-        val paymentProvider = paymentProviderService.getByProvider(provider);
-
-        if (paymentProvider != null) {
-            transaction.setProvider(paymentProvider);
-        }
-    }
-
-    private Transaction processUpdate(Transaction transaction) {
-        initiateTransactionProvider(transaction, transaction.getProvider().getName());
-
-        val existingTransaction = getTransactionByExternalIdAndProvider(
-                transaction.getExternalId(),
-                transaction.getProvider().getName());
-
-        BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
-
-        transactionRepository.save(existingTransaction);
-        return existingTransaction;
-    }
-
     @Override
     public Boolean existsByExternalIdAndProvider(String externalId, String providerName) {
         return transactionRepository.existsByExternalIdAndProviderName(externalId, providerName);
@@ -139,6 +118,27 @@ public class TransactionServiceImpl implements TransactionService {
         val transaction = transactionMapper.toEntity(replenishDto);
         transaction.setReplenishAfter(LocalDateTime.now().plusSeconds((long) replenishAfter));
         processUpdate(transaction);
+    }
+
+    private void initiateTransactionProvider(@NotNull Transaction transaction, String provider) {
+        val paymentProvider = paymentProviderService.getByProvider(provider);
+
+        if (paymentProvider != null) {
+            transaction.setProvider(paymentProvider);
+        }
+    }
+
+    private Transaction processUpdate(Transaction transaction) {
+        initiateTransactionProvider(transaction, transaction.getProvider().getName());
+
+        val existingTransaction = getTransactionByExternalIdAndProvider(
+                transaction.getExternalId(),
+                transaction.getProvider().getName());
+
+        BeanUtils.copyProperties(transaction, existingTransaction, BeansUtils.getNullPropertyNames(transaction));
+
+        transactionRepository.save(existingTransaction);
+        return existingTransaction;
     }
 
     private Transaction getTransactionByExternalIdAndProvider(String externalId, String name) {

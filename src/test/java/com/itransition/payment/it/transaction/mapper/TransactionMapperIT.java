@@ -9,7 +9,7 @@ import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.transaction.dto.AmountDto;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
-import com.itransition.payment.transaction.mapper.TransactionMapperOrikaImpl;
+import com.itransition.payment.transaction.mapper.TransactionMapperImpl;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class TransactionMapperIT extends AbstractIntegrationTest {
 
     @Autowired
-    private TransactionMapperOrikaImpl underTest;
+    private TransactionMapperImpl underTest;
 
     @Test
     void shouldMapTransactionToTransactionInfoDto() {
@@ -130,5 +130,4 @@ public class TransactionMapperIT extends AbstractIntegrationTest {
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
-
 }

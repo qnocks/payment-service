@@ -15,6 +15,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OrikaMapperConfiguration extends ConfigurableMapper {
 
+    @Bean
+    public MapperFacade mapperFacade() {
+        return buildMapperFactory().getMapperFacade();
+    }
+
     private MapperFactory buildMapperFactory() {
         val mapperFactory = new DefaultMapperFactory.Builder()
                 .mapNulls(false)
@@ -46,11 +51,5 @@ public class OrikaMapperConfiguration extends ConfigurableMapper {
                 .field("outerAt", "externalDate")
                 .field("account", "userId")
                 .byDefault().register();
-    }
-
-
-    @Bean
-    public MapperFacade mapperFacade() {
-        return buildMapperFactory().getMapperFacade();
     }
 }

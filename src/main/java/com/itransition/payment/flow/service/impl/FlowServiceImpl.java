@@ -28,6 +28,17 @@ public class FlowServiceImpl implements FlowService {
         return transactionService.save(stateDto);
     }
 
+    @Override
+    public TransactionInfoDto updateTransaction(TransactionInfoDto updateDto) {
+        verifyStatusTransactionCorrectness(updateDto.getExternalId(), updateDto.getProvider());
+        return transactionService.update(updateDto);
+    }
+
+    @Override
+    public List<TransactionInfoDto> searchTransactions(String externalId, String provider) {
+        return List.of(transactionService.getByExternalIdAndProvider(externalId, provider));
+    }
+
     private void verifyForUnique(String externalId, String providerName) {
         val isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
 
@@ -45,12 +56,6 @@ public class FlowServiceImpl implements FlowService {
         }
     }
 
-    @Override
-    public TransactionInfoDto updateTransaction(TransactionInfoDto updateDto) {
-        verifyStatusTransactionCorrectness(updateDto.getExternalId(), updateDto.getProvider());
-        return transactionService.update(updateDto);
-    }
-
     private void verifyStatusTransactionCorrectness(String externalId, String providerName) {
         val existingTransaction = transactionService.getByExternalIdAndProvider(externalId, providerName);
         val status = existingTransaction.getStatus();
@@ -59,10 +64,5 @@ public class FlowServiceImpl implements FlowService {
             throw exceptionHelper.buildTransactionException(
                     "flow.transaction-status-incorrectness", externalId, providerName, status);
         }
-    }
-
-    @Override
-    public List<TransactionInfoDto> searchTransactions(String externalId, String provider) {
-        return List.of(transactionService.getByExternalIdAndProvider(externalId, provider));
     }
 }

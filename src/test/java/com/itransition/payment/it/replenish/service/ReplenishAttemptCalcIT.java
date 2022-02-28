@@ -34,7 +34,7 @@ class ReplenishAttemptCalcIT extends AbstractIntegrationTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(value = executionCount)
     void shouldCalcNextAttemptTime() {
         double expected = Math.exp(failedCount);
         double actual = underTest.calcNextAttemptTime();

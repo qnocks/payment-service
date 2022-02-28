@@ -1,11 +1,10 @@
 package com.itransition.payment;
 
-import com.itransition.payment.core.dto.TransactionReplenishDto;
-import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.account.dto.AccountDto;
-import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.core.dto.TransactionInfoDto;
+import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.transaction.entity.Transaction;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -58,14 +57,5 @@ public final class AssertionsHelper {
         assertThat(actual.getFirstName()).isEqualTo(expected.getFirstName());
         assertThat(actual.getLastName()).isEqualTo(expected.getLastName());
         assertThat(actual.getMiddleName()).isEqualTo(expected.getMiddleName());
-    }
-
-    public static void verifyFieldsEqualityActualExpected(AuthResponse actual, AuthResponse expected) {
-        assertThat(actual.getAccessToken()).isEqualTo(expected.getAccessToken());
-        assertThat(actual.getExpiresIn()).isEqualTo(expected.getExpiresIn());
-        assertThat(actual.getRefreshExpiresIn()).isEqualTo(expected.getRefreshExpiresIn());
-        assertThat(actual.getTokenType()).isEqualTo(expected.getTokenType());
-        assertThat(actual.getNotBeforePolicy()).isEqualTo(expected.getNotBeforePolicy());
-        assertThat(actual.getScope()).isEqualTo(expected.getScope());
     }
 }

@@ -2,15 +2,15 @@ package com.itransition.payment.unit.replenish.service;
 
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.entity.ReplenishError;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.core.repository.TransactionRepository;
+import com.itransition.payment.core.types.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
+import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
-import com.itransition.payment.transaction.service.TransactionService;
 import com.itransition.payment.replenish.service.impl.ReplenishServiceImpl;
+import com.itransition.payment.transaction.service.TransactionService;
 import java.util.Optional;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,12 +45,9 @@ class ReplenishServiceTest {
     @Mock
     private ReplenishAttemptCalc attemptCalc;
 
-    @Mock
-    private ExceptionMessageResolver exceptionMessageResolver;
-
     @Test
     void shouldUpdateReplenishStatusToSuccessWhenNotifySuccess() {
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
 
         when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto)).thenReturn(Mono.just(new ResponseEntity<>(HttpStatus.OK)));
@@ -63,10 +60,10 @@ class ReplenishServiceTest {
 
     @Test
     void shouldSaveReplenishErrorAndSetReplenishAfterWhenNotifyFailed() {
-        var exceptionMessage = "test";
-        var replenishAfter = 10.0;
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var transaction = TestDataProvider.getTransaction();
+        val exceptionMessage = "test";
+        val replenishAfter = 10.0;
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val transaction = TestDataProvider.getTransaction();
 
         when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto))
@@ -88,8 +85,8 @@ class ReplenishServiceTest {
 
     @Test
     void shouldUpdateReplenishStatusToFailedWhenNotifyFailedAndThresholdLimited() {
-        var exceptionMessage = "test";
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val exceptionMessage = "test";
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
 
         when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto))

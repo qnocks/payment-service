@@ -11,6 +11,7 @@ import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.types.TransactionStatus;
 import com.itransition.payment.flow.service.impl.FlowServiceImpl;
 import com.itransition.payment.transaction.service.TransactionService;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,15 +42,15 @@ class FlowServiceTest {
 
     @Test
     void shouldCreateTransaction() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
-        var expected = TestDataProvider.getTransactionInfoDto();
+        val stateDto = TestDataProvider.getTransactionStateDto();
+        val expected = TestDataProvider.getTransactionInfoDto();
 
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(false);
         when(accountService.getById(stateDto.getUser())).thenReturn(AccountDto.builder().build());
         when(transactionService.save(stateDto)).thenReturn(expected);
 
-        var actual = underTest.createTransaction(stateDto);
+        val actual = underTest.createTransaction(stateDto);
 
         verify(transactionService, times(1)).save(stateDto);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
@@ -57,7 +58,7 @@ class FlowServiceTest {
 
     @Test
     void shouldThrowWhenExternalIdIsNotUnique() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
+        val stateDto = TestDataProvider.getTransactionStateDto();
         when(transactionService.existsByExternalIdAndProvider(
                 stateDto.getExternalId(), stateDto.getProvider())).thenReturn(true);
         when(exceptionHelper.buildTransactionException(
@@ -69,7 +70,7 @@ class FlowServiceTest {
 
     @Test
     void shouldThrowWhenAccountIdDoesntExist() {
-        var stateDto = TestDataProvider.getTransactionStateDto();
+        val stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenReturn(null);
         when(exceptionHelper.buildExternalException(
                 HttpStatus.BAD_REQUEST,
@@ -81,8 +82,8 @@ class FlowServiceTest {
 
     @Test
     void shouldThrowWhenTransactionStatusCannotBeChanged() {
-        var updateDto = TestDataProvider.getTransactionInfoDto();
-        var infoDto = TestDataProvider.getTransactionInfoDto();
+        val updateDto = TestDataProvider.getTransactionInfoDto();
+        val infoDto = TestDataProvider.getTransactionInfoDto();
         infoDto.setStatus(TransactionStatus.COMPLETED);
 
         when(transactionService.getByExternalIdAndProvider(
@@ -96,9 +97,9 @@ class FlowServiceTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var updateDto = TestDataProvider.getTransactionInfoDto();
-        var existingInfoDto = TestDataProvider.getTransactionInfoDto();
-        var expected = TransactionInfoDto.builder()
+        val updateDto = TestDataProvider.getTransactionInfoDto();
+        val existingInfoDto = TestDataProvider.getTransactionInfoDto();
+        val expected = TransactionInfoDto.builder()
                 .externalId(updateDto.getExternalId())
                 .status(updateDto.getStatus())
                 .provider(updateDto.getProvider())
@@ -109,7 +110,7 @@ class FlowServiceTest {
                 .thenReturn(existingInfoDto);
         when(transactionService.update(updateDto)).thenReturn(expected);
 
-        var actual = underTest.updateTransaction(updateDto);
+        val actual = underTest.updateTransaction(updateDto);
 
         verify(transactionService, times(1)).update(updateDto);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
@@ -117,12 +118,12 @@ class FlowServiceTest {
 
     @Test
     void shouldSearchTransactions() {
-        var infoDto = TestDataProvider.getTransactionInfoDto();
+        val infoDto = TestDataProvider.getTransactionInfoDto();
 
         when(transactionService.getByExternalIdAndProvider(infoDto.getExternalId(), infoDto.getProvider()))
                 .thenReturn(infoDto);
 
-        var actual = underTest.searchTransactions(infoDto.getExternalId(), infoDto.getProvider());
+        val actual = underTest.searchTransactions(infoDto.getExternalId(), infoDto.getProvider());
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0)).isEqualTo(infoDto);

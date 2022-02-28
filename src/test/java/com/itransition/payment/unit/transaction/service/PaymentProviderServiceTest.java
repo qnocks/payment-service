@@ -4,6 +4,7 @@ import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.transaction.repository.PaymentProviderRepository;
 import com.itransition.payment.transaction.service.impl.PaymentProviderServiceImpl;
 import java.util.Optional;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,11 +27,11 @@ class PaymentProviderServiceTest {
 
     @Test
     void shouldGetPaymentProviderByName() {
-        var expected = TestDataProvider.getPaymentProvider();
+        val expected = TestDataProvider.getPaymentProvider();
 
         when(paymentProviderRepository.findByName(expected.getName())).thenReturn(Optional.of(expected));
 
-        var actual = underTest.getByProvider(expected.getName());
+        val actual = underTest.getByProvider(expected.getName());
 
         verify(paymentProviderRepository, times(1)).findByName(expected.getName());
         assertThat(actual.getId()).isEqualTo(expected.getId());
@@ -39,11 +40,11 @@ class PaymentProviderServiceTest {
 
     @Test
     void shouldGetNullWhenPaymentProviderDoesntExist() {
-        String providerName = "test";
+        val providerName = "test";
 
         when(paymentProviderRepository.findByName(providerName)).thenReturn(Optional.empty());
 
-        var actual = underTest.getByProvider(providerName);
+        val actual = underTest.getByProvider(providerName);
 
         verify(paymentProviderRepository, times(1)).findByName(providerName);
         assertThat(actual).isNull();

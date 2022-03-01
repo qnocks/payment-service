@@ -3,14 +3,16 @@ package com.itransition.payment.replenish.service.impl;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.entity.ReplenishError;
 import com.itransition.payment.core.exception.ExceptionHelper;
+import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
 import com.itransition.payment.replenish.service.ReplenishService;
 import com.itransition.payment.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -29,12 +31,20 @@ public class ReplenishServiceImpl implements ReplenishService {
     @Scheduled(cron = "${app.replenish.cron}")
     @Override
     public void replenish() {
-        var replenishDto = transactionService.getReadyToReplenish();
+        val replenishDto = transactionService.getReadyToReplenish();
 
         if (replenishDto != null) {
+            handleSendTransaction(replenishDto);
+        }
+    }
+
+    private void handleSendTransaction(TransactionReplenishDto replenishDto) {
+        try {
             notifyService.sendTransaction(replenishDto).subscribe(
                     response -> successCallback(replenishDto),
                     error -> failureCallback(replenishDto, error.getMessage()));
+        } catch (ExternalException e) {
+            failureCallback(replenishDto, e.getMessage());
         }
     }
 
@@ -43,7 +53,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     }
 
     private void failureCallback(TransactionReplenishDto replenishDto, String error) {
-        boolean canTryToReplenish = attemptCalc.canAnotherTry();
+        val canTryToReplenish = attemptCalc.canAnotherTry();
         if (canTryToReplenish) {
             saveReplenishError(error, replenishDto);
             setReplenishAfter(replenishDto, attemptCalc.calcNextAttemptTime());

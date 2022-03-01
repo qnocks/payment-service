@@ -46,11 +46,11 @@ class AccountServiceIT extends AbstractIntegrationTest {
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withStatus(HttpStatus.OK.value())));
 
-        var authResponse = TestDataProvider.getAuthResponse();
+        val authResponse = TestDataProvider.getAuthResponse();
         when(securityService.getAuthHeader())
                 .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
 
-        var actual = underTest.getById(accountId);
+        val actual = underTest.getById(accountId);
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, expected);
     }
 }

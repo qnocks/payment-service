@@ -9,6 +9,7 @@ import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.impl.SecurityServiceImpl;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ class SecurityServiceIT extends AbstractIntegrationTest {
                         .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .withStatus(HttpStatus.OK.value())));
 
-        var actual = underTest.getAuthHeader();
+        val actual = underTest.getAuthHeader();
         assertThat(actual).isEqualTo(expected.getTokenType() + " " + expected.getAccessToken());
     }
 }

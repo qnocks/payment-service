@@ -2,6 +2,7 @@ package com.itransition.payment.it.replenish.service;
 
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.replenish.service.impl.ReplenishAttemptCalcImpl;
+import lombok.val;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
@@ -29,20 +30,20 @@ class ReplenishAttemptCalcIT extends AbstractIntegrationTest {
 
     @RepeatedTest(value = executionCount)
     void shouldCalcPossibilityToAnotherTry() {
-        boolean expected = calcPossibility();
-        boolean actual = underTest.canAnotherTry();
+        val expected = calcPossibility();
+        val actual = underTest.canAnotherTry();
         assertThat(actual).isEqualTo(expected);
     }
 
     @RepeatedTest(value = executionCount)
     void shouldCalcNextAttemptTime() {
-        double expected = Math.exp(failedCount);
-        double actual = underTest.calcNextAttemptTime();
+        val expected = Math.exp(failedCount);
+        val actual = underTest.calcNextAttemptTime();
         assertThat(actual).isEqualTo(expected, Offset.offset(0.01));
     }
 
     private boolean calcPossibility() {
-        boolean possible = ++failedCount <= threshold;
+        val possible = ++failedCount <= threshold;
         if (!possible) {
             failedCount = 0;
         }

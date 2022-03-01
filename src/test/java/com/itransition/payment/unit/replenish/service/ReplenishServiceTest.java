@@ -3,7 +3,7 @@ package com.itransition.payment.unit.replenish.service;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.entity.ReplenishError;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;

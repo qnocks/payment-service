@@ -7,6 +7,7 @@ import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.security.service.SecurityService;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,13 @@ class NotifyServiceIT extends AbstractIntegrationTest {
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(HttpStatus.OK.value())));
 
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var authResponse = TestDataProvider.getAuthResponse();
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val authResponse = TestDataProvider.getAuthResponse();
 
         when(securityService.getAuthHeader())
                 .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
 
-        var actual = underTest.sendTransaction(replenishDto);
+        val actual = underTest.sendTransaction(replenishDto);
 
         actual.subscribe(responseEntity -> assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build()));
     }
@@ -50,12 +51,12 @@ class NotifyServiceIT extends AbstractIntegrationTest {
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(HttpStatus.OK.value())));
 
-        var replenishDto = TestDataProvider.getTransactionReplenishDto();
-        var authResponse = TestDataProvider.getAuthResponse();
+        val replenishDto = TestDataProvider.getTransactionReplenishDto();
+        val authResponse = TestDataProvider.getAuthResponse();
 
         when(securityService.getAuthHeader()).thenReturn(authResponse.getAccessToken());
 
-        var actual = underTest.sendTransaction(replenishDto);
+        val actual = underTest.sendTransaction(replenishDto);
 
         actual.subscribe(responseEntity ->
                 assertThat(responseEntity).isEqualTo(ResponseEntity.internalServerError().build()));

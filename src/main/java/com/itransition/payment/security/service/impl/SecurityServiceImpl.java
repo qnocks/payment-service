@@ -1,15 +1,15 @@
 package com.itransition.payment.security.service.impl;
 
 import com.itransition.payment.core.exception.ExceptionHelper;
+import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Service
 @RequiredArgsConstructor
@@ -57,17 +57,21 @@ public class SecurityServiceImpl implements SecurityService {
                         .queryParam("client_id", CLIENT_ID)
                         .build())
                 .retrieve()
-                .onStatus(
-                        HttpStatus::isError,
-                        response -> Mono.error(exceptionHelper.buildExternalException("security.auth-error")))
                 .bodyToMono(AuthResponse.class)
-                .onErrorResume(
-                        error -> Mono.error(exceptionHelper.buildExternalException("security.service-not-available")))
+                .onErrorMap(this::handleError)
                 .blockOptional()
                 .orElseThrow(() -> exceptionHelper.buildExternalException("security.auth-error"));
     }
 
     private String getToken(@NotNull AuthResponse authResponse) {
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
+    }
+
+    private ExternalException handleError(Throwable e) {
+        if (e instanceof WebClientRequestException) {
+            throw exceptionHelper.buildExternalException("security.service-not-available");
+        }
+
+        throw exceptionHelper.buildExternalException("security.auth-error");
     }
 }

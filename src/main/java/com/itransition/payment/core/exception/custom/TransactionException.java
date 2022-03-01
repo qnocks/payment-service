@@ -1,18 +1,18 @@
 package com.itransition.payment.core.exception.custom;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Data
+@Getter
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class TransactionException extends RuntimeException {
 
     @Builder.Default
-    private String message = "Error occurred while transaction processing";
+    private final String message = "Error occurred while transaction processing";
 
     @Builder.Default
-    private HttpStatus status = HttpStatus.BAD_REQUEST;
+    private final HttpStatus status = HttpStatus.BAD_REQUEST;
 }

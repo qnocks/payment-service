@@ -33,7 +33,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handlerUnknownException(Exception e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleUnknownException(Exception e, WebRequest request) {
         return buildResponse(e, "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

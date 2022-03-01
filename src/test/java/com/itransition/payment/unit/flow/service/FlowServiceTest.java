@@ -92,7 +92,6 @@ class FlowServiceTest {
     @Test
     void shouldUpdateTransaction() {
         val updateDto = TestDataProvider.getTransactionInfoDto();
-        val existingInfoDto = TestDataProvider.getTransactionInfoDto();
         val expected = TransactionInfoDto.builder()
                 .externalId(updateDto.getExternalId())
                 .status(updateDto.getStatus())
@@ -101,7 +100,7 @@ class FlowServiceTest {
                 .build();
 
         when(transactionService.getByExternalIdAndProvider(updateDto.getExternalId(), updateDto.getProvider()))
-                .thenReturn(existingInfoDto);
+                .thenReturn(TestDataProvider.getTransactionInfoDto());
         when(transactionService.update(updateDto)).thenReturn(expected);
 
         val actual = underTest.updateTransaction(updateDto);

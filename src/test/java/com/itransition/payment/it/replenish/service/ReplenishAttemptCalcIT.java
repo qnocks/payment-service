@@ -30,16 +30,14 @@ class ReplenishAttemptCalcIT extends AbstractIntegrationTest {
 
     @RepeatedTest(value = executionCount)
     void shouldCalcPossibilityToAnotherTry() {
-        val expected = calcPossibility();
         val actual = underTest.canAnotherTry();
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(calcPossibility());
     }
 
     @RepeatedTest(value = executionCount)
     void shouldCalcNextAttemptTime() {
-        val expected = Math.exp(failedCount);
         val actual = underTest.calcNextAttemptTime();
-        assertThat(actual).isEqualTo(expected, Offset.offset(0.01));
+        assertThat(actual).isEqualTo(Math.exp(failedCount), Offset.offset(0.01));
     }
 
     private boolean calcPossibility() {

@@ -53,8 +53,7 @@ public class ReplenishServiceImpl implements ReplenishService {
     }
 
     private void failureCallback(TransactionReplenishDto replenishDto, String error) {
-        val canTryToReplenish = attemptCalc.canAnotherTry();
-        if (canTryToReplenish) {
+        if (attemptCalc.canAnotherTry()) {
             saveReplenishError(error, replenishDto);
             setReplenishAfter(replenishDto, attemptCalc.calcNextAttemptTime());
         } else {
@@ -67,13 +66,12 @@ public class ReplenishServiceImpl implements ReplenishService {
     }
 
     private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
-        var transaction = transactionRepository.findById(Long.valueOf(replenishDto.getGateId()))
-                .orElseThrow(() -> exceptionHelper.buildTransactionException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, "transaction.cannot-get-by-id"));
-
         replenishErrorRepository.save(ReplenishError.builder()
                 .error(error)
-                .transaction(transaction)
+                .transaction(transactionRepository
+                        .findById(Long.valueOf(replenishDto.getGateId()))
+                        .orElseThrow(() -> exceptionHelper.buildTransactionException(
+                                HttpStatus.INTERNAL_SERVER_ERROR, "transaction.cannot-get-by-id")))
                 .build());
     }
 

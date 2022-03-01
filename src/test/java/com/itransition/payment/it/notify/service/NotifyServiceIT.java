@@ -34,13 +34,12 @@ class NotifyServiceIT extends AbstractIntegrationTest {
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(HttpStatus.OK.value())));
 
-        val replenishDto = TestDataProvider.getTransactionReplenishDto();
         val authResponse = TestDataProvider.getAuthResponse();
 
         when(securityService.getAuthHeader())
                 .thenReturn(authResponse.getTokenType() + " " + authResponse.getAccessToken());
 
-        val actual = underTest.sendTransaction(replenishDto);
+        val actual = underTest.sendTransaction(TestDataProvider.getTransactionReplenishDto());
 
         actual.subscribe(responseEntity -> assertThat(responseEntity).isEqualTo(ResponseEntity.ok().build()));
     }
@@ -51,12 +50,11 @@ class NotifyServiceIT extends AbstractIntegrationTest {
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(HttpStatus.OK.value())));
 
-        val replenishDto = TestDataProvider.getTransactionReplenishDto();
         val authResponse = TestDataProvider.getAuthResponse();
 
         when(securityService.getAuthHeader()).thenReturn(authResponse.getAccessToken());
 
-        val actual = underTest.sendTransaction(replenishDto);
+        val actual = underTest.sendTransaction(TestDataProvider.getTransactionReplenishDto());
 
         actual.subscribe(responseEntity ->
                 assertThat(responseEntity).isEqualTo(ResponseEntity.internalServerError().build()));

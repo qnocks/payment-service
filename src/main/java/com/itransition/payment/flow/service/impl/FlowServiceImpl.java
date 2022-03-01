@@ -39,9 +39,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
     private void verifyForUnique(String externalId, String providerName) {
-        val isTransactionExists = transactionService.existsByExternalIdAndProvider(externalId, providerName);
-
-        if (isTransactionExists) {
+        if (transactionService.existsByExternalIdAndProvider(externalId, providerName)) {
             throw exceptionHelper.buildTransactionException(
                     "flow.external-id-provider-non-uniqueness", externalId, providerName);
         }
@@ -52,8 +50,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
     private void verifyStatusTransactionCorrectness(String externalId, String providerName) {
-        val existingTransaction = transactionService.getByExternalIdAndProvider(externalId, providerName);
-        val status = existingTransaction.getStatus();
+        val status = transactionService.getByExternalIdAndProvider(externalId, providerName).getStatus();
 
         if (!TransactionStatus.INITIAL.equals(status)) {
             throw exceptionHelper.buildTransactionException(

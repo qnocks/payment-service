@@ -1,18 +1,18 @@
 package com.itransition.payment.core.exception.custom;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Data
+@Getter
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class ExternalException extends RuntimeException {
 
     @Builder.Default
-    private String message = "Error occurred while external communication";
+    private final String message = "Error occurred while external communication";
 
     @Builder.Default
-    private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    private final HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 }

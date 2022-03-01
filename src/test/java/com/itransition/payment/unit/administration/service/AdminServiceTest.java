@@ -36,15 +36,14 @@ class AdminServiceTest {
 
         int page = 0;
         int pageSize = 2;
-        String sort = "id";
         String order = "ASC";
+        String sort = "id";
 
         when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)))
                 .thenReturn(pagedTransactions);
 
         val actual = underTest.searchTransactions(
-                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)
-        );
+                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort));
 
         assertThat(actual).hasSize(pageSize);
         assertThat(actual.get(0).getId()).isEqualTo(1L);

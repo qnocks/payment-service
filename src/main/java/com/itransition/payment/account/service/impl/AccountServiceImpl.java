@@ -6,7 +6,6 @@ import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDto getById(String id) {
-        val authHeader = securityService.getAuthHeader();
-        return retrieveById(id, authHeader);
+        return retrieveById(id, securityService.getAuthHeader());
     }
 
     private AccountDto retrieveById(String id, String authHeader) {

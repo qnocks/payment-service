@@ -6,7 +6,6 @@ import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -26,8 +25,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String getAuthHeader() {
-        val authResponse = authorize();
-        return getToken(authResponse);
+        return getToken(authorize());
     }
 
     private AuthResponse authorize() {

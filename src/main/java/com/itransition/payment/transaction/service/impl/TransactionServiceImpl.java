@@ -46,16 +46,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionInfoDto update(TransactionInfoDto updateDto) {
-        val transaction = transactionMapper.toEntity(updateDto);
-        val updatedTransaction = processUpdate(transaction);
+        val updatedTransaction = processUpdate(transactionMapper.toEntity(updateDto));
         return transactionMapper.toDto(updatedTransaction);
     }
 
     @Transactional
     @Override
     public TransactionStateDto update(TransactionStateDto adminDto) {
-        val transaction = transactionMapper.toEntity(adminDto);
-        val updatedTransaction = processUpdate(transaction);
+        val updatedTransaction = processUpdate(transactionMapper.toEntity(adminDto));
         return transactionMapper.toAdminDto(updatedTransaction);
     }
 

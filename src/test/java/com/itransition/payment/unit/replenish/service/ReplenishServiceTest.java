@@ -85,12 +85,11 @@ class ReplenishServiceTest {
 
     @Test
     void shouldUpdateReplenishStatusToFailedWhenNotifyFailedAndThresholdLimited() {
-        val exceptionMessage = "test";
         val replenishDto = TestDataProvider.getTransactionReplenishDto();
 
         when(transactionService.getReadyToReplenish()).thenReturn(replenishDto);
         when(notifyService.sendTransaction(replenishDto))
-                .thenReturn(Mono.error(() -> new IllegalStateException(exceptionMessage)));
+                .thenReturn(Mono.error(IllegalStateException::new));
         when(attemptCalc.canAnotherTry()).thenReturn(false);
 
         underTest.replenish();

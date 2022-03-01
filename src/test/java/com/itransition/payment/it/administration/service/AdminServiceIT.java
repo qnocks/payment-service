@@ -43,8 +43,7 @@ class AdminServiceIT extends AbstractIntegrationTest {
                 .findByExternalIdAndProviderName(externalId, provider).get();
 
         val actual = underTest.searchTransactions(
-                PageRequest.of(0, 1, Sort.Direction.valueOf("ASC"), "externalId")
-        );
+                PageRequest.of(0, 1, Sort.Direction.valueOf("ASC"), "externalId"));
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getId()).isEqualTo(existingTransaction.getId());

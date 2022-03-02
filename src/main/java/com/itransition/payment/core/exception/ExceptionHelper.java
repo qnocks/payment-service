@@ -28,6 +28,19 @@ public class ExceptionHelper {
                 .build();
     }
 
+    public ExternalException buildExternalException(String messageKey, Object... params) {
+        return ExternalException.builder()
+                .message(exceptionMessageResolver.getMessage(messageKey, params))
+                .build();
+    }
+
+    public ExternalException buildExternalException(HttpStatus status, String messageKey, Object... params) {
+        return ExternalException.builder()
+                .message(exceptionMessageResolver.getMessage(messageKey, params))
+                .status(status)
+                .build();
+    }
+
     public ExternalException handleExternalException(Throwable e, Class<?> clazz, String... params) {
         if (clazz.equals(AccountService.class)) {
             return processAccountExternalException((Exception) e, params);
@@ -52,18 +65,5 @@ public class ExceptionHelper {
         }
 
         return buildExternalException("security.auth-error");
-    }
-
-    public ExternalException buildExternalException(String messageKey, Object... params) {
-        return ExternalException.builder()
-                .message(exceptionMessageResolver.getMessage(messageKey, params))
-                .build();
-    }
-
-    public ExternalException buildExternalException(HttpStatus status, String messageKey, Object... params) {
-        return ExternalException.builder()
-                .message(exceptionMessageResolver.getMessage(messageKey, params))
-                .status(status)
-                .build();
     }
 }

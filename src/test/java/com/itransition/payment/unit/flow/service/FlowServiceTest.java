@@ -72,6 +72,7 @@ class FlowServiceTest {
         val stateDto = TestDataProvider.getTransactionStateDto();
         when(accountService.getById(stateDto.getUser())).thenThrow(ExternalException.builder().build());
         assertThrows(ExternalException.class, () -> underTest.createTransaction(stateDto));
+        verify(accountService).getById(stateDto.getUser());
     }
 
     @Test
@@ -92,6 +93,7 @@ class FlowServiceTest {
     @Test
     void shouldUpdateTransaction() {
         val updateDto = TestDataProvider.getTransactionInfoDto();
+        val existingInfoDto = TestDataProvider.getTransactionInfoDto();
         val expected = TransactionInfoDto.builder()
                 .externalId(updateDto.getExternalId())
                 .status(updateDto.getStatus())
@@ -100,7 +102,7 @@ class FlowServiceTest {
                 .build();
 
         when(transactionService.getByExternalIdAndProvider(updateDto.getExternalId(), updateDto.getProvider()))
-                .thenReturn(TestDataProvider.getTransactionInfoDto());
+                .thenReturn(existingInfoDto);
         when(transactionService.update(updateDto)).thenReturn(expected);
 
         val actual = underTest.updateTransaction(updateDto);

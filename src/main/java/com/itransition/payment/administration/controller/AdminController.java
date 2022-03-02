@@ -48,7 +48,8 @@ public class AdminController {
     )
     @PostMapping
     public TransactionStateDto completeTransaction(
-            @RequestParam("external_id") String externalId, @RequestParam String provider) {
+            @RequestParam("external_id") String externalId,
+            @RequestParam String provider) {
         return adminService.completeTransaction(externalId, provider);
     }
 }

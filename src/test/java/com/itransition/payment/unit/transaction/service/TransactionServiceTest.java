@@ -202,9 +202,12 @@ class TransactionServiceTest {
                 Transaction.builder().id(1L).build(),
                 Transaction.builder().id(2L).build());
 
-        int pageSize = pagedTransactions.size();
+        val page = 0;
+        val pageSize = pagedTransactions.size();
+        val order = "ASC";
+        val sort = "id";
 
-        val pageable = PageRequest.of(0, pageSize, Sort.Direction.valueOf("ASC"), "id");
+        val pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
 
         when(transactionRepository.findAll(pageable)).thenReturn(new PageImpl<>(pagedTransactions, pageable, pageSize));
         when(transactionMapper.toAdminDto(any(Transaction.class))).thenReturn(TransactionStateDto.builder().build());
@@ -216,9 +219,11 @@ class TransactionServiceTest {
 
     @Test
     void shouldGetNullWhenNothingReadyToReplenish() {
+        val transaction = TestDataProvider.getTransaction();
+
         when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
                 TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL))
-                .thenReturn(List.of(TestDataProvider.getTransaction()));
+                .thenReturn(List.of(transaction));
 
         val actual = underTest.getReadyToReplenish();
 
@@ -229,6 +234,7 @@ class TransactionServiceTest {
     void shouldUpdateReplenishStatus() {
         val replenishDto = TestDataProvider.getTransactionReplenishDto();
         val transaction = TestDataProvider.getTransaction();
+        val status = ReplenishmentStatus.FAILED;
 
         when(transactionMapper.toEntity(replenishDto)).thenReturn(transaction);
         when(paymentProviderService.getByProvider(transaction.getProvider().getName()))
@@ -236,13 +242,14 @@ class TransactionServiceTest {
         when(transactionRepository.findByExternalIdAndProviderName(
                 transaction.getExternalId(), transaction.getProvider().getName())).thenReturn(Optional.of(transaction));
 
-        underTest.updateReplenishStatus(replenishDto, ReplenishmentStatus.FAILED);
+        underTest.updateReplenishStatus(replenishDto, status);
 
         verify(transactionRepository, times(1)).save(transaction);
     }
 
     @Test
     void shouldSetReplenishAfter() {
+        val replenishAfter = 10.25;
         val replenishDto = TestDataProvider.getTransactionReplenishDto();
         val transaction = TestDataProvider.getTransaction();
 
@@ -252,7 +259,7 @@ class TransactionServiceTest {
         when(transactionRepository.findByExternalIdAndProviderName(
                 transaction.getExternalId(), transaction.getProvider().getName())).thenReturn(Optional.of(transaction));
 
-        underTest.setReplenishAfter(replenishDto, 10.25);
+        underTest.setReplenishAfter(replenishDto, replenishAfter);
 
         verify(transactionRepository, times(1)).save(transaction);
     }

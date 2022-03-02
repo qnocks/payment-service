@@ -30,22 +30,25 @@ public class OrikaMapperConfiguration extends ConfigurableMapper {
     }
 
     private void configureTransactionMapping(MapperFactory factory) {
+        val providerFiled = "provider";
+        val providerNameField = "provider.name";
+
         factory.classMap(TransactionStateDto.class, Transaction.class)
                 .field("amount.amount", "amount")
                 .field("amount.currency", "currency")
                 .field("commissionAmount.amount", "commissionAmount")
                 .field("commissionAmount.currency", "commissionCurrency")
                 .field("user", "userId")
-                .field("provider", "provider.name")
+                .field(providerFiled, providerNameField)
                 .byDefault()
                 .register();
 
         factory.classMap(TransactionInfoDto.class, Transaction.class)
-                .field("provider", "provider.name")
+                .field(providerFiled, providerNameField)
                 .byDefault().register();
 
         factory.classMap(TransactionReplenishDto.class, Transaction.class)
-                .field("provider", "provider.name")
+                .field(providerFiled, providerNameField)
                 .field("outerId", "externalId")
                 .field("gateId", "id")
                 .field("outerAt", "externalDate")

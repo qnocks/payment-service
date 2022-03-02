@@ -14,12 +14,12 @@ public class ReplenishAttemptCalcImpl implements ReplenishAttemptCalc {
 
     @Override
     public boolean canAnotherTry() {
-        val canTryToReplenish = ++failedCount <= threshold;
-        if (!canTryToReplenish) {
+        val isCannotTryToReplenish = ++failedCount > threshold;
+        if (isCannotTryToReplenish) {
             failedCount = 0;
         }
 
-        return canTryToReplenish;
+        return !isCannotTryToReplenish;
     }
 
     @Override

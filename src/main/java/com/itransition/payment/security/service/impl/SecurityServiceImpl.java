@@ -1,14 +1,12 @@
 package com.itransition.payment.security.service.impl;
 
 import com.itransition.payment.core.exception.ExceptionHelper;
-import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.security.dto.AuthResponse;
 import com.itransition.payment.security.service.SecurityService;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Service
 @RequiredArgsConstructor
@@ -56,20 +54,12 @@ public class SecurityServiceImpl implements SecurityService {
                         .build())
                 .retrieve()
                 .bodyToMono(AuthResponse.class)
-                .onErrorMap(this::handleError)
+                .onErrorMap(throwable -> exceptionHelper.handleExternalException(throwable, SecurityService.class))
                 .blockOptional()
                 .orElseThrow(() -> exceptionHelper.buildExternalException("security.auth-error"));
     }
 
     private String getToken(@NotNull AuthResponse authResponse) {
         return authResponse.getTokenType() + " " + authResponse.getAccessToken();
-    }
-
-    private ExternalException handleError(Throwable e) {
-        if (e instanceof WebClientRequestException) {
-            throw exceptionHelper.buildExternalException("security.service-not-available");
-        }
-
-        throw exceptionHelper.buildExternalException("security.auth-error");
     }
 }

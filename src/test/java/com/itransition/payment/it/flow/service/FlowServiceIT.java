@@ -57,15 +57,19 @@ class FlowServiceIT extends AbstractIntegrationTest {
         @SneakyThrows
         @Test
         void shouldCreateTransaction() {
-            WireMock.stubFor(WireMock.get("/account/" + 321).willReturn(
+            val accountId = 321;
+            val accountDto = TestDataProvider.getAccountDto();
+            val authResponse = TestDataProvider.getAuthResponse();
+
+            WireMock.stubFor(WireMock.get("/account/" + accountId).willReturn(
                     ResponseDefinitionBuilder.responseDefinition()
-                            .withBody(mapper.writeValueAsString(TestDataProvider.getAccountDto()))
+                            .withBody(mapper.writeValueAsString(accountDto))
                             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                             .withStatus(HttpStatus.OK.value())));
 
             WireMock.stubFor(WireMock.post("/auth/token?grant_type=&client_secret=&client_id=")
                     .willReturn(ResponseDefinitionBuilder.responseDefinition()
-                            .withBody(mapper.writeValueAsString(TestDataProvider.getAuthResponse()))
+                            .withBody(mapper.writeValueAsString(authResponse))
                             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                             .withStatus(HttpStatus.OK.value())));
 

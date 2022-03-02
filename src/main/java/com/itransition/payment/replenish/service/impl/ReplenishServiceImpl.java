@@ -3,7 +3,6 @@ package com.itransition.payment.replenish.service.impl;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.entity.ReplenishError;
 import com.itransition.payment.core.exception.ExceptionHelper;
-import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.repository.TransactionRepository;
 import com.itransition.payment.core.type.ReplenishmentStatus;
 import com.itransition.payment.notify.service.NotifyService;
@@ -43,7 +42,7 @@ public class ReplenishServiceImpl implements ReplenishService {
             notifyService.sendTransaction(replenishDto).subscribe(
                     response -> successCallback(replenishDto),
                     error -> failureCallback(replenishDto, error.getMessage()));
-        } catch (ExternalException e) {
+        } catch (Exception e) {
             failureCallback(replenishDto, e.getMessage());
         }
     }

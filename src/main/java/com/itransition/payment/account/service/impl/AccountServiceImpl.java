@@ -22,7 +22,6 @@ public class AccountServiceImpl implements AccountService {
         return retrieveById(id, securityService.getAuthHeader());
     }
 
-    // TODO: move error handling logic to exception helper
     private AccountDto retrieveById(String id, String authHeader) {
         return webClient.get()
                 .uri("account/{account_id}", id)

@@ -14,7 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class TransactionMapperIT extends AbstractIntegrationTest {
+class TransactionMapperIT extends AbstractIntegrationTest {
 
     @Autowired
     private TransactionMapperImpl underTest;

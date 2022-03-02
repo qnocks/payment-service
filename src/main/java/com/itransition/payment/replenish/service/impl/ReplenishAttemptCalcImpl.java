@@ -1,6 +1,7 @@
 package com.itransition.payment.replenish.service.impl;
 
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,12 @@ public class ReplenishAttemptCalcImpl implements ReplenishAttemptCalc {
 
     @Override
     public boolean canAnotherTry() {
-        boolean canTryToReplenish = ++failedCount <= threshold;
-        if (!canTryToReplenish) {
+        val isCannotTryToReplenish = ++failedCount > threshold;
+        if (isCannotTryToReplenish) {
             failedCount = 0;
         }
 
-        return canTryToReplenish;
+        return !isCannotTryToReplenish;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.itransition.payment.transaction.entity;
 
 import com.itransition.payment.core.entity.ReplenishError;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

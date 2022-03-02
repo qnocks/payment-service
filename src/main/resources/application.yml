@@ -33,7 +33,7 @@ springdoc:
 
 app:
   replenish:
-    threshold: 3
+    threshold: 2
     cron: '*/30 * * * * *'
 
   exception:

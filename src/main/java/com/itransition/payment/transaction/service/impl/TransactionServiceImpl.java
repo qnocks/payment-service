@@ -5,8 +5,8 @@ import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.core.util.BeansUtils;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.mapper.TransactionMapper;
@@ -46,16 +46,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     @Override
     public TransactionInfoDto update(TransactionInfoDto updateDto) {
-        val transaction = transactionMapper.toEntity(updateDto);
-        val updatedTransaction = processUpdate(transaction);
+        val updatedTransaction = processUpdate(transactionMapper.toEntity(updateDto));
         return transactionMapper.toDto(updatedTransaction);
     }
 
     @Transactional
     @Override
     public TransactionStateDto update(TransactionStateDto adminDto) {
-        val transaction = transactionMapper.toEntity(adminDto);
-        val updatedTransaction = processUpdate(transaction);
+        val updatedTransaction = processUpdate(transactionMapper.toEntity(adminDto));
         return transactionMapper.toAdminDto(updatedTransaction);
     }
 

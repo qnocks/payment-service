@@ -4,7 +4,6 @@ import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.notify.service.NotifyService;
 import com.itransition.payment.security.service.SecurityService;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,7 @@ public class NotifyServiceImpl implements NotifyService {
 
     @Override
     public Mono<ResponseEntity<Void>> sendTransaction(TransactionReplenishDto replenishDto) {
-        val authHeader = securityService.getAuthHeader();
-        return callExternalTransaction(authHeader, replenishDto);
+        return callExternalTransaction(securityService.getAuthHeader(), replenishDto);
     }
 
     private Mono<ResponseEntity<Void>> callExternalTransaction(String authHeader, TransactionReplenishDto replenishDto) {

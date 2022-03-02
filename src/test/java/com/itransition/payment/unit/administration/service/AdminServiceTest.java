@@ -3,6 +3,7 @@ package com.itransition.payment.unit.administration.service;
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.service.TransactionService;
 import com.itransition.payment.administration.service.impl.AdminServiceImpl;
 import java.util.List;
@@ -35,13 +36,14 @@ class AdminServiceTest {
 
         int page = 0;
         int pageSize = 2;
-        String sort = "id";
         String order = "ASC";
+        String sort = "id";
 
         when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)))
                 .thenReturn(pagedTransactions);
 
-        val actual = underTest.searchTransactions(page, pageSize, sort, order, null);
+        val actual = underTest.searchTransactions(
+                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort));
 
         assertThat(actual).hasSize(pageSize);
         assertThat(actual.get(0).getId()).isEqualTo(1L);
@@ -62,12 +64,17 @@ class AdminServiceTest {
 
     @Test
     void shouldCompleteTransaction() {
-        TransactionStateDto stateDto = TestDataProvider.getTransactionStateDto();
+        val stateDto = TestDataProvider.getTransactionStateDto();
+        val completedTransaction = TransactionStateDto.builder()
+                .externalId(stateDto.getExternalId())
+                .provider(stateDto.getProvider())
+                .status(TransactionStatus.COMPLETED)
+                .build();
 
-        when(transactionService.complete(stateDto.getExternalId(), stateDto.getProvider())).thenReturn(stateDto);
+        when(transactionService.update(completedTransaction)).thenReturn(completedTransaction);
 
         val actual = underTest.completeTransaction(stateDto.getExternalId(), stateDto.getProvider());
 
-        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, stateDto);
+        AssertionsHelper.verifyFieldsEqualityActualExpected(actual, completedTransaction);
     }
 }

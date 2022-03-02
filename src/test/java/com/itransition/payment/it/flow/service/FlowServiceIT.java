@@ -8,13 +8,14 @@ import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.flow.service.FlowService;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,9 @@ class FlowServiceIT extends AbstractIntegrationTest {
         @SneakyThrows
         @Test
         void shouldCreateTransaction() {
-            int accountId = 321;
-            var accountDto = TestDataProvider.getAccountDto();
-            var authResponse = TestDataProvider.getAuthResponse();
+            val accountId = 321;
+            val accountDto = TestDataProvider.getAccountDto();
+            val authResponse = TestDataProvider.getAuthResponse();
 
             WireMock.stubFor(WireMock.get("/account/" + accountId).willReturn(
                     ResponseDefinitionBuilder.responseDefinition()
@@ -72,8 +73,8 @@ class FlowServiceIT extends AbstractIntegrationTest {
                             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                             .withStatus(HttpStatus.OK.value())));
 
-            var stateDto = TestDataProvider.getTransactionStateDto();
-            var expected = Transaction.builder()
+            val stateDto = TestDataProvider.getTransactionStateDto();
+            val expected = Transaction.builder()
                     .id(1L)
                     .externalId(stateDto.getExternalId())
                     .provider(PaymentProvider.builder().name(stateDto.getProvider()).build())
@@ -89,7 +90,7 @@ class FlowServiceIT extends AbstractIntegrationTest {
 
             underTest.createTransaction(stateDto);
 
-            var actual = transactionRepository
+            val actual = transactionRepository
                     .findByExternalIdAndProviderName(stateDto.getExternalId(), stateDto.getProvider());
 
             AssertionsHelper.verifyFieldsEqualityActualExpected(actual.get(), expected);
@@ -98,7 +99,7 @@ class FlowServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var existingTransaction = transactionRepository.getById(0L);
+        val existingTransaction = transactionRepository.getById(0L);
 
         underTest.updateTransaction(TransactionInfoDto.builder()
                 .externalId(existingTransaction.getExternalId())
@@ -107,15 +108,15 @@ class FlowServiceIT extends AbstractIntegrationTest {
                 .additionalData(existingTransaction.getAdditionalData())
                 .build());
 
-        var actual = transactionRepository.getById(0L);
+        val actual = transactionRepository.getById(0L);
 
         assertThat(actual.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
     }
 
     @Test
     void shouldSearchTransactions() {
-        var expected = transactionRepository.findByExternalIdAndProviderName(externalId, provider).get();
-        var actual = underTest.searchTransactions(externalId, provider);
+        val expected = transactionRepository.findByExternalIdAndProviderName(externalId, provider).get();
+        val actual = underTest.searchTransactions(externalId, provider);
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getExternalId()).isEqualTo(expected.getExternalId());

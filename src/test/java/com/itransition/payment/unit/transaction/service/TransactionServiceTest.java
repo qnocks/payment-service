@@ -7,8 +7,8 @@ import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.ReplenishmentStatus;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.entity.PaymentProvider;
 import com.itransition.payment.transaction.entity.Transaction;
 import com.itransition.payment.transaction.mapper.TransactionMapper;
@@ -202,10 +202,10 @@ class TransactionServiceTest {
                 Transaction.builder().id(1L).build(),
                 Transaction.builder().id(2L).build());
 
-        int page = 0;
-        int pageSize = pagedTransactions.size();
-        val sort = "id";
+        val page = 0;
+        val pageSize = pagedTransactions.size();
         val order = "ASC";
+        val sort = "id";
 
         val pageable = PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort);
 
@@ -222,7 +222,8 @@ class TransactionServiceTest {
         val transaction = TestDataProvider.getTransaction();
 
         when(transactionRepository.findAllByStatusAndReplenishmentStatusOrderByIdAsc(
-                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL)).thenReturn(List.of(transaction));
+                TransactionStatus.COMPLETED, ReplenishmentStatus.INITIAL))
+                .thenReturn(List.of(transaction));
 
         val actual = underTest.getReadyToReplenish();
 
@@ -248,7 +249,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldSetReplenishAfter() {
-        double replenishAfter = 10.25;
+        val replenishAfter = 10.25;
         val replenishDto = TestDataProvider.getTransactionReplenishDto();
         val transaction = TestDataProvider.getTransaction();
 

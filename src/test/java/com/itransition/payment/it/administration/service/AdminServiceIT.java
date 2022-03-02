@@ -4,12 +4,15 @@ import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.administration.service.AdminService;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.repository.TransactionRepository;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.it.AbstractIntegrationTest;
 import com.itransition.payment.transaction.dto.AmountDto;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +39,11 @@ class AdminServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldSearchTransactions() {
-        var existingTransaction = transactionRepository
+        val existingTransaction = transactionRepository
                 .findByExternalIdAndProviderName(externalId, provider).get();
 
-        var actual = underTest.searchTransactions(
-                0, 1, "externalId", "ASC", null);
+        val actual = underTest.searchTransactions(
+                PageRequest.of(0, 1, Sort.Direction.valueOf("ASC"), "externalId"));
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getId()).isEqualTo(existingTransaction.getId());
@@ -48,7 +51,7 @@ class AdminServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldUpdateTransaction() {
-        var existingTransaction = transactionRepository.getById(0L);
+        val existingTransaction = transactionRepository.getById(0L);
 
         underTest.updateTransaction(TransactionStateDto.builder()
                 .id(existingTransaction.getId())
@@ -66,7 +69,7 @@ class AdminServiceIT extends AbstractIntegrationTest {
                 .additionalData("updated")
                 .build());
 
-        var actual = transactionRepository.getById(0L);
+        val actual = transactionRepository.getById(0L);
 
         AssertionsHelper.verifyFieldsEqualityActualExpected(actual, existingTransaction);
         assertThat(actual.getAdditionalData()).isEqualTo("updated");
@@ -74,11 +77,11 @@ class AdminServiceIT extends AbstractIntegrationTest {
 
     @Test
     void shouldCompleteTransaction() {
-        var existingTransaction = transactionRepository.getById(0L);
+        val existingTransaction = transactionRepository.getById(0L);
         underTest.completeTransaction(
                 existingTransaction.getExternalId(),
                 existingTransaction.getProvider().getName());
-        var actual = transactionRepository.getById(0L);
+        val actual = transactionRepository.getById(0L);
         assertThat(actual.getStatus()).isEqualTo(TransactionStatus.COMPLETED);
     }
 }

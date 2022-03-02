@@ -8,7 +8,7 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
-import com.itransition.payment.core.types.TransactionStatus;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.flow.service.impl.FlowServiceImpl;
 import com.itransition.payment.transaction.service.TransactionService;
 import lombok.val;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,13 +70,9 @@ class FlowServiceTest {
     @Test
     void shouldThrowWhenAccountIdDoesntExist() {
         val stateDto = TestDataProvider.getTransactionStateDto();
-        when(accountService.getById(stateDto.getUser())).thenReturn(null);
-        when(exceptionHelper.buildExternalException(
-                HttpStatus.BAD_REQUEST,
-                "flow.account-absence",
-                stateDto.getUser())).thenThrow(ExternalException.builder().build());
-
+        when(accountService.getById(stateDto.getUser())).thenThrow(ExternalException.builder().build());
         assertThrows(ExternalException.class, () -> underTest.createTransaction(stateDto));
+        verify(accountService).getById(stateDto.getUser());
     }
 
     @Test

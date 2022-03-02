@@ -3,7 +3,7 @@ package com.itransition.payment.transaction.service;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.types.ReplenishmentStatus;
+import com.itransition.payment.core.type.ReplenishmentStatus;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 

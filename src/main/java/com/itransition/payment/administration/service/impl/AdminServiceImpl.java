@@ -1,12 +1,12 @@
 package com.itransition.payment.administration.service.impl;
 
-import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.administration.service.AdminService;
+import com.itransition.payment.core.dto.TransactionStateDto;
+import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.service.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +16,8 @@ public class AdminServiceImpl implements AdminService {
     private final TransactionService transactionService;
 
     @Override
-    public List<TransactionStateDto> searchTransactions(
-            int page, int pageSize, String sort, String order, String value) {
-        return transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort));
+    public List<TransactionStateDto> searchTransactions(Pageable pageable) {
+        return transactionService.getAll(pageable);
     }
 
     @Override
@@ -28,6 +27,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public TransactionStateDto completeTransaction(String externalId, String provider) {
-        return transactionService.complete(externalId, provider);
+        return transactionService.update(TransactionStateDto.builder()
+                .externalId(externalId)
+                .provider(provider)
+                .status(TransactionStatus.COMPLETED)
+                .build());
     }
 }

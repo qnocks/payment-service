@@ -38,3 +38,8 @@ app:
 
   exception:
     trace: true
+
+  jwt:
+    token:
+      secret: payment-secret
+      expired: 900000

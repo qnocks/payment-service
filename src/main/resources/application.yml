@@ -41,5 +41,5 @@ app:
 
   jwt:
     token:
-      secret: payment-secret
+      secret: payment-secret-long-long-long-long-long-long-long-long-long-long-long-long
       expired: 900000

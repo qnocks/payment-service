@@ -4,10 +4,12 @@ import com.itransition.payment.auth.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,40 +23,43 @@ public class JwtTokenProvider {
     private long expiredMs;
 
     public String createToken(String username, List<Role> roles) {
-        Claims claims = Jwts.claims().setSubject(username);
+        val claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
 
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + expiredMs);
+        val creationDate = new Date();
+        val expirationDate = new Date(creationDate.getTime() + expiredMs);
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiration)
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setSubject(username)
+                .setIssuedAt(creationDate)
+                .setExpiration(expirationDate)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 
     public boolean validateToken(String token) {
-        // TODO: implement it
-        Jws<Claims> claims = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token);
-
-        return !claims.getBody().getExpiration().before(new Date());
+        return getClaimsFromToken(token)
+                .getExpiration()
+                .after(new Date());
     }
 
     public String getSubject(String token) {
-        // TODO: implement it
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
+        return getClaimsFromToken(token)
                 .getSubject();
     }
 
+    public Claims getClaimsFromToken(String token) {
+        val key = Base64.getEncoder().encodeToString(secret.getBytes());
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
     private List<String> getRoleNames(List<Role> roles) {
-        List<String> result = new ArrayList<>();
+        val result = new ArrayList<String>();
         roles.forEach(role -> result.add(role.getName()));
         return result;
     }

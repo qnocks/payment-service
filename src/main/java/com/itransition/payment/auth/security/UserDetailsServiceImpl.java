@@ -2,7 +2,6 @@ package com.itransition.payment.auth.security;
 
 import com.itransition.payment.auth.repository.UserRepository;
 import com.itransition.payment.auth.type.UserStatus;
-import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

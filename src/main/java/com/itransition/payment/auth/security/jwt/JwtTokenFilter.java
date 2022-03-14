@@ -1,6 +1,5 @@
 package com.itransition.payment.auth.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itransition.payment.auth.exception.custom.AuthException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -12,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        val token = request.getHeader("Authorization");
+        val token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);

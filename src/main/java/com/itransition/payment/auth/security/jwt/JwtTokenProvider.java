@@ -45,7 +45,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         return getClaimsFromToken(token)
                 .getExpiration()
-                .after(new Date());
+                .after(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
     }
 
     public String getSubject(String token) {

@@ -1,5 +1,7 @@
 package com.itransition.payment.auth.security.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itransition.payment.auth.exception.custom.AuthException;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -8,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,15 +52,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return null;
     }
 
+    @SneakyThrows
     private void processFilter(String token) {
-        if (jwtTokenProvider.validateToken(token)) {
-            val authentication = createAuthentication(jwtTokenProvider.getSubject(token));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (!jwtTokenProvider.validateToken(token)) {
+            // TODO: implement more elegant way to handle token expiration case
+            throw AuthException.builder()
+                    .message("Token is expired")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
+
+        val authentication = createAuthentication(jwtTokenProvider.getSubject(token));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     private Authentication createAuthentication(String subject) {
-        var userDetails = userDetailsService.loadUserByUsername(subject);
+        val userDetails = userDetailsService.loadUserByUsername(subject);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

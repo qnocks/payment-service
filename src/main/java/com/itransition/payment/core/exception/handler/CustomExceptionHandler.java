@@ -1,5 +1,6 @@
 package com.itransition.payment.core.exception.handler;
 
+import com.itransition.payment.auth.exception.custom.AuthException;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import java.time.LocalDateTime;
@@ -10,6 +11,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -29,6 +32,21 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(ExternalException.class)
     public ResponseEntity<ErrorResponse> handleExternalAuthException(ExternalException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), e.getStatus(), request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), HttpStatus.FORBIDDEN, request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(BadCredentialsException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(AuthException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 

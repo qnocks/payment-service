@@ -1,10 +1,12 @@
 package com.itransition.payment.auth.security;
 
 import java.util.Collection;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Builder
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 

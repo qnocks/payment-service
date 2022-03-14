@@ -7,7 +7,7 @@
 
     <changeSet id="INIT_ROLE_TABLE" author="r.ostanin@itransition.com">
         <insert tableName="users_roles">
-            <column name="user_id" value="2"/>
+            <column name="user_id" value="1"/>
             <column name="role_id" value="1"/>
         </insert>
     </changeSet>

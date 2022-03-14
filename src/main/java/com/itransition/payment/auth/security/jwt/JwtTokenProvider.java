@@ -1,12 +1,13 @@
 package com.itransition.payment.auth.security.jwt;
 
+import com.itransition.payment.auth.dto.TokenPair;
 import com.itransition.payment.auth.entity.Role;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import lombok.val;
@@ -16,26 +17,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwt.token.secret}")
+    @Value("${app.auth.jwt.token.secret}")
     private String secret;
 
-    @Value("${app.jwt.token.expired}")
-    private long expiredMs;
+    @Value("${app.auth.jwt.token.expired}")
+    private long expired;
 
-    public String createToken(String username, List<Role> roles) {
+    public TokenPair createToken(String username, List<Role> roles) {
         val claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
 
-        val creationDate = new Date();
-        val expirationDate = new Date(creationDate.getTime() + expiredMs);
+        val creationDate = LocalDateTime.now();
+        val expirationDate = creationDate.plusSeconds(expired);
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(creationDate)
-                .setExpiration(expirationDate)
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .compact();
+        return TokenPair.builder()
+                .token(Jwts.builder()
+                        .setClaims(claims)
+                        .setSubject(username)
+                        .setIssuedAt(Date.from(creationDate.toInstant(ZoneOffset.UTC)))
+                        .setExpiration(Date.from(expirationDate.toInstant(ZoneOffset.UTC)))
+                        .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                        .compact())
+                .expiration(expirationDate)
+                .build();
     }
 
     public boolean validateToken(String token) {
@@ -50,9 +54,8 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaimsFromToken(String token) {
-        val key = Base64.getEncoder().encodeToString(secret.getBytes());
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

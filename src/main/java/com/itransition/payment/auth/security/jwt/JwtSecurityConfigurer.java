@@ -17,7 +17,11 @@ public class JwtSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecu
 
     @Override
     public void configure(HttpSecurity http) {
-        val tokenFilter = new JwtTokenFilter(jwtTokenProvider, userDetailsService);
+        val tokenFilter = JwtTokenFilter.builder()
+                .jwtTokenProvider(jwtTokenProvider)
+                .userDetailsService(userDetailsService)
+                .build();
+
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

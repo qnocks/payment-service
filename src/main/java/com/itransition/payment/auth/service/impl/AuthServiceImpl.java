@@ -5,19 +5,23 @@ import com.itransition.payment.auth.dto.LoginResponse;
 import com.itransition.payment.auth.repository.UserRepository;
 import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
 import com.itransition.payment.auth.service.AuthService;
+import com.itransition.payment.auth.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final SessionService sessionService;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
@@ -28,11 +32,13 @@ public class AuthServiceImpl implements AuthService {
 
         // TODO: add custom exception handling for auth flow
         val user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
-        val token = jwtTokenProvider.createToken(username, user.getRoles());
+        val tokenPair = jwtTokenProvider.createToken(username, user.getRoles());
+
+        sessionService.createSession(user, tokenPair);
 
         return LoginResponse.builder()
                 .username(username)
-                .token(token)
+                .token(tokenPair.getToken())
                 .build();
     }
 }

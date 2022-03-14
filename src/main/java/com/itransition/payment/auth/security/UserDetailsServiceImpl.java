@@ -24,12 +24,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("lol kek lol"));
 
         // TODO: extract to method
-        return new UserDetailsImpl(
-                user.getUsername(),
-                user.getPassword(),
-                user.getStatus().equals(UserStatus.ACTIVE),
-                user.getRoles().stream()
+        return UserDetailsImpl.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .enabled(user.getStatus().equals(UserStatus.ACTIVE))
+                .authorities(user.getRoles().stream()
                         .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()))
+                .build();
+//        return new UserDetailsImpl(
+//                user.getUsername(),
+//                user.getPassword(),
+//                user.getStatus().equals(UserStatus.ACTIVE),
+//                user.getRoles().stream()
+//                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+//                        .collect(Collectors.toList()));
     }
 }

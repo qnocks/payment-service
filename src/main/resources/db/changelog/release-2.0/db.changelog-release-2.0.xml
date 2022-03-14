@@ -13,4 +13,6 @@
     <include file="dml/PMTS-08-DML.xml" relativeToChangelogFile="true" />
     <include file="dml/PMTS-09-DML.xml" relativeToChangelogFile="true" />
 
+    <include file="ddl/PMTS-10-DDL.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>

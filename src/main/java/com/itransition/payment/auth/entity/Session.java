@@ -1,5 +1,6 @@
 package com.itransition.payment.auth.entity;
 
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "session")
+@Table(name = "sessions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +26,8 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     private String token;
-    private int expired;
+    private LocalDateTime expired;
 }

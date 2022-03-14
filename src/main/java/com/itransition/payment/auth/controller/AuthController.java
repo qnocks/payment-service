@@ -32,6 +32,7 @@ public class AuthController {
                 .build();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/user")
     public LoginResponse user() {
         return LoginResponse.builder()

@@ -39,12 +39,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
+                    .antMatchers("/auth/**").permitAll()
+                    .antMatchers("/admin/transactions/**").authenticated()
+                    .anyRequest().permitAll()
+                    .and()
                 .apply(new JwtSecurityConfigurer(jwtTokenProvider, userDetailsService));
     }
 }

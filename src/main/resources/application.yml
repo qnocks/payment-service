@@ -39,7 +39,10 @@ app:
   exception:
     trace: true
 
-  jwt:
-    token:
-      secret: payment-secret-long-long-long-long-long-long-long-long-long-long-long-long
-      expired: 900000
+  auth:
+    jwt:
+      token:
+        secret: ${auth.jwt.secret}
+        expired: ${auth.jwt.expired}
+    session:
+      cron: '*/30 * * * * *'

@@ -21,7 +21,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private static final String TOKEN_TYPE = "Bearer";
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
     private final ExceptionHelper exceptionHelper;
@@ -43,7 +42,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        val tokenPrefix = TOKEN_TYPE + " ";
+        val tokenPrefix = JwtTokenProvider.getTokenType() + " ";
         val token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (token != null && token.startsWith(tokenPrefix)) {

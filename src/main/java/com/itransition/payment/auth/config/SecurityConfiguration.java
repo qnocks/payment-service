@@ -1,7 +1,6 @@
 package com.itransition.payment.auth.config;
 
 import com.itransition.payment.auth.security.jwt.JwtSecurityConfigurer;
-import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Configuration
@@ -24,9 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final Logger LOG = LogManager.getLogger(SecurityConfiguration.class);
     private static final String AUTH_ENDPOINT = "/auth/**";
     private static final String ADMIN_ENDPOINT = "/admin/transactions/**";
-    private final JwtTokenProvider jwtTokenProvider;
     private final JwtSecurityConfigurer jwtSecurityConfigurer;
-    private final UserDetailsService userDetailsService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
@@ -59,7 +55,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .and()
-//                .apply(new JwtSecurityConfigurer(jwtTokenProvider, userDetailsService));
                 .apply(jwtSecurityConfigurer);
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
+    private static final String TOKEN_TYPE = "Bearer";
     private static final String ROLES_CLAIMS_KEY = "roles";
 
     @Value("${app.auth.jwt.token.secret}")
@@ -61,6 +62,10 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public static String getTokenType() {
+        return TOKEN_TYPE;
     }
 
     private List<String> getRoleNames(List<Role> roles) {

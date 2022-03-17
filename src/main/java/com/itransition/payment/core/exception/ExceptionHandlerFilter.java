@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class HttpExceptionFilter extends OncePerRequestFilter {
+public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
     private final ObjectMapper mapper;
 

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenAuthPayload {
+public class TokenPayload {
 
     private String token;
     private LocalDateTime expiration;

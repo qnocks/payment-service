@@ -1,26 +1,23 @@
 package com.itransition.payment.auth.security.jwt;
 
+import com.itransition.payment.core.exception.HttpExceptionFilter;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class JwtSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
+    private final JwtTokenFilter jwtTokenFilter;
+    private final HttpExceptionFilter exceptionFilter;
 
     @Override
     public void configure(HttpSecurity http) {
-        val tokenFilter = JwtTokenFilter.builder()
-                .jwtTokenProvider(jwtTokenProvider)
-                .userDetailsService(userDetailsService)
-                .build();
-
-        http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionFilter, JwtTokenFilter.class);
     }
 }

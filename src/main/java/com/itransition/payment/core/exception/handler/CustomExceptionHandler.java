@@ -1,6 +1,5 @@
 package com.itransition.payment.core.exception.handler;
 
-import com.itransition.payment.auth.exception.custom.AuthException;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import java.time.LocalDateTime;
@@ -43,11 +42,6 @@ public class CustomExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleAuthException(BadCredentialsException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
-    }
-
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ErrorResponse> handleAuthException(AuthException e, WebRequest request) {
-        return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
     @ExceptionHandler(Exception.class)

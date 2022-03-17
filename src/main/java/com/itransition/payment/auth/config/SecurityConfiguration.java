@@ -15,18 +15,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final Logger log = LogManager.getLogger(SecurityConfiguration.class);
+    private static final Logger LOG = LogManager.getLogger(SecurityConfiguration.class);
+    private static final String AUTH_ENDPOINT = "/auth/**";
+    private static final String ADMIN_ENDPOINT = "/admin/transactions/**";
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtSecurityConfigurer jwtSecurityConfigurer;
     private final UserDetailsService userDetailsService;
     private final AuthenticationEntryPoint authenticationEntryPoint;
-    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     @Override
@@ -34,8 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         try {
             return super.authenticationManager();
         } catch (Exception e) {
-            log.warn(e.getMessage());
-            e.printStackTrace();
+            LOG.warn(e.getMessage());
             return null;
         }
     }
@@ -52,14 +52,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/auth/**").permitAll()
-                    .antMatchers("/admin/transactions/**").authenticated()
+                    .antMatchers(AUTH_ENDPOINT).permitAll()
+                    .antMatchers(ADMIN_ENDPOINT).authenticated()
                     .anyRequest().permitAll()
                     .and()
                 .exceptionHandling()
-                    .accessDeniedHandler(accessDeniedHandler)
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .and()
-                .apply(new JwtSecurityConfigurer(jwtTokenProvider, userDetailsService));
+//                .apply(new JwtSecurityConfigurer(jwtTokenProvider, userDetailsService));
+                .apply(jwtSecurityConfigurer);
     }
 }

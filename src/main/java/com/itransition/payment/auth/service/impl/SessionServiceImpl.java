@@ -1,6 +1,6 @@
 package com.itransition.payment.auth.service.impl;
 
-import com.itransition.payment.auth.dto.TokenAuthPayload;
+import com.itransition.payment.auth.dto.TokenPayload;
 import com.itransition.payment.auth.entity.Session;
 import com.itransition.payment.auth.entity.User;
 import com.itransition.payment.auth.repository.SessionRepository;
@@ -20,13 +20,12 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public void createSession(User user, TokenAuthPayload tokenAuthPayload) {
-        // TODO: before saving check if session with a user doesn't exists
-        sessionRepository.save(Session.builder()
-                .user(user)
-                .token(tokenAuthPayload.getToken())
-                .expired(tokenAuthPayload.getExpiration())
-                .build());
+    public void saveSession(User user, TokenPayload tokenPayload) {
+        if (isSessionExists(user)) {
+            updateSession(user, tokenPayload);
+        } else {
+            createSession(user, tokenPayload);
+        }
     }
 
     @Scheduled(cron = "${app.auth.session.cron}")
@@ -35,5 +34,25 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.deleteAll(sessionRepository.findAll().stream()
                 .filter(session -> session.getExpired().isBefore(LocalDateTime.now()))
                 .collect(Collectors.toList()));
+    }
+
+    private void createSession(User user, TokenPayload tokenPayload) {
+        sessionRepository.save(Session.builder()
+                .user(user)
+                .token(tokenPayload.getToken())
+                .expired(tokenPayload.getExpiration())
+                .build());
+    }
+
+    private void updateSession(User user, TokenPayload tokenPayload) {
+        sessionRepository.findByUserId(user.getId()).ifPresent(session -> {
+            session.setToken(tokenPayload.getToken());
+            session.setExpired(tokenPayload.getExpiration());
+            sessionRepository.save(session);
+        });
+    }
+
+    private boolean isSessionExists(User user) {
+        return sessionRepository.findByUserId(user.getId()).isPresent();
     }
 }

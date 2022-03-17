@@ -1,4 +1,4 @@
-package com.itransition.payment.auth.exception.custom;
+package com.itransition.payment.core.exception.custom;
 
 import lombok.Builder;
 import lombok.Getter;

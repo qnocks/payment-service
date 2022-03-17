@@ -1,6 +1,7 @@
 package com.itransition.payment.core.exception;
 
 import com.itransition.payment.account.service.AccountService;
+import com.itransition.payment.core.exception.custom.AuthException;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.security.service.SecurityService;
@@ -36,6 +37,13 @@ public class ExceptionHelper {
 
     public ExternalException buildExternalException(HttpStatus status, String messageKey, Object... params) {
         return ExternalException.builder()
+                .message(exceptionMessageResolver.getMessage(messageKey, params))
+                .status(status)
+                .build();
+    }
+
+    public AuthException buildAuthException(HttpStatus status, String messageKey, Object... params) {
+        return AuthException.builder()
                 .message(exceptionMessageResolver.getMessage(messageKey, params))
                 .status(status)
                 .build();

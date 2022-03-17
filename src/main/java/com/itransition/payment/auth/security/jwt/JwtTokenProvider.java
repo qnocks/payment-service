@@ -1,6 +1,6 @@
 package com.itransition.payment.auth.security.jwt;
 
-import com.itransition.payment.auth.dto.TokenAuthPayload;
+import com.itransition.payment.auth.dto.TokenPayload;
 import com.itransition.payment.auth.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -17,20 +17,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
+    private static final String ROLES_CLAIMS_KEY = "roles";
+
     @Value("${app.auth.jwt.token.secret}")
     private String secret;
 
     @Value("${app.auth.jwt.token.expired}")
     private long expired;
 
-    public TokenAuthPayload createToken(String username, List<Role> roles) {
+    public TokenPayload createToken(String username, List<Role> roles) {
         val claims = Jwts.claims().setSubject(username);
-        claims.put("roles", getRoleNames(roles));
+        claims.put(ROLES_CLAIMS_KEY, getRoleNames(roles));
 
         val creationDate = LocalDateTime.now();
         val expirationDate = creationDate.plusSeconds(expired);
 
-        return TokenAuthPayload.builder()
+        return TokenPayload.builder()
                 .token(Jwts.builder()
                         .setClaims(claims)
                         .setSubject(username)

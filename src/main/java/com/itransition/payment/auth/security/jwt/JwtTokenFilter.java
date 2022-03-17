@@ -1,10 +1,9 @@
 package com.itransition.payment.auth.security.jwt;
 
-import com.itransition.payment.auth.exception.custom.AuthException;
+import com.itransition.payment.core.exception.ExceptionHelper;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,14 +14,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Builder
+@Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
+    private static final String TOKEN_TYPE = "Bearer";
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
+    private final ExceptionHelper exceptionHelper;
 
     @SneakyThrows
     @Override
@@ -41,10 +43,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
+        val tokenPrefix = TOKEN_TYPE + " ";
         val token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
+        if (token != null && token.startsWith(tokenPrefix)) {
+            return token.substring(tokenPrefix.length());
         }
 
         return null;
@@ -53,11 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @SneakyThrows
     private void processFilter(String token) {
         if (!jwtTokenProvider.validateToken(token)) {
-            // TODO: implement more elegant way to handle token expiration case
-            throw AuthException.builder()
-                    .message("Token is expired")
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .build();
+            throw exceptionHelper.buildAuthException(HttpStatus.UNAUTHORIZED, "auth.token-expired");
         }
 
         val authentication = createAuthentication(jwtTokenProvider.getSubject(token));

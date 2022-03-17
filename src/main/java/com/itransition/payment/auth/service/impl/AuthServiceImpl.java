@@ -34,17 +34,16 @@ public class AuthServiceImpl implements AuthService {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 username, loginRequest.getPassword()));
-
-        val user = userRepository.findByUsername(credentialsEncoder.encode(username)).orElseThrow(
-                () -> new UsernameNotFoundException(
+        val user = userRepository.findByUsername(credentialsEncoder.encode(username))
+                .orElseThrow(() -> new UsernameNotFoundException(
                         exceptionMessageResolver.getMessage("auth.username-not-found", username)));
-        val tokenPair = jwtTokenProvider.createToken(username, user.getRoles());
+        val tokenPayload = jwtTokenProvider.createToken(username, user.getRoles());
 
-        sessionService.createSession(user, tokenPair);
+        sessionService.saveSession(user, tokenPayload);
 
         return LoginResponse.builder()
                 .username(username)
-                .token(tokenPair.getToken())
+                .token(tokenPayload.getToken())
                 .build();
     }
 }

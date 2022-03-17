@@ -1,9 +1,7 @@
 package com.itransition.payment.auth.security.jwt;
 
 import com.itransition.payment.auth.exception.custom.AuthException;
-import java.io.IOException;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.Builder;
@@ -26,12 +24,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+            @NonNull FilterChain filterChain) {
 
         val token = parseJwt(request);
 

@@ -1,6 +1,6 @@
 package com.itransition.payment.auth.security.jwt;
 
-import com.itransition.payment.auth.dto.TokenPair;
+import com.itransition.payment.auth.dto.TokenAuthPayload;
 import com.itransition.payment.auth.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,14 +23,14 @@ public class JwtTokenProvider {
     @Value("${app.auth.jwt.token.expired}")
     private long expired;
 
-    public TokenPair createToken(String username, List<Role> roles) {
+    public TokenAuthPayload createToken(String username, List<Role> roles) {
         val claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
 
         val creationDate = LocalDateTime.now();
         val expirationDate = creationDate.plusSeconds(expired);
 
-        return TokenPair.builder()
+        return TokenAuthPayload.builder()
                 .token(Jwts.builder()
                         .setClaims(claims)
                         .setSubject(username)

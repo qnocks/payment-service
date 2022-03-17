@@ -2,12 +2,12 @@ package com.itransition.payment.auth.exception.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itransition.payment.core.exception.handler.ErrorResponse;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,10 +21,11 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper;
 
+    @SneakyThrows
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+                         AuthenticationException authException) {
 
         val errorResponse = ErrorResponse.builder()
                 .message(authException.getMessage())

@@ -1,6 +1,6 @@
 package com.itransition.payment.auth.service.impl;
 
-import com.itransition.payment.auth.dto.TokenPair;
+import com.itransition.payment.auth.dto.TokenAuthPayload;
 import com.itransition.payment.auth.entity.Session;
 import com.itransition.payment.auth.entity.User;
 import com.itransition.payment.auth.repository.SessionRepository;
@@ -20,11 +20,12 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public void createSession(User user, TokenPair tokenPair) {
+    public void createSession(User user, TokenAuthPayload tokenAuthPayload) {
+        // TODO: before saving check if session with a user doesn't exists
         sessionRepository.save(Session.builder()
                 .user(user)
-                .token(tokenPair.getToken())
-                .expired(tokenPair.getExpiration())
+                .token(tokenAuthPayload.getToken())
+                .expired(tokenAuthPayload.getExpiration())
                 .build());
     }
 

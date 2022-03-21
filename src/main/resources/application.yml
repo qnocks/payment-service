@@ -42,7 +42,11 @@ app:
   auth:
     jwt:
       token:
-        secret: ${auth.jwt.secret}
-        expired: ${auth.jwt.expired}
+        access:
+          secret: ${auth.jwt.secret}
+          expired: ${auth.jwt.expired}
+        refresh:
+          expired: ${auth.refresh.expired}
+          cron: '1 * * * * *'
     session:
       cron: '*/30 * * * * *'

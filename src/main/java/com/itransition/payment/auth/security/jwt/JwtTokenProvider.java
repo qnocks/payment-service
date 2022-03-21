@@ -20,10 +20,10 @@ public class JwtTokenProvider {
     private static final String TOKEN_TYPE = "Bearer";
     private static final String ROLES_CLAIMS_KEY = "roles";
 
-    @Value("${app.auth.jwt.token.secret}")
+    @Value("${app.auth.jwt.token.access.secret}")
     private String secret;
 
-    @Value("${app.auth.jwt.token.expired}")
+    @Value("${app.auth.jwt.token.access.expired}")
     private long expired;
 
     public TokenPayload createToken(String username, List<Role> roles) {

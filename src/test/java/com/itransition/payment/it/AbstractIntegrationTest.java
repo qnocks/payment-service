@@ -7,7 +7,8 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 @SpringBootTest(properties = {
         "auth.jwt.secret=test-secret-very-very-very-long",
-        "auth.jwt.expired=123"
+        "auth.jwt.expired=123",
+        "auth.refresh.expired=300"
 })
 @AutoConfigureDataJpa
 public abstract class AbstractIntegrationTest {

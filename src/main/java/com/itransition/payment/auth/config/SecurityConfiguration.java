@@ -1,6 +1,7 @@
 package com.itransition.payment.auth.config;
 
 import com.itransition.payment.auth.security.jwt.JwtSecurityConfigurer;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
@@ -38,9 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @SneakyThrows
     @Override
-    protected void configure(HttpSecurity http) {
-        http
-                .httpBasic()
+    protected void configure(@NotNull HttpSecurity http) {
+        http.httpBasic()
                     .disable()
                 .csrf()
                     .disable()

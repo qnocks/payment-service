@@ -1,4 +1,4 @@
-package com.itransition.payment.auth.security;
+package com.itransition.payment.auth.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itransition.payment.core.exception.handler.ErrorResponse;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper;
 

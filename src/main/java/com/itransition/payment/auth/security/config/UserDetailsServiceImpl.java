@@ -1,7 +1,7 @@
-package com.itransition.payment.auth.security;
+package com.itransition.payment.auth.security.config;
 
 import com.itransition.payment.auth.repository.UserRepository;
-import com.itransition.payment.auth.security.crypto.CredentialsEncoder;
+import com.itransition.payment.auth.crypto.Encoder;
 import com.itransition.payment.auth.type.UserStatus;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import java.util.stream.Collectors;
@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final CredentialsEncoder credentialsEncoder;
+    private final Encoder encoder;
     private final ExceptionMessageResolver exceptionMessageResolver;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        val user = userRepository.findByUsername(credentialsEncoder.encode(username))
+        val user = userRepository.findByUsername(encoder.encode(username))
                 .orElseThrow(() -> new UsernameNotFoundException(
                         exceptionMessageResolver.getMessage("auth.username-not-found", username)));
 

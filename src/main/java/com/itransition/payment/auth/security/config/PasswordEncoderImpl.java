@@ -1,6 +1,6 @@
-package com.itransition.payment.auth.security.crypto.impl;
+package com.itransition.payment.auth.security.config;
 
-import com.itransition.payment.auth.security.crypto.CredentialsEncoder;
+import com.itransition.payment.auth.crypto.Encoder;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 public class PasswordEncoderImpl implements PasswordEncoder {
 
     private static final String SHA_PREFIX = "{SHA}";
-    private final CredentialsEncoder credentialsEncoder;
+    private final Encoder encoder;
 
     @Override
     public String encode(CharSequence rawPassword) {
-        return SHA_PREFIX + credentialsEncoder.encode(String.valueOf(rawPassword));
+        return SHA_PREFIX + encoder.encode(String.valueOf(rawPassword));
     }
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        val password = credentialsEncoder.encode(String.valueOf(rawPassword));
+        val password = encoder.encode(String.valueOf(rawPassword));
         return password.equals(encodedPassword);
     }
 }

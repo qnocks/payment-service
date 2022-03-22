@@ -10,6 +10,7 @@ import com.itransition.payment.replenish.repository.ReplenishErrorRepository;
 import com.itransition.payment.replenish.service.ReplenishAttemptCalc;
 import com.itransition.payment.replenish.service.ReplenishService;
 import com.itransition.payment.transaction.service.TransactionService;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -64,7 +65,7 @@ public class ReplenishServiceImpl implements ReplenishService {
         transactionService.updateReplenishStatus(replenishDto, status);
     }
 
-    private void saveReplenishError(String error, TransactionReplenishDto replenishDto) {
+    private void saveReplenishError(String error, @NotNull TransactionReplenishDto replenishDto) {
         replenishErrorRepository.save(ReplenishError.builder()
                 .error(error)
                 .transaction(transactionRepository

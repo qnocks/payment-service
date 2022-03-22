@@ -2,13 +2,13 @@ package com.itransition.payment.auth.security.jwt;
 
 import com.itransition.payment.auth.dto.TokenPayload;
 import com.itransition.payment.auth.entity.Role;
+import com.itransition.payment.core.util.DateTimeConverterUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +37,8 @@ public class JwtTokenProvider {
                 .token(Jwts.builder()
                         .setClaims(claims)
                         .setSubject(username)
-                        .setIssuedAt(Date.from(creationDate.toInstant(ZoneOffset.UTC)))
-                        .setExpiration(Date.from(expirationDate.toInstant(ZoneOffset.UTC)))
+                        .setIssuedAt(DateTimeConverterUtils.toDate(creationDate))
+                        .setExpiration(DateTimeConverterUtils.toDate(expirationDate))
                         .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                         .compact())
                 .expiration(expirationDate)
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         return getClaimsFromToken(token)
                 .getExpiration()
-                .after(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
+                .after(DateTimeConverterUtils.toDate(LocalDateTime.now()));
     }
 
     public String getSubject(String token) {

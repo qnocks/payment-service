@@ -1,4 +1,4 @@
-package com.itransition.payment.auth.security;
+package com.itransition.payment.auth.security.config;
 
 import java.util.Collection;
 import lombok.Builder;

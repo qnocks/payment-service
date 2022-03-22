@@ -36,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionInfoDto save(TransactionStateDto stateDto) {
+    public TransactionInfoDto save(@NotNull TransactionStateDto stateDto) {
         val transaction = transactionMapper.toEntity(stateDto);
         initiateTransactionProvider(transaction, stateDto.getProvider());
         transactionRepository.saveAndFlush(transaction);
@@ -126,7 +126,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    private Transaction processUpdate(Transaction transaction) {
+    private Transaction processUpdate(@NotNull Transaction transaction) {
         initiateTransactionProvider(transaction, transaction.getProvider().getName());
 
         val existingTransaction = getTransactionByExternalIdAndProvider(

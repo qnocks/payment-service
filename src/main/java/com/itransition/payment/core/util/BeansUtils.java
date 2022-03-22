@@ -9,7 +9,7 @@ import org.springframework.beans.BeanWrapperImpl;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BeansUtils {
 
-    public static String[] getNullPropertyNames(final Object source) {
+    public static String[] getNullPropertyNames(Object source) {
         val beanWrapper = new BeanWrapperImpl(source);
         val propertyDescriptors = beanWrapper.getPropertyDescriptors();
         val emptyNames = new HashSet<String>();

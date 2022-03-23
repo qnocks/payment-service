@@ -2,10 +2,11 @@ package com.itransition.payment.auth.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itransition.payment.core.exception.handler.ErrorResponse;
+import com.itransition.payment.core.util.DateTimeUtils;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -23,15 +24,15 @@ public class AuthenticationEntryPointHandler implements AuthenticationEntryPoint
     @SneakyThrows
     @Override
     public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) {
+                         @NotNull HttpServletResponse response,
+                         @NotNull AuthenticationException authException) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(mapper.writeValueAsString(ErrorResponse.builder()
                 .message(authException.getMessage())
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .error(HttpStatus.UNAUTHORIZED)
-                .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
+                .timestamp(DateTimeUtils.toSeconds(LocalDateTime.now()))
                 .build()));
     }
 }

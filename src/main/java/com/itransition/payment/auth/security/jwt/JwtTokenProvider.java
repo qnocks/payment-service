@@ -2,14 +2,14 @@ package com.itransition.payment.auth.security.jwt;
 
 import com.itransition.payment.auth.dto.TokenPayload;
 import com.itransition.payment.auth.entity.Role;
-import com.itransition.payment.core.util.DateTimeConverterUtils;
+import com.itransition.payment.core.util.DateTimeUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,8 +37,8 @@ public class JwtTokenProvider {
                 .token(Jwts.builder()
                         .setClaims(claims)
                         .setSubject(username)
-                        .setIssuedAt(DateTimeConverterUtils.toDate(creationDate))
-                        .setExpiration(DateTimeConverterUtils.toDate(expirationDate))
+                        .setIssuedAt(DateTimeUtils.toDate(creationDate))
+                        .setExpiration(DateTimeUtils.toDate(expirationDate))
                         .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                         .compact())
                 .expiration(expirationDate)
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         return getClaimsFromToken(token)
                 .getExpiration()
-                .after(DateTimeConverterUtils.toDate(LocalDateTime.now()));
+                .after(DateTimeUtils.toDate(LocalDateTime.now()));
     }
 
     public String getSubject(String token) {
@@ -68,7 +68,7 @@ public class JwtTokenProvider {
         return TOKEN_TYPE;
     }
 
-    private List<String> getRoleNames(List<Role> roles) {
+    private List<String> getRoleNames(@NotNull List<Role> roles) {
         val result = new ArrayList<String>();
         roles.forEach(role -> result.add(role.getName()));
         return result;

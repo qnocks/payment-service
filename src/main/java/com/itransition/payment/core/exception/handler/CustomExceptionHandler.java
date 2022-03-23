@@ -2,7 +2,7 @@ package com.itransition.payment.core.exception.handler;
 
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
-import com.itransition.payment.core.util.DateTimeConverterUtils;
+import com.itransition.payment.core.util.DateTimeUtils;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
@@ -54,7 +54,7 @@ public class CustomExceptionHandler {
                 .message(message)
                 .status(status.value())
                 .error(status)
-                .timestamp(DateTimeConverterUtils.toLong(LocalDateTime.now()))
+                .timestamp(DateTimeUtils.toSeconds(LocalDateTime.now()))
                 .build();
 
         if (printStackTrace && isTraceOn(request)) {

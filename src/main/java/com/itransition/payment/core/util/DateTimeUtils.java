@@ -8,13 +8,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class DateTimeConverterUtils {
+public final class DateTimeUtils {
 
     public static Date toDate(@NotNull LocalDateTime value) {
         return Date.from(value.toInstant(ZoneOffset.UTC));
     }
 
-    public static long toLong(@NotNull LocalDateTime value) {
+    public static long toSeconds(@NotNull LocalDateTime value) {
         return value.toEpochSecond(ZoneOffset.UTC);
     }
 }

@@ -46,3 +46,6 @@ app:
         expired: ${auth.jwt.expired}
     session:
       cron: '*/30 * * * * *'
+
+  cors:
+    origins: 'http://localhost:4200'

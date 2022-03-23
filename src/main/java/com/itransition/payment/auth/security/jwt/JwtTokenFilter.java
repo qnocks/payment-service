@@ -30,7 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain) {
+            @NotNull FilterChain filterChain) {
 
         val token = parseJwt(request);
 
@@ -41,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request) {
+    private String parseJwt(@NotNull HttpServletRequest request) {
         val tokenPrefix = JwtTokenProvider.getTokenType() + " ";
         val token = request.getHeader(HttpHeaders.AUTHORIZATION);
 

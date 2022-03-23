@@ -20,7 +20,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final Logger LOG = LogManager.getLogger(SecurityConfiguration.class);
+    private static final Logger LOGGER = LogManager.getLogger(SecurityConfiguration.class);
     private static final String AUTH_ENDPOINT = "/auth/**";
     private static final String ADMIN_ENDPOINT = "/admin/transactions/**";
     private final JwtSecurityConfigurer jwtSecurityConfigurer;
@@ -32,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         try {
             return super.authenticationManager();
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
             return null;
         }
     }
@@ -40,7 +40,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @SneakyThrows
     @Override
     protected void configure(@NotNull HttpSecurity http) {
-        http.httpBasic()
+        http.cors()
+                    .and()
+                .httpBasic()
                     .disable()
                 .csrf()
                     .disable()

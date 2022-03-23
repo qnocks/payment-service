@@ -2,6 +2,7 @@ package com.itransition.payment.auth.service.impl;
 
 import com.itransition.payment.auth.dto.LoginRequest;
 import com.itransition.payment.auth.dto.LoginResponse;
+import com.itransition.payment.auth.dto.LogoutRequest;
 import com.itransition.payment.auth.repository.UserRepository;
 import com.itransition.payment.auth.crypto.Encoder;
 import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
@@ -49,8 +50,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout() {
+    public void logout(LogoutRequest logoutRequest) {
         // TODO: implement method in next PR
-        throw new UnsupportedOperationException();
+        val user = userRepository.findByUsername(encoder.encode(logoutRequest.getUsername()))
+                .orElseThrow(() -> new UsernameNotFoundException(exceptionMessageResolver.getMessage(
+                        "auth.username-not-found", logoutRequest.getUsername())));
+
+        sessionService.removeByUserId(user.getId());
     }
 }

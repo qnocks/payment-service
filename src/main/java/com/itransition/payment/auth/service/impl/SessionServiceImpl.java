@@ -37,6 +37,11 @@ public class SessionServiceImpl implements SessionService {
                 .collect(Collectors.toList()));
     }
 
+    @Override
+    public void removeByUserId(Long id) {
+        sessionRepository.deleteByUserId(id);
+    }
+
     private void createSession(User user, @NotNull TokenPayload tokenPayload) {
         sessionRepository.save(Session.builder()
                 .user(user)

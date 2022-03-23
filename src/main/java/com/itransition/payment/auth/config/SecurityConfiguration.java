@@ -21,6 +21,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final Logger LOGGER = LogManager.getLogger(SecurityConfiguration.class);
+    private static final String LOGIN_ENDPOINT = "/auth/login";
     private static final String AUTH_ENDPOINT = "/auth/**";
     private static final String ADMIN_ENDPOINT = "/admin/transactions/**";
     private final JwtSecurityConfigurer jwtSecurityConfigurer;
@@ -50,8 +51,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                    .antMatchers(AUTH_ENDPOINT).permitAll()
-                    .antMatchers(ADMIN_ENDPOINT).authenticated()
+                    .antMatchers(LOGIN_ENDPOINT).permitAll()
+                    .antMatchers(AUTH_ENDPOINT, ADMIN_ENDPOINT).authenticated()
                     .anyRequest().permitAll()
                     .and()
                 .exceptionHandling()

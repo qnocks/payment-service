@@ -1,6 +1,7 @@
 package com.itransition.payment.auth.security.jwt;
 
 import com.itransition.payment.core.exception.ExceptionHandlerFilter;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +17,7 @@ public class JwtSecurityConfigurer extends SecurityConfigurerAdapter<DefaultSecu
     private final ExceptionHandlerFilter exceptionFilter;
 
     @Override
-    public void configure(HttpSecurity http) {
+    public void configure(@NotNull HttpSecurity http) {
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(exceptionFilter, JwtTokenFilter.class);
     }

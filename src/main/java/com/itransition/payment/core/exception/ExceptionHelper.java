@@ -5,6 +5,7 @@ import com.itransition.payment.core.exception.custom.AuthException;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.security.service.SecurityService;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public class ExceptionHelper {
                 .build();
     }
 
-    public ExternalException handleExternalException(Throwable e, Class<?> clazz, String... params) {
+    public ExternalException handleExternalException(Throwable e, @NotNull Class<?> clazz, String... params) {
         if (clazz.equals(AccountService.class)) {
             return processAccountExternalException((Exception) e, params);
         } else if (clazz.equals(SecurityService.class)) {

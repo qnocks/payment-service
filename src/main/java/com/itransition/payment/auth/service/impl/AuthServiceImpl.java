@@ -16,6 +16,15 @@ import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
+import com.itransition.payment.auth.repository.UserRepository;
+import com.itransition.payment.auth.crypto.Encoder;
+import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
+import com.itransition.payment.auth.service.AuthService;
+import com.itransition.payment.auth.service.SessionService;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import javax.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -87,5 +96,10 @@ public class AuthServiceImpl implements AuthService {
                 .type(JwtTokenProvider.getTokenType())
                 .refreshToken(refreshToken.getToken())
                 .build();
+    }
+    @Override
+    public void logout() {
+        // TODO: implement method in next PR
+        throw new UnsupportedOperationException();
     }
 }

@@ -10,4 +10,6 @@ public interface AuthService {
     LoginResponse login(LoginRequest loginRequest);
 
     RefreshTokenResponse refreshToken(RefreshTokenRequest request);
+    // TODO: method signature can be changed when the method will implemented
+    void logout();
 }

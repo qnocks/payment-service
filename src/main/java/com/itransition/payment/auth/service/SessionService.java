@@ -5,7 +5,7 @@ import com.itransition.payment.auth.entity.User;
 
 public interface SessionService {
 
-    void saveSession(User user, TokenPayload tokenPayload);
+    void createOrUpdate(User user, TokenPayload tokenPayload);
 
     void clearExpiredSessions();
 }

@@ -4,7 +4,7 @@ import com.itransition.payment.core.exception.ExceptionHelper;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.NonNull;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -28,9 +28,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @SneakyThrows
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @NotNull FilterChain filterChain) {
 
         val token = parseJwt(request);
 
@@ -41,11 +41,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(HttpServletRequest request) {
+    private String parseJwt(@NotNull HttpServletRequest request) {
         val tokenPrefix = JwtTokenProvider.getTokenType() + " ";
         val token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (token != null && token.startsWith(tokenPrefix)) {
+            // TODO: find more proper way to deal with it
             return token.substring(tokenPrefix.length());
         }
 

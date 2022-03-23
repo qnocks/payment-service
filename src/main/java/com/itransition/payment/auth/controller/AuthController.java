@@ -24,13 +24,13 @@ public class AuthController {
         return authService.login(loginRequest);
     }
 
-    @PostMapping("/logout")
-    public void logout(@RequestBody LogoutRequest logoutRequest) {
-        authService.logout(logoutRequest);
-    }
-
     @PostMapping("/refresh")
     public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest request) {
         return authService.refreshToken(request);
+    }
+
+    @PostMapping("/logout")
+    public void logout(@RequestBody LogoutRequest logoutRequest) {
+        authService.logout(logoutRequest);
     }
 }

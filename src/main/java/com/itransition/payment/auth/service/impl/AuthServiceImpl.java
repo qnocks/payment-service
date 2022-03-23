@@ -1,5 +1,6 @@
 package com.itransition.payment.auth.service.impl;
 
+import com.itransition.payment.auth.crypto.Encoder;
 import com.itransition.payment.auth.dto.LoginRequest;
 import com.itransition.payment.auth.dto.LoginResponse;
 import com.itransition.payment.auth.dto.RefreshTokenRequest;
@@ -14,6 +15,7 @@ import com.itransition.payment.auth.service.RefreshTokenService;
 import com.itransition.payment.auth.service.SessionService;
 import com.itransition.payment.core.exception.ExceptionHelper;
 import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -92,8 +94,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(LogoutRequest logoutRequest) {
-        // TODO: implement method in next PR
+    public void logout(@NotNull LogoutRequest logoutRequest) {
         val user = userRepository.findByUsername(encoder.encode(logoutRequest.getUsername()))
                 .orElseThrow(() -> new UsernameNotFoundException(exceptionMessageResolver.getMessage(
                         "auth.username-not-found", logoutRequest.getUsername())));

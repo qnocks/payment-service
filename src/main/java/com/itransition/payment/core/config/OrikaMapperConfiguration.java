@@ -4,6 +4,7 @@ import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.transaction.entity.Transaction;
+import javax.validation.constraints.NotNull;
 import lombok.val;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
@@ -29,7 +30,7 @@ public class OrikaMapperConfiguration extends ConfigurableMapper {
         return mapperFactory;
     }
 
-    private void configureTransactionMapping(MapperFactory factory) {
+    private void configureTransactionMapping(@NotNull MapperFactory factory) {
         val providerFiled = "provider";
         val providerNameField = "provider.name";
 

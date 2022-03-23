@@ -38,3 +38,14 @@ app:
 
   exception:
     trace: true
+
+  auth:
+    jwt:
+      token:
+        secret: ${auth.jwt.secret}
+        expired: ${auth.jwt.expired}
+    session:
+      cron: '*/30 * * * * *'
+
+  cors:
+    origins: 'http://localhost:4200'

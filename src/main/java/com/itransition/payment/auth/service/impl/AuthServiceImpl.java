@@ -1,0 +1,56 @@
+package com.itransition.payment.auth.service.impl;
+
+import com.itransition.payment.auth.dto.LoginRequest;
+import com.itransition.payment.auth.dto.LoginResponse;
+import com.itransition.payment.auth.repository.UserRepository;
+import com.itransition.payment.auth.crypto.Encoder;
+import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
+import com.itransition.payment.auth.service.AuthService;
+import com.itransition.payment.auth.service.SessionService;
+import com.itransition.payment.core.exception.ExceptionMessageResolver;
+import javax.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
+    private final SessionService sessionService;
+    private final ExceptionMessageResolver exceptionMessageResolver;
+    private final Encoder encoder;
+
+    @Override
+    public LoginResponse login(@NotNull LoginRequest loginRequest) {
+        val username = loginRequest.getUsername();
+
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                username, loginRequest.getPassword()));
+        val user = userRepository.findByUsername(encoder.encode(username))
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        exceptionMessageResolver.getMessage("auth.username-not-found", username)));
+        val tokenPayload = jwtTokenProvider.createToken(username, user.getRoles());
+
+        sessionService.createOrUpdate(user, tokenPayload);
+
+        return LoginResponse.builder()
+                .username(username)
+                .token(tokenPayload.getToken())
+                .build();
+    }
+
+    @Override
+    public void logout() {
+        // TODO: implement method in next PR
+        throw new UnsupportedOperationException();
+    }
+}

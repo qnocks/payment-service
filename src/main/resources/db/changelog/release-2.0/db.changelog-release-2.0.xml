@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+
+    <include file="ddl/PMTS-04-DDL.xml" relativeToChangelogFile="true" />
+    <include file="ddl/PMTS-05-DDL.xml" relativeToChangelogFile="true" />
+    <include file="ddl/PMTS-06-DDL.xml" relativeToChangelogFile="true" />
+
+    <include file="dml/PMTS-07-DML.xml" relativeToChangelogFile="true" />
+    <include file="dml/PMTS-08-DML.xml" relativeToChangelogFile="true" />
+    <include file="dml/PMTS-09-DML.xml" relativeToChangelogFile="true" />
+
+    <include file="ddl/PMTS-10-DDL.xml" relativeToChangelogFile="true" />
+
+</databaseChangeLog>

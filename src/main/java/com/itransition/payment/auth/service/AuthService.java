@@ -4,6 +4,7 @@ import com.itransition.payment.auth.dto.LoginRequest;
 import com.itransition.payment.auth.dto.LoginResponse;
 import com.itransition.payment.auth.dto.RefreshTokenRequest;
 import com.itransition.payment.auth.dto.RefreshTokenResponse;
+import com.itransition.payment.auth.dto.LogoutRequest;
 
 public interface AuthService {
 
@@ -11,5 +12,5 @@ public interface AuthService {
 
     RefreshTokenResponse refreshToken(RefreshTokenRequest request);
     // TODO: method signature can be changed when the method will implemented
-    void logout();
+    void logout(LogoutRequest logoutRequest);
 }

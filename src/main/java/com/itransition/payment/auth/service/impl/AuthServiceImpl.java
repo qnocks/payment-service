@@ -5,6 +5,7 @@ import com.itransition.payment.auth.dto.LoginResponse;
 import com.itransition.payment.auth.dto.RefreshTokenRequest;
 import com.itransition.payment.auth.dto.RefreshTokenResponse;
 import com.itransition.payment.auth.entity.RefreshToken;
+import com.itransition.payment.auth.dto.LogoutRequest;
 import com.itransition.payment.auth.repository.UserRepository;
 import com.itransition.payment.auth.security.crypto.CredentialsEncoder;
 import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
@@ -35,9 +36,10 @@ public class AuthServiceImpl implements AuthService {
     private final CredentialsEncoder credentialsEncoder;
     private final ExceptionHelper exceptionHelper;
     private final ExceptionMessageResolver exceptionMessageResolver;
+    private final Encoder encoder;
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(@NotNull LoginRequest loginRequest) {
         val username = loginRequest.getUsername();
         val encodedUsername = credentialsEncoder.encode(username);
 
@@ -88,9 +90,14 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(refreshToken.getToken())
                 .build();
     }
+
     @Override
-    public void logout() {
+    public void logout(LogoutRequest logoutRequest) {
         // TODO: implement method in next PR
-        throw new UnsupportedOperationException();
+        val user = userRepository.findByUsername(encoder.encode(logoutRequest.getUsername()))
+                .orElseThrow(() -> new UsernameNotFoundException(exceptionMessageResolver.getMessage(
+                        "auth.username-not-found", logoutRequest.getUsername())));
+
+        sessionService.removeByUserId(user.getId());
     }
 }

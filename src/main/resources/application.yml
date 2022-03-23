@@ -50,3 +50,6 @@ app:
           cron: '1 * * * * *'
     session:
       cron: '*/30 * * * * *'
+
+  cors:
+    origins: 'http://localhost:4200'

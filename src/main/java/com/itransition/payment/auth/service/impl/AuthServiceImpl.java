@@ -16,15 +16,6 @@ import com.itransition.payment.core.exception.ExceptionMessageResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
-import com.itransition.payment.auth.repository.UserRepository;
-import com.itransition.payment.auth.crypto.Encoder;
-import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
-import com.itransition.payment.auth.service.AuthService;
-import com.itransition.payment.auth.service.SessionService;
-import com.itransition.payment.core.exception.ExceptionMessageResolver;
-import javax.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -58,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
                         exceptionMessageResolver.getMessage("auth.username-not-found", username)));
         val tokenPayload = jwtTokenProvider.createToken(encodedUsername, user.getRoles());
 
-        sessionService.saveSession(user, tokenPayload);
+        sessionService.createOrUpdate(user, tokenPayload);
 
         return LoginResponse.builder()
                 .username(username)
@@ -89,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
                 refreshToken.getUser().getUsername(), refreshToken.getUser().getRoles());
 
         refreshTokenService.resetExpiration(refreshToken);
-        sessionService.saveSession(refreshToken.getUser(), accessToken);
+        sessionService.createOrUpdate(refreshToken.getUser(), accessToken);
 
         return RefreshTokenResponse.builder()
                 .accessToken(accessToken.getToken())

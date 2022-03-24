@@ -7,6 +7,7 @@ import com.itransition.payment.auth.dto.RefreshTokenRequest;
 import com.itransition.payment.auth.dto.RefreshTokenResponse;
 import com.itransition.payment.auth.entity.RefreshToken;
 import com.itransition.payment.auth.dto.LogoutRequest;
+import com.itransition.payment.auth.entity.User;
 import com.itransition.payment.auth.repository.UserRepository;
 import com.itransition.payment.auth.security.crypto.CredentialsEncoder;
 import com.itransition.payment.auth.security.jwt.JwtTokenProvider;
@@ -48,11 +49,9 @@ public class AuthServiceImpl implements AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 encodedUsername, loginRequest.getPassword()));
 
-        val user = userRepository.findByUsername(encodedUsername)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        exceptionMessageResolver.getMessage("auth.username-not-found", username)));
+        val user = getUserByUsername(encodedUsername);
+        verifySessionAbsence(user, loginRequest);
         val tokenPayload = jwtTokenProvider.createToken(encodedUsername, user.getRoles());
-
         sessionService.createOrUpdate(user, tokenPayload);
 
         return LoginResponse.builder()
@@ -66,17 +65,31 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
         val refreshToken = refreshTokenService.getByToken(request.getRefreshToken());
-
-        if (isTokenValid(refreshToken)) {
-            return processRefreshing(refreshToken);
-        }
-
-        throw exceptionHelper.buildAuthException(
-                HttpStatus.BAD_REQUEST, "auth.token.refresh.expired", refreshToken.getToken());
+        verifyRefreshTokenValidation(refreshToken);
+        return processRefreshing(refreshToken);
     }
 
-    private boolean isTokenValid(RefreshToken refreshToken) {
-        return refreshTokenService.verifyAndDeleteExpired(refreshToken);
+    @Override
+    public void logout(@NotNull LogoutRequest logoutRequest) {
+        val user = getUserByUsername(encoder.encode(logoutRequest.getUsername()));
+        sessionService.removeByUserId(user.getId());
+    }
+
+    private void verifySessionAbsence(@NotNull User user, @NotNull LoginRequest loginRequest) {
+        val isExists = sessionService.existsByUserId(user.getId());
+        if (isExists) {
+            throw exceptionHelper.buildAuthException(
+                    HttpStatus.CONFLICT, "auth.session.exists", loginRequest.getUsername());
+        }
+    }
+
+    private void verifyRefreshTokenValidation(RefreshToken refreshToken) {
+        val isTokenNotValid = !refreshTokenService.verifyAndDeleteExpired(refreshToken);
+
+        if (isTokenNotValid) {
+            throw exceptionHelper.buildAuthException(
+                    HttpStatus.BAD_REQUEST, "auth.token.refresh.expired", refreshToken.getToken());
+        }
     }
 
     private RefreshTokenResponse processRefreshing(RefreshToken refreshToken) {
@@ -93,12 +106,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    @Override
-    public void logout(@NotNull LogoutRequest logoutRequest) {
-        val user = userRepository.findByUsername(encoder.encode(logoutRequest.getUsername()))
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(exceptionMessageResolver.getMessage(
-                        "auth.username-not-found", logoutRequest.getUsername())));
-
-        sessionService.removeByUserId(user.getId());
+                        "auth.username-not-found", username)));
     }
 }

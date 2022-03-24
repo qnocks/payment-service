@@ -10,4 +10,6 @@ public interface SessionService {
     void clearExpiredSessions();
 
     void removeByUserId(Long id);
+
+    Boolean existsByUserId(Long id);
 }

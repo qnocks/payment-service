@@ -22,7 +22,7 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public void createOrUpdate(User user, TokenPayload tokenPayload) {
-        if (isSessionExists(user)) {
+        if (existsByUserId(user.getId())) {
             updateSession(user, tokenPayload);
         } else {
             createSession(user, tokenPayload);
@@ -42,6 +42,11 @@ public class SessionServiceImpl implements SessionService {
         sessionRepository.deleteByUserId(id);
     }
 
+    @Override
+    public Boolean existsByUserId(Long id) {
+        return sessionRepository.existsByUserId(id);
+    }
+
     private void createSession(User user, @NotNull TokenPayload tokenPayload) {
         sessionRepository.save(Session.builder()
                 .user(user)
@@ -56,9 +61,5 @@ public class SessionServiceImpl implements SessionService {
             session.setExpired(tokenPayload.getExpiration());
             sessionRepository.save(session);
         });
-    }
-
-    private boolean isSessionExists(@NotNull User user) {
-        return sessionRepository.findByUserId(user.getId()).isPresent();
     }
 }

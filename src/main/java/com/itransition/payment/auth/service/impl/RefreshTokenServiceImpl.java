@@ -8,6 +8,7 @@ import com.itransition.payment.core.exception.ExceptionHelper;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Boolean verifyAndDeleteExpired(RefreshToken token) {
+    public Boolean verifyAndDeleteExpired(@NotNull RefreshToken token) {
         if (token.getExpired().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteById(token.getId());
             return false;
@@ -50,7 +51,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void resetExpiration(RefreshToken token) {
+    public void resetExpiration(@NotNull RefreshToken token) {
         token.setExpired(LocalDateTime.now().plusSeconds(expired));
     }
 

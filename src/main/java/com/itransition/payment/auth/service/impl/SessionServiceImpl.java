@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +22,9 @@ public class SessionServiceImpl implements SessionService {
     private final SessionRepository sessionRepository;
 
     @Override
-    public void createOrUpdate(User user, TokenPayload tokenPayload) {
-        if (existsByUserId(user.getId())) {
+    public void createOrUpdate(@NotNull User user, TokenPayload tokenPayload) {
+        val isSessionExist = existsByUserId(user.getId());
+        if (isSessionExist) {
             updateSession(user, tokenPayload);
         } else {
             createSession(user, tokenPayload);
@@ -55,7 +57,7 @@ public class SessionServiceImpl implements SessionService {
                 .build());
     }
 
-    private void updateSession(User user, @NotNull TokenPayload tokenPayload) {
+    private void updateSession(@NotNull User user, @NotNull TokenPayload tokenPayload) {
         sessionRepository.findByUserId(user.getId()).ifPresent(session -> {
             session.setToken(tokenPayload.getToken());
             session.setExpired(tokenPayload.getExpiration());

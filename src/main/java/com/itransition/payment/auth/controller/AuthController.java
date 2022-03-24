@@ -20,8 +20,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 
     @PostMapping("/refresh")
@@ -30,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestBody LogoutRequest logoutRequest) {
-        authService.logout(logoutRequest);
+    public void logout(@RequestBody LogoutRequest request) {
+        authService.logout(request);
     }
 }

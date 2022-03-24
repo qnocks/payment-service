@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+    public RefreshTokenResponse refreshToken(@NotNull RefreshTokenRequest request) {
         val refreshToken = refreshTokenService.getByToken(request.getRefreshToken());
         verifyRefreshTokenValidation(refreshToken);
         return processRefreshing(refreshToken);
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private void verifyRefreshTokenValidation(RefreshToken refreshToken) {
+    private void verifyRefreshTokenValidation(@NotNull RefreshToken refreshToken) {
         val isTokenNotValid = !refreshTokenService.verifyAndDeleteExpired(refreshToken);
 
         if (isTokenNotValid) {
@@ -92,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    private RefreshTokenResponse processRefreshing(RefreshToken refreshToken) {
+    private RefreshTokenResponse processRefreshing(@NotNull RefreshToken refreshToken) {
         val accessToken = jwtTokenProvider.createToken(
                 refreshToken.getUser().getUsername(), refreshToken.getUser().getRoles());
 

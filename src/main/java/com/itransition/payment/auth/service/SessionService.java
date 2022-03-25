@@ -8,4 +8,8 @@ public interface SessionService {
     void createOrUpdate(User user, TokenPayload tokenPayload);
 
     void clearExpiredSessions();
+
+    void removeByUserId(Long id);
+
+    Boolean existsByUserId(Long id);
 }

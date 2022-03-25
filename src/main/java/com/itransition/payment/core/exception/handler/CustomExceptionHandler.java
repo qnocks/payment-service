@@ -1,5 +1,6 @@
 package com.itransition.payment.core.exception.handler;
 
+import com.itransition.payment.core.exception.custom.AuthException;
 import com.itransition.payment.core.exception.custom.ExternalException;
 import com.itransition.payment.core.exception.custom.TransactionException;
 import com.itransition.payment.core.util.DateTimeUtils;
@@ -10,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,31 +27,36 @@ public class CustomExceptionHandler {
     private boolean printStackTrace;
 
     @ExceptionHandler(TransactionException.class)
-    public ErrorResponse handleTransactionException(@NotNull TransactionException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleTransactionException(@NotNull TransactionException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
     @ExceptionHandler(ExternalException.class)
-    public ErrorResponse handleExternalAuthException(@NotNull ExternalException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleExternalAuthException(@NotNull ExternalException e, WebRequest request) {
+        return buildResponse(e, e.getMessage(), e.getStatus(), request);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(@NotNull AuthException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), e.getStatus(), request);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ErrorResponse handleAccessDeniedException(@NotNull AccessDeniedException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(@NotNull AccessDeniedException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ErrorResponse handleAuthException(@NotNull BadCredentialsException e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleAuthException(@NotNull BadCredentialsException e, WebRequest request) {
         return buildResponse(e, e.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ErrorResponse handleUnknownException(Exception e, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleUnknownException(Exception e, WebRequest request) {
         return buildResponse(e, "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    private ErrorResponse buildResponse(Exception e, String message, HttpStatus status, WebRequest request) {
+    private ResponseEntity<ErrorResponse> buildResponse(Exception e, String message, HttpStatus status, WebRequest request) {
         val response = ErrorResponse.builder()
                 .message(message)
                 .status(status.value())
@@ -61,7 +68,7 @@ public class CustomExceptionHandler {
             response.setStackTrace(ExceptionUtils.getStackTrace(e));
         }
 
-        return response;
+        return ResponseEntity.status(status).body(response);
     }
 
     private boolean isTraceOn(@NotNull WebRequest request) {

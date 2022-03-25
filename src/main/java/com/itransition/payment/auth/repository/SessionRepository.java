@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
     Optional<Session> findByUserId(Long id);
+
+    void deleteByUserId(Long id);
+
+    Boolean existsByUserId(Long id);
 }

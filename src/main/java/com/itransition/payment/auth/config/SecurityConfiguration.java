@@ -22,6 +22,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final Logger LOGGER = LogManager.getLogger(SecurityConfiguration.class);
     private static final String AUTH_ENDPOINT = "/auth/**";
+    private static final String LOGOUT_ENDPOINT = "/auth/logout";
     private static final String ADMIN_ENDPOINT = "/admin/transactions/**";
     private final JwtSecurityConfigurer jwtSecurityConfigurer;
     private final AuthenticationEntryPoint authenticationEntryPoint;
@@ -50,8 +51,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
+                    .antMatchers(LOGOUT_ENDPOINT, ADMIN_ENDPOINT).authenticated()
                     .antMatchers(AUTH_ENDPOINT).permitAll()
-                    .antMatchers(ADMIN_ENDPOINT).authenticated()
                     .anyRequest().permitAll()
                     .and()
                 .exceptionHandling()

@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        val user = userRepository.findByUsername(encoder.encode(username))
+        val user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         exceptionMessageResolver.getMessage("auth.username-not-found", username)));
 

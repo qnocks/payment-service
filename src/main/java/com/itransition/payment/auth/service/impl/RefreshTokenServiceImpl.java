@@ -28,7 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshToken getByToken(String token) {
         return refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> exceptionHelper.buildAuthException(
-                        HttpStatus.BAD_REQUEST, "auth.token.refresh.not-found", token));
+                        HttpStatus.UNAUTHORIZED, "auth.token.refresh.expired", token));
     }
 
     @Override

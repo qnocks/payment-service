@@ -29,11 +29,11 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(mapper.writeValueAsString(ErrorResponse.builder()
                     .message(e.getMessage())
-                    .error(HttpStatus.BAD_REQUEST)
+                    .error(HttpStatus.UNAUTHORIZED)
                     .timestamp(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                     .build()));
         }

@@ -7,8 +7,8 @@
     
     <changeSet id="INIT_USER_TABLE" author="r.ostanin@itransition.com">
         <insert tableName="users">
-            <column name="username" value="admin"/>
-            <column name="password" value="admin"/>
+            <column name="username" value="8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"/>
+            <column name="password" value="8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"/>
             <column name="status" value="ACTIVE"/>
         </insert>
     </changeSet>

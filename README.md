@@ -1,5 +1,22 @@
 # Payment Service
 
+## Usage
+
+### Requirements
+
+* JDK 11
+* Docker Engine
+* Docker Compose
+
+To run this project using gradle wrapper set up docker container and pass the environment variables for auth:
+
+```
+$ cd /payment-service
+$ ./gradlew build
+$  docker-compose up
+$ ./gradlew bootRun --args='--auth.jwt.secret=secret --auth.jwt.expired=5000 --auth.refresh.expired=50000'    
+```
+
 ## Overview
 
 The purpose of an application is to accept payments from a wide amount of different payment providers and broadcast the result of successfully finished payment transactions.

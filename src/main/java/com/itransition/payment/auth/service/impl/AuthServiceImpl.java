@@ -88,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (isTokenNotValid) {
             throw exceptionHelper.buildAuthException(
-                    HttpStatus.BAD_REQUEST, "auth.token.refresh.expired", refreshToken.getToken());
+                    HttpStatus.UNAUTHORIZED, "auth.token.refresh.expired", refreshToken.getToken());
         }
     }
 

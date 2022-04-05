@@ -56,7 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @SneakyThrows
     private void processFilter(String token) {
         if (!jwtTokenProvider.validateToken(token)) {
-            throw exceptionHelper.buildAuthException(HttpStatus.UNAUTHORIZED, "auth.token-expired");
+            throw exceptionHelper.buildAuthException(HttpStatus.UNAUTHORIZED, "auth.token.access.expired");
         }
 
         val authentication = createAuthentication(jwtTokenProvider.getSubject(token));

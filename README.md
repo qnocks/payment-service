@@ -8,7 +8,8 @@
 * Docker Engine
 * Docker Compose
 
-To run this project using gradle wrapper set up docker container and pass the environment variables for auth:
+To run this project using gradle wrapper set up docker container and pass the environment variables for auth. \
+**Note:** *auth.jwt.secret* has to be large then 265 bytes
 
 ```
 $ cd /payment-service

@@ -7,7 +7,6 @@ import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.service.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<TransactionStateDto> searchTransactions(int page, int pageSize, String sort, String order) {
-        val mappedSort = paramMapper.map(sort);
-        return transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), mappedSort));
+        return transactionService.getAll(
+                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), paramMapper.map(sort)));
     }
 
     @Override

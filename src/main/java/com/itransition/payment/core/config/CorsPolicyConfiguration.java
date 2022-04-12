@@ -5,6 +5,8 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,9 +23,15 @@ public class CorsPolicyConfiguration {
     protected CorsConfigurationSource corsConfigurationSource() {
         val configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(parseCsvOrigins());
-        configuration.setAllowedMethods(List.of("GET", "POST"));
+        configuration.setAllowedMethods(List.of(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name()));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(List.of(
+                HttpHeaders.AUTHORIZATION,
+                HttpHeaders.CACHE_CONTROL,
+                HttpHeaders.CONTENT_TYPE));
 
         val source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(AUTH_ENDPOINT, configuration);

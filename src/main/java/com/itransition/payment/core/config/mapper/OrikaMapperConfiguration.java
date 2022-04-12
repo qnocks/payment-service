@@ -3,7 +3,6 @@ package com.itransition.payment.core.config.mapper;
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
 import com.itransition.payment.core.dto.TransactionStateDto;
-import com.itransition.payment.core.config.mapper.DateTimeConverter;
 import com.itransition.payment.transaction.entity.Transaction;
 import javax.validation.constraints.NotNull;
 import lombok.val;

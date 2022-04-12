@@ -11,8 +11,6 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +40,7 @@ class AdminServiceIT extends AbstractIntegrationTest {
         val existingTransaction = transactionRepository
                 .findByExternalIdAndProviderName(externalId, provider).get();
 
-        val actual = underTest.searchTransactions(
-                PageRequest.of(0, 1, Sort.Direction.valueOf("ASC"), "externalId"));
+        val actual = underTest.searchTransactions(0, 1, "user", "ASC");
 
         assertThat(actual).hasSize(1);
         assertThat(actual.get(0).getId()).isEqualTo(existingTransaction.getId());

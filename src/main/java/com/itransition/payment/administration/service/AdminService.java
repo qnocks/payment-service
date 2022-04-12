@@ -2,11 +2,10 @@ package com.itransition.payment.administration.service;
 
 import com.itransition.payment.core.dto.TransactionStateDto;
 import java.util.List;
-import org.springframework.data.domain.Pageable;
 
 public interface AdminService {
 
-    List<TransactionStateDto> searchTransactions(Pageable pageable);
+    List<TransactionStateDto> searchTransactions(int page, int pageSize, String sort, String order);
 
     TransactionStateDto updateTransaction(TransactionStateDto adminDto);
 

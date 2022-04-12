@@ -2,6 +2,7 @@ package com.itransition.payment.unit.administration.service;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
+import com.itransition.payment.administration.mapper.ParamMapper;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.service.TransactionService;
@@ -28,6 +29,9 @@ class AdminServiceTest {
     @Mock
     private TransactionService transactionService;
 
+    @Mock
+    private ParamMapper paramMapper;
+
     @Test
     void shouldSearchTransactions() {
         val pagedTransactions = List.of(
@@ -39,11 +43,11 @@ class AdminServiceTest {
         String order = "ASC";
         String sort = "id";
 
+        when(paramMapper.map(sort)).thenReturn(sort);
         when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)))
                 .thenReturn(pagedTransactions);
 
-        val actual = underTest.searchTransactions(
-                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort));
+        val actual = underTest.searchTransactions(page, pageSize, sort, order);
 
         assertThat(actual).hasSize(pageSize);
         assertThat(actual.get(0).getId()).isEqualTo(1L);

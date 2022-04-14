@@ -1,6 +1,6 @@
 package com.itransition.payment.administration.service.impl;
 
-import com.itransition.payment.administration.mapper.ParamMapper;
+import com.itransition.payment.transaction.mapper.TransactionParamsMapper;
 import com.itransition.payment.administration.service.AdminService;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.type.TransactionStatus;
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
 
     private final TransactionService transactionService;
-    private final ParamMapper paramMapper;
+    private final TransactionParamsMapper paramsMapper;
 
     @Override
     public List<TransactionStateDto> searchTransactions(int page, int pageSize, String sort, String order) {
         return transactionService.getAll(
-                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), paramMapper.map(sort)));
+                PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), paramsMapper.map(sort)));
     }
 
     @Override

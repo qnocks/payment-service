@@ -2,11 +2,11 @@ package com.itransition.payment.unit.administration.service;
 
 import com.itransition.payment.AssertionsHelper;
 import com.itransition.payment.TestDataProvider;
-import com.itransition.payment.administration.mapper.ParamMapper;
+import com.itransition.payment.transaction.mapper.TransactionParamsMapper;
+import com.itransition.payment.administration.service.impl.AdminServiceImpl;
 import com.itransition.payment.core.dto.TransactionStateDto;
 import com.itransition.payment.core.type.TransactionStatus;
 import com.itransition.payment.transaction.service.TransactionService;
-import com.itransition.payment.administration.service.impl.AdminServiceImpl;
 import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class AdminServiceTest {
     private TransactionService transactionService;
 
     @Mock
-    private ParamMapper paramMapper;
+    private TransactionParamsMapper paramsMapper;
 
     @Test
     void shouldSearchTransactions() {
@@ -43,7 +43,7 @@ class AdminServiceTest {
         String order = "ASC";
         String sort = "id";
 
-        when(paramMapper.map(sort)).thenReturn(sort);
+        when(paramsMapper.map(sort)).thenReturn(sort);
         when(transactionService.getAll(PageRequest.of(page, pageSize, Sort.Direction.valueOf(order), sort)))
                 .thenReturn(pagedTransactions);
 

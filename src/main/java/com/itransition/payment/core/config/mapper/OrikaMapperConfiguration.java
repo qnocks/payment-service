@@ -1,4 +1,4 @@
-package com.itransition.payment.core.config;
+package com.itransition.payment.core.config.mapper;
 
 import com.itransition.payment.core.dto.TransactionInfoDto;
 import com.itransition.payment.core.dto.TransactionReplenishDto;
@@ -34,12 +34,16 @@ public class OrikaMapperConfiguration extends ConfigurableMapper {
         val providerFiled = "provider";
         val providerNameField = "provider.name";
 
+        factory.getConverterFactory().registerConverter(new DateTimeConverter());
+
         factory.classMap(TransactionStateDto.class, Transaction.class)
                 .field("amount.amount", "amount")
                 .field("amount.currency", "currency")
                 .field("commissionAmount.amount", "commissionAmount")
                 .field("commissionAmount.currency", "commissionCurrency")
                 .field("user", "userId")
+                .field("timestamp", "createdAt")
+                .field("providerTimestamp", "externalDate")
                 .field(providerFiled, providerNameField)
                 .byDefault()
                 .register();
